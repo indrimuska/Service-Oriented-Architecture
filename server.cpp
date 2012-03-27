@@ -8,38 +8,37 @@
 
 #include <vector>
 #include <iostream>
+#include <arpa/inet.h>
 
-#include "SOA/Service.h"
-
-
-
-#include <sys/unistd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <stdio.h>
+#include "SOA/Socket.h"
+#include "Application/RotateService.cpp"
 
 using namespace std;
 
 int main(int argc, char ** argv) {
+	string myAddress = "127.0.0.1", myPort;
+	string SRaddress = "127.0.0.1", SRport;
 	
-	// Parametri della funzione ROTATE
-	vector<param> parameters;
-	parameters.push_back(param(IN, BUFFER));
-	parameters.push_back(param(OUT, BUFFER));
+	// Avvio del server
+	cout << "Set port number: ";
+	cin >> myPort;
+	Communicator comm;
+	comm.startListener(myPort);
 	
-	// Inizializzaione della funzione
-	Service rotate("rotate", parameters);
-	
-	char hostname[128];
-	gethostname(hostname, sizeof hostname);
-	
-	return 1;
+	// Inizializzaione del servizio
+	RotateService rotate;
 	
 	// Connessione al Service Register
+	cout << "Insert server register address: ";
+	cin >> SRaddress;
+	cout << "Insert server register port:    ";
+	cin >> SRport;
 	Socket serviceRegister;
-	Communicator comm;
-	comm.connectTo("127.0.0.1", "12345", serviceRegister);
+	if (!comm.connectTo(SRaddress, SRport, serviceRegister)) return 0;
 	
 	// Registrazione del servizio al Service Register
-	rotate.serviceRegistration(serviceRegister, "myAddress", "myPort");
+	rotate.serviceRegistration(serviceRegister, myAddress, myPort);
+	
+	// Chiusura di tutte le connessioni
+	comm.closeAllCommunications();
 }

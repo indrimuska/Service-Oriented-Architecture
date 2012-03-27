@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+
 #include "SOA/Communicator.h"
 
 using namespace std;
