@@ -24,7 +24,7 @@ private:
 	vector<param> outParameters;
 	
 public:
-	Service(string name, vector<param> parameters);
+	void setService(string name, vector<param> parameters);
 	bool serviceRegistration(Socket SRsocket, string SPaddres, string SPport);
 	void execute();
 };

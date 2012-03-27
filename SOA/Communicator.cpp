@@ -35,16 +35,13 @@ bool Communicator::startListener(string port, int backlog_queue) {
 bool Communicator::waitForClients(Socket &clientSocket) {
 	struct sockaddr_in client;
 	socklen_t client_size = sizeof(client);
-	char * client_address = (char *) malloc(INET_ADDRSTRLEN);
 	int client_socket = accept(listenSocket, (sockaddr *) &client, &client_size);
 	if (client_socket == -1) {
 		cerr << "Impossibile accettare la connessione.\n";
 		return false;
 	}
-	inet_ntop(AF_INET, &client.sin_addr, client_address, INET_ADDRSTRLEN);
 	clientSocket = Socket(client_socket);
 	sockets.push_back(clientSocket);
-	free(client_address);
 	return true;
 }
 bool Communicator::stopListener() {
