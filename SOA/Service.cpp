@@ -8,7 +8,7 @@
 
 #include "Service.h"
 
-void Service::setService(string name, vector<param> parameters) {
+Service::Service(string name, vector<param> parameters) {
 	this->name = name;
 	for (int i = 0; i < parameters.size(); i++) {
 		if (parameters[i].direction == IN) inParameters.push_back(parameters[i]);
