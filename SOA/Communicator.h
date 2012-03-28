@@ -21,7 +21,7 @@ private:
 	vector<Socket> sockets;
 public:
 	bool startListener(string port, int backlog_queue = 10);
-	bool waitForClients(Socket &clientSocket);
+	bool waitForConnection(Socket &clientSocket);
 	bool stopListener();
 	bool connectTo(string address, string port, Socket &S_socket);
 	bool closeCommunication(Socket socket);

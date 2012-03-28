@@ -16,7 +16,9 @@ bool SOA::setServerRegister(string SRaddres, string SRport) {
 		cerr << "Impossibile connettersi al Server Register\n";
 		return false;
 	}
-	if (!SRsocket.sendString(ACK_PACKET)) {
+	string ack;
+	if (!SRsocket.sendString(CONN_ACK_REQ) ||
+		!SRsocket.receiveString(ack) || ack.compare(CONN_ACK_RESP) != 0) {
 		cerr << "Impossibile confermare la connesione al Server Register\n";
 		return false;
 	}

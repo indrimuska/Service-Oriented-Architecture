@@ -14,8 +14,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define ACK_PACKET "Simple Ack Packet"
-
 using namespace std;
 
 class Socket {

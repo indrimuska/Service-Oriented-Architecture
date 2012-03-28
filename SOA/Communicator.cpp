@@ -32,7 +32,7 @@ bool Communicator::startListener(string port, int backlog_queue) {
 	}
 	return true;
 }
-bool Communicator::waitForClients(Socket &clientSocket) {
+bool Communicator::waitForConnection(Socket &clientSocket) {
 	struct sockaddr_in client;
 	socklen_t client_size = sizeof(client);
 	int client_socket = accept(listenSocket, (sockaddr *) &client, &client_size);

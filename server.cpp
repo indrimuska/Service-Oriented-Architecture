@@ -38,6 +38,7 @@ int main(int argc, char ** argv) {
 	global.setServerRegister(SRaddress, SRport);
 	if (!global.serviceRegistration(rotate)) return 0;
 	
+	while(1);
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();
 }
