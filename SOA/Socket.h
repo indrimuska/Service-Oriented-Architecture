@@ -1,6 +1,6 @@
 //
-//  Socket.h
-//  SOA
+//  SOA/Socket.h
+//  Service Oriented Architecture
 //
 //  Created by Indri Muska on 27/03/12.
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
@@ -13,6 +13,8 @@
 #include <iostream>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+
+#define ACK_PACKET "Simple Ack Packet"
 
 using namespace std;
 

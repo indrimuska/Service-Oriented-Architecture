@@ -1,6 +1,6 @@
 //
-//  Communicator.cpp
-//  SOA
+//  SOA/Communicator.cpp
+//  Service Oriented Architecture
 //
 //  Created by Indri Muska on 14/03/12.
 //  Copyright (c) 2012 Indri Muska. All rights reserved.

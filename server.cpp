@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 
+#include "SOA/SOA.h"
 #include "Application/RotateService.cpp"
 
 using namespace std;
@@ -32,11 +33,10 @@ int main(int argc, char ** argv) {
 	cin >> SRaddress;
 	cout << "Insert server register port:    ";
 	cin >> SRport;
-	Socket serviceRegister;
-	if (!comm.connectTo(SRaddress, SRport, serviceRegister)) return 0;
 	
-	// Registrazione del servizio al Service Register
-	rotate.serviceRegistration(serviceRegister, SPaddress, SPport);
+	SOA global;
+	global.setServerRegister(SRaddress, SRport);
+	if (!global.serviceRegistration(rotate)) return 0;
 	
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();
