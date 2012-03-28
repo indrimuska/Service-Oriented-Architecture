@@ -9,6 +9,7 @@
 #ifndef SOA_Socket_h
 #define SOA_Socket_h
 
+#include <netdb.h>
 #include <iostream>
 #include <arpa/inet.h>
 #include <sys/socket.h>

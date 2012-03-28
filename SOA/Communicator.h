@@ -26,6 +26,7 @@ public:
 	bool connectTo(string address, string port, Socket &S_socket);
 	bool closeCommunication(Socket socket);
 	bool closeAllCommunications();
+	string getIP();
 };
 
 #endif

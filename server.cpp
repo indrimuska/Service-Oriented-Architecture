@@ -8,22 +8,21 @@
 
 #include <vector>
 #include <iostream>
-#include <arpa/inet.h>
 
-#include "SOA/Socket.h"
 #include "Application/RotateService.cpp"
 
 using namespace std;
 
 int main(int argc, char ** argv) {
-	string myAddress = "127.0.0.1", myPort;
-	string SRaddress = "127.0.0.1", SRport;
+	string SPaddress, SPport;
+	string SRaddress, SRport;
 	
 	// Avvio del server
 	cout << "Set port number: ";
-	cin >> myPort;
+	cin >> SPport;
 	Communicator comm;
-	comm.startListener(myPort);
+	comm.startListener(SPport);
+	SPaddress = comm.getIP();
 	
 	// Inizializzaione del servizio
 	RotateService rotate;
@@ -37,7 +36,7 @@ int main(int argc, char ** argv) {
 	if (!comm.connectTo(SRaddress, SRport, serviceRegister)) return 0;
 	
 	// Registrazione del servizio al Service Register
-	rotate.serviceRegistration(serviceRegister, myAddress, myPort);
+	rotate.serviceRegistration(serviceRegister, SPaddress, SPport);
 	
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();

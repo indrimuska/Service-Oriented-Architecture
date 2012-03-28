@@ -90,3 +90,12 @@ bool Communicator::closeAllCommunications() {
 	sockets.clear();
 	return true;
 }
+string Communicator::getIP() {
+	char hostname[128];
+	struct in_addr address;
+	struct hostent * ip;
+	gethostname(hostname, sizeof(hostname));
+	ip = gethostbyname(hostname);
+	memcpy(&address, ip->h_addr_list[0], sizeof(in_addr));
+	return inet_ntoa(address);
+}
