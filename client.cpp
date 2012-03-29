@@ -12,7 +12,28 @@
 
 using namespace std;
 
+class Prova1 {
+	public:
+	int value;
+	Prova1(){value=1;};
+};
+
 int main(int argc, char ** argv) {
+	
+	Socket server;
+	Communicator client;
+	client.connectTo("127.0.0.1", argv[1], server);
+	
+	/*
+	int i;
+	Prova1 * p1;
+	server.receiveBinary(p1, i);
+	cout << "ricevuto " << p1->value << "\n";
+	*/
+	
+	client.closeAllCommunications();
+	
+	/*
 	Communicator * client = new Communicator();
 	
 	string s_string;
@@ -27,5 +48,5 @@ int main(int argc, char ** argv) {
 	cout << "chiusura di tutte le comunicazioni\n";
 	client->closeAllCommunications();
 	cout << "uscita\n";
-	return 1;
+	return 1;*/
 }

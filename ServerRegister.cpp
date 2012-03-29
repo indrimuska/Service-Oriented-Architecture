@@ -41,6 +41,7 @@ public:
 			cerr << "Impossibile confermare la connessione\n";
 			return false;
 		}
+		delete sk;
 		return true;
 	}
 	bool registerServer(Socket * sk) {
@@ -49,8 +50,18 @@ public:
 	bool registerService(Socket * sk) {
 		return true;
 	}
+	bool unregisterService(Socket * sk){
+		return true;
+	}
+    Service provideServiceInformation(Socket * sk){
+    	return true;
+    }
+
+
 	~ServerRegister() {
+		// Chiusura del socket di ascolto
 		comm.stopListener();
+		// Chiusura di tutte le connessioni aperte
 		comm.closeAllCommunications();
 	}
 };
@@ -64,27 +75,15 @@ int main(int argc, char ** argv) {
 	
 	ServerRegister serverRegister(SRport);
 	
-	Communicator comm;
-	
-	Socket * sk;
 	while (1) {
 		// Attesa di connessioni in corso
 		cout << "\nWaiting for connection...\n";
-		sk = new Socket();
-		if (!comm.waitForConnection(* sk)) return 0;
+		if (!serverRegister.waitForConnection()) return 0;
 		
-		sk->sendString(ACK_PACKET);
-		cout << "Ack send\n";
-		
-		comm.closeCommunication(* sk);
 		cout << "Connection closed\n";
 	}
 	
-	// Chiusura del socket di ascolto
-	if (!comm.stopListener()) return 0;
-	
-	// Chiusura di tutte le connessioni aperte
-	if (!comm.closeAllCommunications()) return 0;
+	~serverRegister();
 	
 	return 1;
 }

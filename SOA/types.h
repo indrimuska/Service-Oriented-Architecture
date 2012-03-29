@@ -47,4 +47,14 @@ struct param {
 	}
 };
 
+struct packet_field {
+	void * value;
+	int length;
+	
+	packet_field(void * v, int l) {
+		this->value = v;
+		this->length = l;
+	}
+};
+
 #endif

@@ -14,7 +14,35 @@
 
 using namespace std;
 
+class Prova1 {
+	public:
+	int value;
+	Prova1(){value=1;};
+};
+
+class Prova2 {
+	int value;
+	Prova2(){value=2;};
+};
+
 int main(int argc, char ** argv) {
+	
+	Socket client;
+	Communicator server;
+	server.startListener(argv[1]);
+	cout << "aspetto il client" << endl;
+	server.waitForConnection(client);
+	
+	/*
+	vector<packet_field> packet;
+	Prova1 p1;
+	client.sendBinary((void *) &p1, sizeof(Prova1));
+	cout << "inviato\n";
+	*/
+	
+	server.closeAllCommunications();
+	
+	/*
 	string SPaddress, SPport;
 	string SRaddress, SRport;
 	
@@ -40,5 +68,5 @@ int main(int argc, char ** argv) {
 	
 	while(1);
 	// Chiusura di tutte le connessioni
-	comm.closeAllCommunications();
+	comm.closeAllCommunications();*/
 }
