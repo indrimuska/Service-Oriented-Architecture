@@ -6,11 +6,10 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include <iostream>
-
 #include <map>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 #include "SOA/SOA.h"
 #include "SOA/Communicator.h"
@@ -38,8 +37,8 @@ public:
 	bool waitForConnection() {
 		Socket * sk = new Socket();
 		string request;
-		comm.waitForConnection(* sk);
-		if (!sk->receiveString(request)) return false;
+		comm.waitForConnection(*sk);
+		sk->receiveString(request);
 		if (!request.compare(CONN_ACK_REQ)) return confirmConnection(sk);
 		if (!request.compare(SRV_REG_REQ)) return registerServer(sk);
 		if (!request.compare(SRC_REG_REQ)) return registerService(sk);
@@ -58,8 +57,9 @@ public:
 		cout << "Entro in registerServer\n";
 		string serverToReg; //serverToReg is a string that must have the format "address:port"
 		sk->receiveString(serverToReg);
-		for (int i = 0; i < (int) SRservers.size(); i++) {
+		for (int i = 0; i < (int)SRservers.size(); i++) {
 			if (serverToReg == SRservers[i].identification) {
+				
 				string address, port;
 				sk->receiveString(address);
 				sk->receiveString(port);
@@ -73,16 +73,17 @@ public:
 		return false;
 	}
 	bool displayRegisteredServers(Socket * sk) {
-		cout <<"Eseguo displayRegisteredServers\n";
-		for (int i = 0; i < (int) SRservers.size(); i++) {
+		for (int i = 0; i < (int)SRservers.size(); i++) {
 			ServerInformation siShow = SRservers[i];
 			cout << "Indirizzo server = " + siShow.Saddress + ", porta Server = " + siShow.Sport << endl;
 		}
 		return true;
 	}
+	
 	bool registerService(Socket * sk) {
 		string serviceToReg;
 		sk->receiveString(serviceToReg);
+		
 		servicesIt = SRservices.find(serviceToReg);
 		if (servicesIt == SRservices.end()) {
 			ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
@@ -120,7 +121,8 @@ int main(int argc, char ** argv) {
 	while (1) {
 		// Attesa di connessioni in corso
 		cout << "\nWaiting for connection...\n";
-		if (!serverRegister.waitForConnection()) return 0;
+		if (!serverRegister.waitForConnection())
+			return 0;
 		
 		cout << "Connection closed\n";
 	}

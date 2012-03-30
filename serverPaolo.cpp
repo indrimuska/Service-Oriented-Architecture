@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 	string regReq = SRV_REG_REQ;
     serverRegister.sendString(regReq);
 
-
+    cout << serverPaolo.getIP() << endl;
     string serverInfo = serverPaolo.getIP() + ":" + port;
     serverRegister.sendString(serverInfo);
 

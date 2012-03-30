@@ -30,7 +30,7 @@ using namespace std;
 
 class SOA {
 private:
-	string SRaddres;
+	string SRaddress;
 	string SRport;
 	Communicator comm;
 	

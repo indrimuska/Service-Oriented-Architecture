@@ -15,16 +15,38 @@ void Service::setService(string name, vector<param> parameters) {
 		else outParameters.push_back(parameters[i]);
 	}
 }
-bool Service::serviceRegistration(Socket SRsocket, string SPaddres, string SPport) {
-	if (!SRsocket.sendString(SPaddres + ':' + SPport + '/' + name)) {
+bool Service::setServer(string SPaddress, string SPport) {
+	this->SPaddress = SPaddress;
+	this->SPport = SPport;
+}
+bool Service::serviceRegistration(Socket SRsocket) {
+	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + name)) {
 		cerr << "Errore nella richiesta di registrazione al Server Register\n";
 		return false;
 	}
 	return true;
 }
-bool Service::serviceUnRegistration(Socket SRsocket, string SPaddres, string SPport) {
-	if (!SRsocket.sendString(SPaddres + ':' + SPport + '/' + name)) {
+bool Service::serviceUnRegistration(Socket SRsocket) {
+	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + name)) {
 		cerr << "Errore nella richiesta di registrazione al Server Register\n";
+		return false;
+	}
+	return true;
+}
+bool Service::requestService() {
+	Communicator comm;
+	Socket serviceProvider;
+	if (!comm.connectTo(SPaddress, SPport, serviceProvider)) return false;
+	if (!serviceProvider.sendString(SRC_REQ)) {
+		cerr << "Errore nella richiesta di servizio\n";
+		return false;
+	}
+	string ack;
+	if (!serviceProvider.receiveString(ack) || ack.compare(SRC_RESP)) {
+		// Perché la richiesta non è andata a buon fine?
+		// Forse il servizio non esisteva?
+		// Oppure il server non c'ha più voglia? (boh)
+		cerr << "Errore nella conferma di accettazione del servizio\n";
 		return false;
 	}
 	return true;

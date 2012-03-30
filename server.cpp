@@ -27,6 +27,7 @@ int main(int argc, char ** argv) {
 	
 	// Inizializzaione del servizio
 	RotateService rotate;
+	rotate.setServer(SPaddress, SPport);
 	
 	// Connessione al Service Register
 /*	cout << "Insert server register address: ";
