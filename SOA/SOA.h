@@ -16,6 +16,7 @@
 #define CONN_ACK_RESP	"This is a simple ACK packet"
 #define SRV_REG_REQ		"I'd like me to register"
 #define SRV_REG_RESP	"Ok, now you're registred"
+#define SRV_REG_DISP    "I want to know who is registered"
 #define SRC_REG_REQ		"Hey, I have a new service for any client!"
 #define SRC_REG_RESP	"Well, your service is now registred"
 #define SRV_DEREG_REQ	"I don't want to serv clients anymore"

@@ -64,24 +64,24 @@ bool Socket::serializeObject(void * object, size_t length, string &filename) {
 	ofstream file;
 	stringstream ss_filename;
 	ss_filename << rand();
-	file.open(ss_filename.str().c_str(), ios_base::binary);
+	filename = ss_filename.str().c_str();
+	file.open(filename.c_str(), ios_base::binary);
 	if (!file.good()) {
 		cerr << "Impossibile serializzare l'oggetto\n";
 		return false;
 	}
 	file.write((char *) object, length);
 	file.close();
-	filename = ss_filename.str();
 	return true;
 }
 bool Socket::sendObject(void * object, size_t length) {
 	string filename;
-	if (!serializeObject(object, length, filename)) return false;/*
-	int i = (int) send(sk, object, length, MSG_WAITALL);
-	if (i == -1 || i < length) {
-		cerr << "Errore nel'invio di un insieme di bit\n";
+	if (!serializeObject(object, length, filename)) return false;
+	if (!sendFile(filename)) return false;
+	if (remove(filename.c_str())) {
+		cerr << "Impossibile eliminare l'oggetto serializzato\n";
 		return false;
-	}*/
+	}
 	return true;
 }
 bool Socket::receiveInt(int &number) {
@@ -132,6 +132,27 @@ bool Socket::receiveFile(string where, string &filename) {
 	if (i < dimension) {
 		cerr << "Impossibile salvare il contenuto del file richiesto\n"
 		"Controllare di avere i permessi necessari\n";
+		return false;
+	}
+	return true;
+}
+bool Socket::deserializeObject(void * object, size_t length, string filename) {
+	ifstream file;
+	file.open(filename.c_str(), ios_base::binary);
+	if (!file.good()) {
+		cerr << "Impossibile de-serializzare l'oggetto\n";
+		return false;
+	}
+	file.read((char *) object, length);
+	file.close();
+	return true;
+}
+bool Socket::receiveObject(void * object, size_t length) {
+	string where = ".", filename;
+	if (!receiveFile(where, filename)) return false;
+	if (!deserializeObject(object, length, where + '/' + filename)) return false;
+	if (remove((where + '/' + filename).c_str())) {
+		cerr << "Impossibile eliminare l'oggetto serializzato\n";
 		return false;
 	}
 	return true;

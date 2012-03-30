@@ -13,6 +13,8 @@
 #include <string.h>
 #include "SOA/SOA.h"
 #include "SOA/Communicator.h"
+#include "SOA/ServerInformation.h"
+#include "SOA/ServiceInformation.h"
 
 using namespace std;
 
@@ -21,11 +23,10 @@ private:
 	Communicator comm;
 	string SRaddress;
 	string SRport;
-	map<string, ServerInformation> SRservers;
-	map<string, ServerInformation>::iterator serversIt;
+	vector<ServerInformation> SRservers;
+	vector<int>::iterator SIit;
 	map<string, ServiceInformation> SRservices;
 	map<string, ServiceInformation>::iterator servicesIt;
-
 
 public:
 	ServerRegister(string SRport) {
@@ -36,11 +37,16 @@ public:
 	bool waitForConnection() {
 		Socket * sk = new Socket();
 		string request;
-		comm.waitForConnection(* sk);
+		comm.waitForConnection(*sk);
 		sk->receiveString(request);
-		if (!request.compare(CONN_ACK_REQ)) return confirmConnection(sk);
-		if (!request.compare(SRV_REG_REQ)) return registerServer(sk);
-		if (!request.compare(SRC_REG_REQ)) return registerService(sk);
+		if (!request.compare(CONN_ACK_REQ))
+			return confirmConnection(sk);
+		if (!request.compare(SRV_REG_REQ))
+			return registerServer(sk);
+		if (!request.compare(SRC_REG_REQ))
+			return registerService(sk);
+		if (!request.compare(SRV_REG_DISP))
+			return registerService(sk);
 		return true;
 	}
 	bool confirmConnection(Socket * sk) {
@@ -52,71 +58,79 @@ public:
 		return true;
 	}
 	bool registerServer(Socket * sk) {
+		cout << "Entro in registerServer\n";
 		string serverToReg; //serverToReg is a string that must have the format "address:port"
 		sk->receiveString(serverToReg);
-		serversIt = SRservers.find(serverToReg);
-		if (serversIt == SRservers.end()){
+		for (int i = 0; i < SRservers.size(); i++) {
+			if (serverToReg == SRservers[i]) {
 
-			string address, port;
-			sk -> receiveString(address);
-			sk -> receiveString(port);
-			ServerInformation serInf = ServerInformation(address, port);
-			SRservers.insert(pair<string, ServerInformation> (serverToReg, serInf));
-			return true;
+				string address, port;
+				sk->receiveString(address);
+				sk->receiveString(port);
+				ServerInformation serInf = ServerInformation(address, port);
+				SIit = SRservers.begin();
+				SIit = SRservers.insert(SIit, serverToReg);
+				return true;
+			}
 		}
 
-		cout << "Questo server è già registrato";
+		cout << "Questo server è già registrato\n";
 		return false;
 	}
-	bool registerService(Socket * sk) {
-		string serviceToReg;
-		sk->receiveString(serviceToReg);
+	bool displayRegisteredServers(Socket * sk) {
+		//serversIt	= SRservers.
+				return true;
+}
 
-		servicesIt = SRservices.find(serviceToReg);
-		if (servicesIt == SRservices.end()){
-			ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
-		}
-		return true;
+bool registerService(Socket * sk) {
+	string serviceToReg;
+	sk->receiveString(serviceToReg);
+
+	servicesIt = SRservices.find(serviceToReg);
+	if (servicesIt == SRservices.end()) {
+		ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
 	}
-	bool unregisterService(Socket * sk){
-		return true;
-	}
+	return true;
+}
+bool unregisterService(Socket * sk) {
+	return true;
+}
 
-    bool provideServiceInformation(Socket * sk){
-    	string serviceName;
-		cin >> serviceName;
-		servicesIt = SRservices.find(serviceName);
-		ServiceInformation si = servicesIt;
-    	return true;
-    }
+bool provideServiceInformation(Socket * sk) {
+	string serviceName;
+	cin >> serviceName;
+	servicesIt = SRservices.find(serviceName);
+	//ServiceInformation si = servicesIt;
+	return true;
+}
 
-
-	~ServerRegister() {
-		// Chiusura del socket di ascolto
-		comm.stopListener();
-		// Chiusura di tutte le connessioni aperte
-		comm.closeAllCommunications();
-	}
+~ServerRegister() {
+	// Chiusura del socket di ascolto
+	comm.stopListener();
+	// Chiusura di tutte le connessioni aperte
+	comm.closeAllCommunications();
+}
 };
 
 int main(int argc, char ** argv) {
 	string SRport;
-	
+
 	cout << " * SERVER REGISTER * \n\n";
 	cout << "Set port number: ";
 	cin >> SRport;
-	
+
 	ServerRegister serverRegister(SRport);
-	
+
 	while (1) {
 		// Attesa di connessioni in corso
 		cout << "\nWaiting for connection...\n";
-		if (!serverRegister.waitForConnection()) return 0;
-		
+		if (!serverRegister.waitForConnection())
+			return 0;
+
 		cout << "Connection closed\n";
 	}
-	
+
 	serverRegister.~ServerRegister();
-	
+
 	return 1;
 }

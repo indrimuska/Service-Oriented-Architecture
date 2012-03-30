@@ -2,9 +2,12 @@
 //  server.cpp
 //  Service Oriented Architecture
 //
-//  Created by Indri Muska on 14/03/12.
+//  Created by par on 30/03/12.
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
+
+//questo esempio serve solo per provare il funzionamento della registrazione di un server e di un registro
+//sul serverRegister
 
 #include <vector>
 #include <iostream>
@@ -16,12 +19,24 @@ using namespace std;
 int main(int argc, char ** argv) {
 
 	Socket serverRegister;
-	Communicator server;
-	server.startListener(argv[1]);
-	cout << "aspetto il client" << endl;
-	server.waitForConnection(serverRegister);
+	Communicator serverPaolo;
+	string port;
+	cout << "Porta server?" << endl;
+	cin >> port;
+	//server.startListener(argv[1]);
+	serverPaolo.connectTo("127.0.0.1", port, serverRegister);
+	//cout << "Ciao" << endl;
+	string regReq = SRV_REG_REQ;
+    serverRegister.sendString(regReq);
+
+
+    string serverInfo = serverPaolo.getIP() + ":" + port;
+    serverRegister.sendString(serverInfo);
+
+    for(;;);
 
 
 
-	server.closeAllCommunications();
+
+	serverPaolo.closeAllCommunications();
 }

@@ -24,20 +24,22 @@ using namespace std;
 class Socket {
 private:
 	int sk;
-	bool serializeObject(void * object, size_t length, string &filename);
 public:
 	Socket();
 	Socket(int sk);
 	bool sendInt(int number);
 	bool sendString(string s_string);
-	bool sendObject(void * object, size_t length);
 	bool sendFile(string filename);
+	bool sendObject(void * object, size_t length);
 	bool receiveInt(int &number);
 	bool receiveString(string &s_string);
-	bool receiveObject(void * object, int &length);
 	bool receiveFile(string where, string &filename);
+	bool receiveObject(void * object, size_t length);
 	bool operator==(const Socket &operand);
 	bool closeSocket();
+	
+	bool serializeObject(void * object, size_t length, string &filename);
+	bool deserializeObject(void * object, size_t length, string filename);
 };
 
 #endif

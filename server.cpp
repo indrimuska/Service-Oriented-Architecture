@@ -33,43 +33,13 @@ int main(int argc, char ** argv) {
 	cout << "aspetto il client" << endl;
 	server.waitForConnection(client);
 	
-	client.sendFile(argv[2]);
-	cout << "file inviato\n";
+	Prova1 * p1 = new Prova1();
+	p1->value = 3;
+	client.sendObject((void *) p1, sizeof(Prova1));
+	cout << "inviato: " << p1->value << endl;
 	
-	/*
-	vector<packet_field> packet;
-	Prova1 p1;
-	client.sendBinary((void *) &p1, sizeof(Prova1));
-	cout << "inviato\n";
-	*/
+	//Prova1 ppp1;
+	//client.sendObject((void *) &ppp1, sizeof(ppp1));
 	
 	server.closeAllCommunications();
-	
-	/*
-	string SPaddress, SPport;
-	string SRaddress, SRport;
-	
-	// Avvio del server
-	cout << "Set port number: ";
-	cin >> SPport;
-	Communicator comm;
-	comm.startListener(SPport);
-	SPaddress = comm.getIP();
-	
-	// Inizializzaione del servizio
-	RotateService rotate;
-	
-	// Connessione al Service Register
-	cout << "Insert server register address: ";
-	cin >> SRaddress;
-	cout << "Insert server register port:    ";
-	cin >> SRport;
-	
-	SOA global;
-	global.setServerRegister(SRaddress, SRport);
-	if (!global.serviceRegistration(rotate)) return 0;
-	
-	while(1);
-	// Chiusura di tutte le connessioni
-	comm.closeAllCommunications();*/
 }

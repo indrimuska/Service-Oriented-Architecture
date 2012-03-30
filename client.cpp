@@ -13,7 +13,7 @@
 using namespace std;
 
 class Prova1 {
-	public:
+public:
 	int value;
 	Prova1(){value=1;};
 };
@@ -24,33 +24,9 @@ int main(int argc, char ** argv) {
 	Communicator client;
 	client.connectTo("127.0.0.1", argv[1], server);
 	
-	string file;
-	server.receiveFile("file_prova", file);
-	cout << "ricevuto file: " << file << endl;
-	
-	/*
-	int i;
 	Prova1 * p1;
-	server.receiveBinary(p1, i);
-	cout << "ricevuto " << p1->value << "\n";
-	*/
+	server.receiveObject(p1, sizeof(Prova1));
+	cout << "ricevuto: " << p1->value << endl;
 	
 	client.closeAllCommunications();
-	
-	/*
-	Communicator * client = new Communicator();
-	
-	string s_string;
-	Socket server_socket;
-	cout << "connessione a 127.0.0.1:12345\n";
-	client->connectTo("127.0.0.1", "12345", server_socket);
-	cout << "invio dell'intero 326\n";
-	server_socket.sendInt(326);
-	cout << "ricezione di una stringa\n";
-	server_socket.receiveString(s_string);
-	cout << "stringa ricevuta \"" << s_string << "\"\n";
-	cout << "chiusura di tutte le comunicazioni\n";
-	client->closeAllCommunications();
-	cout << "uscita\n";
-	return 1;*/
 }
