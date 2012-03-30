@@ -30,12 +30,10 @@ public:
 	Socket(int sk);
 	bool sendInt(int number);
 	bool sendString(string s_string);
-	bool sendBinary(char * binary, int length);
 	bool sendObject(void * object, size_t length);
 	bool sendFile(string filename);
 	bool receiveInt(int &number);
 	bool receiveString(string &s_string);
-	bool receiveBinary(char * binary, int &length);
 	bool receiveObject(void * object, int &length);
 	bool receiveFile(string where, string &filename);
 	bool operator==(const Socket &operand);

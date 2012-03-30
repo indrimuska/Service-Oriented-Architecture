@@ -7,10 +7,11 @@
 
 #include "ServerInformation.h"
 
-namespace std {
+using namespace std;
 
-ServerInformation::ServerInformation() {
-	// TODO Auto-generated constructor stub
+ServerInformation::ServerInformation(string address, string port) {
+	Saddress = address;
+	Sport = port;
 
 }
 
@@ -18,4 +19,4 @@ ServerInformation::~ServerInformation() {
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace std */
+

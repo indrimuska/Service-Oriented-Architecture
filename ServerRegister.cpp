@@ -52,9 +52,19 @@ public:
 		return true;
 	}
 	bool registerServer(Socket * sk) {
-		string serverToReg;
+		string serverToReg; //serverToReg is a string that must have the format "address:port"
 		sk->receiveString(serverToReg);
 		serversIt = SRservers.find(serverToReg);
+		if (serversIt == SRservers.end()){
+
+			string address, port;
+			sk -> receiveString(address);
+			sk -> receiveString(port);
+			ServerInformation serInf = ServerInformation(address, port);
+			SRservers.insert(pair<string, ServerInformation> (serverToReg, serInf));
+
+		}
+
 
 		return true;
 	}

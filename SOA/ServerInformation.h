@@ -8,13 +8,20 @@
 #ifndef SERVERINFORMATION_H_
 #define SERVERINFORMATION_H_
 
-namespace std {
+#include <iostream>
+#include <string.h>
+
+using namespace std;
 
 class ServerInformation {
+private:
+	string Saddress;
+	string Sport;
+
 public:
-	ServerInformation();
+	ServerInformation(string, string);
 	virtual ~ServerInformation();
 };
 
-} /* namespace std */
+
 #endif /* SERVERINFORMATION_H_ */

@@ -31,15 +31,6 @@ bool Socket::sendString(string s_string) {
 	}
 	return true;
 }
-bool Socket::sendBinary(char * binary, int length) {
-	if (!sendInt(length)) return false;
-	int i = (int) send(sk, binary, length, MSG_WAITALL);
-	if (i == -1 || i < length) {
-		cerr << "Errore nel'invio di un insieme di bit\n";
-		return false;
-	}
-	return true;
-}
 bool Socket::sendFile(string filename) {
 	struct stat info;
 	if (stat(filename.c_str(), &info) == -1) {
@@ -53,16 +44,14 @@ bool Socket::sendFile(string filename) {
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
-	char * content = (char *) malloc(info.st_size + 1);
+	char * content = (char *) malloc(info.st_size);
 	if ((int) fread(content, 1, info.st_size, file) < info.st_size) {
 		cerr << "Impossibile leggere il contenuto del file\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
-	content[info.st_size] = '\0';
 	if (!sendString(filename)) return false;
 	if (!sendInt(static_cast<int>(info.st_size))) return false;
-	
 	int i = (int) send(sk, content, info.st_size, 0);
 	if (i == -1 || i < info.st_size) {
 		cerr << "Errore nell'invio del file\n";
@@ -118,34 +107,19 @@ bool Socket::receiveString(string &s_string) {
 	free(c_string);
 	return true;
 }
-bool Socket::receiveBinary(char * binary, int &length) { // RICORDARSI DI FARE LA free(binary)
-	if (!receiveInt(length)) return false;
-	binary = (char *) malloc(length);
-	//memset(binary, '\0', length + 1);
-	bzero(binary, length);
-	int i = (int) recv(sk, binary, length, MSG_WAITALL);
-	if (i == -1 || i < length) {
-		cerr << "Errore nella ricezione di un insieme di bit\n";
-		return false;
-	}
-	//binary[length] = '\0';
-	return true;
-}
 bool Socket::receiveFile(string where, string &filename) {
 	int dimension;
 	if (!receiveString(filename)) return false;
 	if (!receiveInt(dimension)) return false;
 	
-	char * binary = (char *) malloc(dimension + 2);
-	memset(binary, '\0', dimension + 2);
+	char * binary = (char *) malloc(dimension + 1);
+	memset(binary, '\0', dimension + 1);
 	int i = (int) recv(sk, binary, dimension, MSG_WAITALL);
 	if (i == -1 || i < dimension) {
 		cerr << "Il file non è stato ricevuto correttamente.\n";
 		return false;
 	}
-	binary[dimension+1] = '\0';
-	cout << "file: " << binary << endl;
-	
+	binary[dimension] = '\0';
 	FILE * file;
 	if (!(file = fopen((where + '/' + filename).c_str(), "w"))) {
 		cerr << "Impossibile creare il file richiesto\n"
