@@ -5,4 +5,14 @@ client
 
 server
 
-Service Oriented Architecture.xcodeproj/*
+Service Oriented Architecture.xcodeproj/**
+
+Debug/*
+
+.cproject
+
+.project
+
+.project
+
+.cproject

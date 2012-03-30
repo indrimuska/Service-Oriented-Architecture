@@ -10,7 +10,7 @@
 
 void Service::setService(string name, vector<param> parameters) {
 	this->name = name;
-	for (int i = 0; i < parameters.size(); i++) {
+	for (int i = 0; i < (int) parameters.size(); i++) {
 		if (parameters[i].direction == IN) inParameters.push_back(parameters[i]);
 		else outParameters.push_back(parameters[i]);
 	}

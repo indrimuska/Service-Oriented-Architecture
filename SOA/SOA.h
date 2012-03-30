@@ -21,7 +21,7 @@
 #define SRV_DEREG_REQ	"I don't want to serv clients anymore"
 #define SRV_DEREG_RESP	"Starting from now, you will not contacted"
 #define SRC_DEREG_REQ	"Sorry, I can't give a service"
-#define SRC_DEREG_RESP	"Don't worry, you'll not asked for that service"
+#define SRC_DEREG_RESP	"Don't worry, you'll not asked for that service again"
 
 //#define SOA_MESSAGES enum { CONN_ACK_REQ, CONN_ACK_RESP, SRV_REG_REQ, SRV_REG_RESP, SRC_REG_REQ, SRC_REG_RESP, SRV_DEREG_REQ, SRV_DEREG_RESP, SRC_DEREG_REQ, SRC_DEREG_RESP };
 

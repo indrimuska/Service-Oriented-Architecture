@@ -8,6 +8,9 @@
 
 #include <iostream>
 
+#include <map>
+#include <stdio.h>
+#include <string.h>
 #include "SOA/SOA.h"
 #include "SOA/Communicator.h"
 
@@ -18,8 +21,12 @@ private:
 	Communicator comm;
 	string SRaddress;
 	string SRport;
-	vector<Service> services;
-	
+	map<string, ServerInformation> SRservers;
+	map<string, ServerInformation>::iterator serversIt;
+	map<string, ServiceInformation> SRservices;
+	map<string, ServiceInformation>::iterator servicesIt;
+
+
 public:
 	ServerRegister(string SRport) {
 		this->SRaddress = comm.getIP();
@@ -45,15 +52,31 @@ public:
 		return true;
 	}
 	bool registerServer(Socket * sk) {
+		string serverToReg;
+		sk->receiveString(serverToReg);
+		serversIt = SRservers.find(serverToReg);
+
 		return true;
 	}
 	bool registerService(Socket * sk) {
+		string serviceToReg;
+		sk->receiveString(serviceToReg);
+
+		servicesIt = SRservices.find(serviceToReg);
+		if (servicesIt == SRservices.end()){
+			ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
+		}
 		return true;
 	}
 	bool unregisterService(Socket * sk){
 		return true;
 	}
-    Service provideServiceInformation(Socket * sk){
+
+    bool provideServiceInformation(Socket * sk){
+    	string serviceName;
+		cin >> serviceName;
+		servicesIt = SRservices.find(serviceName);
+		ServiceInformation si = servicesIt;
     	return true;
     }
 
@@ -83,7 +106,7 @@ int main(int argc, char ** argv) {
 		cout << "Connection closed\n";
 	}
 	
-	~serverRegister();
+	serverRegister.~ServerRegister();
 	
 	return 1;
 }

@@ -33,6 +33,9 @@ int main(int argc, char ** argv) {
 	cout << "aspetto il client" << endl;
 	server.waitForConnection(client);
 	
+	client.sendFile(argv[2]);
+	cout << "file inviato\n";
+	
 	/*
 	vector<packet_field> packet;
 	Prova1 p1;

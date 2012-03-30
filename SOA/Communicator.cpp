@@ -78,14 +78,14 @@ bool Communicator::connectTo(string address, string port, Socket &S_socket) {
 }
 bool Communicator::closeCommunication(Socket socket) {
 	int i;
-	for (i = 0; i < sockets.size(); i++)
+	for (i = 0; i < (int) sockets.size(); i++)
 		if (sockets[i] == socket) break;
 	if (!sockets[i].closeSocket()) return false;
 	sockets.erase(sockets.begin() + i);
 	return true;
 }
 bool Communicator::closeAllCommunications() {
-	for (int i = 0; i < sockets.size(); i++)
+	for (int i = 0; i < (int) sockets.size(); i++)
 		if (!sockets[i].closeSocket()) return false;
 	sockets.clear();
 	return true;

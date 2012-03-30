@@ -9,10 +9,12 @@
 #ifndef SOA_Socket_h
 #define SOA_Socket_h
 
+#include <cstdlib>
 #include <netdb.h>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <string.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -35,6 +37,7 @@ public:
 	bool receiveString(string &s_string);
 	bool receiveBinary(char * binary, int &length);
 	bool receiveObject(void * object, int &length);
+	bool receiveFile(string where, string &filename);
 	bool operator==(const Socket &operand);
 	bool closeSocket();
 };

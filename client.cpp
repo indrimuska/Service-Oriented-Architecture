@@ -24,6 +24,10 @@ int main(int argc, char ** argv) {
 	Communicator client;
 	client.connectTo("127.0.0.1", argv[1], server);
 	
+	string file;
+	server.receiveFile("file_prova", file);
+	cout << "ricevuto file: " << file << endl;
+	
 	/*
 	int i;
 	Prova1 * p1;
