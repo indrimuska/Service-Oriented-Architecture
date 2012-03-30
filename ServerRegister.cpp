@@ -62,11 +62,11 @@ public:
 			sk -> receiveString(port);
 			ServerInformation serInf = ServerInformation(address, port);
 			SRservers.insert(pair<string, ServerInformation> (serverToReg, serInf));
-
+			return true;
 		}
 
-
-		return true;
+		cout << "Questo server è già registrato";
+		return false;
 	}
 	bool registerService(Socket * sk) {
 		string serviceToReg;
