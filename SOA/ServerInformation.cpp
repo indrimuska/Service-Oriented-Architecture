@@ -9,7 +9,8 @@
 
 using namespace std;
 
-ServerInformation::ServerInformation(string address, string port) {
+ServerInformation::ServerInformation(string identif, string address, string port) {
+	identification = identif;
 	Saddress = address;
 	Sport = port;
 

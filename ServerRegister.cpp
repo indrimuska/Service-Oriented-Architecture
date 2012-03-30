@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include <iostream>
-
 #include <map>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
+
 #include "SOA/SOA.h"
 #include "SOA/Communicator.h"
 #include "SOA/ServerInformation.h"
@@ -24,7 +24,7 @@ private:
 	string SRaddress;
 	string SRport;
 	vector<ServerInformation> SRservers;
-	vector<int>::iterator SIit;
+	vector<ServerInformation>::iterator SIit;
 	map<string, ServiceInformation> SRservices;
 	map<string, ServiceInformation>::iterator servicesIt;
 
@@ -61,15 +61,15 @@ public:
 		cout << "Entro in registerServer\n";
 		string serverToReg; //serverToReg is a string that must have the format "address:port"
 		sk->receiveString(serverToReg);
-		for (int i = 0; i < SRservers.size(); i++) {
-			if (serverToReg == SRservers[i]) {
+		for (int i = 0; i < (int)SRservers.size(); i++) {
+			if (serverToReg == SRservers[i].identification) {
 
 				string address, port;
 				sk->receiveString(address);
 				sk->receiveString(port);
-				ServerInformation serInf = ServerInformation(address, port);
+				ServerInformation serInf = ServerInformation(serverToReg, address, port);
 				SIit = SRservers.begin();
-				SIit = SRservers.insert(SIit, serverToReg);
+				SRservers.insert(SIit, serInf);
 				return true;
 			}
 		}
@@ -78,38 +78,41 @@ public:
 		return false;
 	}
 	bool displayRegisteredServers(Socket * sk) {
-		//serversIt	= SRservers.
-				return true;
-}
-
-bool registerService(Socket * sk) {
-	string serviceToReg;
-	sk->receiveString(serviceToReg);
-
-	servicesIt = SRservices.find(serviceToReg);
-	if (servicesIt == SRservices.end()) {
-		ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
+		for (int i = 0; i < (int)SRservers.size(); i++) {
+			ServerInformation siShow = SRservers[i];
+			cout << "Indirizzo server = " + siShow.Saddress + ", porta Server = " + siShow.Sport << endl;
+		}
+		return true;
 	}
-	return true;
-}
-bool unregisterService(Socket * sk) {
-	return true;
-}
 
-bool provideServiceInformation(Socket * sk) {
-	string serviceName;
-	cin >> serviceName;
-	servicesIt = SRservices.find(serviceName);
-	//ServiceInformation si = servicesIt;
-	return true;
-}
+	bool registerService(Socket * sk) {
+		string serviceToReg;
+		sk->receiveString(serviceToReg);
 
-~ServerRegister() {
-	// Chiusura del socket di ascolto
-	comm.stopListener();
-	// Chiusura di tutte le connessioni aperte
-	comm.closeAllCommunications();
-}
+		servicesIt = SRservices.find(serviceToReg);
+		if (servicesIt == SRservices.end()) {
+			ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
+		}
+		return true;
+	}
+	bool unregisterService(Socket * sk) {
+		return true;
+	}
+
+	bool provideServiceInformation(Socket * sk) {
+		string serviceName;
+		cin >> serviceName;
+		servicesIt = SRservices.find(serviceName);
+		//ServiceInformation si = servicesIt;
+		return true;
+	}
+
+	~ServerRegister() {
+		// Chiusura del socket di ascolto
+		comm.stopListener();
+		// Chiusura di tutte le connessioni aperte
+		comm.closeAllCommunications();
+	}
 };
 
 int main(int argc, char ** argv) {

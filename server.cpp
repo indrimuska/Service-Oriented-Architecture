@@ -14,32 +14,39 @@
 
 using namespace std;
 
-class Prova1 {
-	public:
-	int value;
-	Prova1(){value=1;};
-};
-
-class Prova2 {
-	int value;
-	Prova2(){value=2;};
-};
-
 int main(int argc, char ** argv) {
+	string SPaddress, SPport;
+	string SRaddress, SRport;
 	
-	Socket client;
-	Communicator server;
-	server.startListener(argv[1]);
-	cout << "aspetto il client" << endl;
-	server.waitForConnection(client);
+	// Avvio del server
+	cout << "Set port number: ";
+	cin >> SPport;
+	Communicator comm;
+	comm.startListener(SPport);
+	SPaddress = comm.getIP();
 	
-	Prova1 * p1 = new Prova1();
-	p1->value = 3;
-	client.sendObject((void *) p1, sizeof(Prova1));
-	cout << "inviato: " << p1->value << endl;
+	// Inizializzaione del servizio
+	RotateService rotate;
 	
-	//Prova1 ppp1;
-	//client.sendObject((void *) &ppp1, sizeof(ppp1));
+	// Connessione al Service Register
+/*	cout << "Insert server register address: ";
+	cin >> SRaddress;
+	cout << "Insert server register port:    ";
+	cin >> SRport;*/
 	
-	server.closeAllCommunications();
+	SOA global;
+//	global.setServerRegister(SRaddress, SRport);
+//	if (!global.serverRegistration(SPaddress, SPport)) return 0;
+//	if (!global.serviceRegistration(rotate)) return 0;
+	
+	while (1) {
+		// In attesa di connessione con i client...
+		Socket * sk;
+		comm.waitForConnection(* sk);
+		
+		
+	}
+	
+	// Chiusura di tutte le connessioni
+	comm.closeAllCommunications();
 }

@@ -16,7 +16,14 @@ void Service::setService(string name, vector<param> parameters) {
 	}
 }
 bool Service::serviceRegistration(Socket SRsocket, string SPaddres, string SPport) {
-	if (!SRsocket.sendString(SPaddres + ":" + SPport + "/" + name)) {
+	if (!SRsocket.sendString(SPaddres + ':' + SPport + '/' + name)) {
+		cerr << "Errore nella richiesta di registrazione al Server Register\n";
+		return false;
+	}
+	return true;
+}
+bool Service::serviceUnRegistration(Socket SRsocket, string SPaddres, string SPport) {
+	if (!SRsocket.sendString(SPaddres + ':' + SPport + '/' + name)) {
 		cerr << "Errore nella richiesta di registrazione al Server Register\n";
 		return false;
 	}

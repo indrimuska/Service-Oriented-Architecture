@@ -33,6 +33,9 @@ int main(int argc, char ** argv) {
     string serverInfo = serverPaolo.getIP() + ":" + port;
     serverRegister.sendString(serverInfo);
 
+    string regDisp = SRV_REG_DISP;
+        serverRegister.sendString(regDisp);
+
     for(;;);
 
 

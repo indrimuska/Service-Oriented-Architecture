@@ -14,12 +14,15 @@
 using namespace std;
 
 class ServerInformation {
-private:
-	string Saddress;
-	string Sport;
+
+
+
 
 public:
-	ServerInformation(string, string);
+	string identification;
+	string Saddress;
+	string Sport;
+	ServerInformation(string, string, string);
 	virtual ~ServerInformation();
 };
 
