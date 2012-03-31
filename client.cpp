@@ -16,7 +16,8 @@ using namespace std;
 int main(int argc, char ** argv) {
 	
 	
-	int value = 6453;
+	char value[] = "My hammond has lost!";
+	cout << sizeof(char)*sizeof(value) << endl;
 	
 	//parameter() {
 	//parameter(param_direction direction, param_type type) {
@@ -24,9 +25,9 @@ int main(int argc, char ** argv) {
 	//void init(param_direction direction, param_type type) {
 	//void setValue(parameter_value value) {
 	
-	parameter p(IN, INT);
-	parameter_value pv((void *) &value, sizeof(int));
-	p.setValue(pv);
+	parameter p(IN, STRING, parameter_value((void *) value, sizeof(char)*sizeof(value)));
+	
+	cout << "VALUE: " << string((char *) p.getValue()) << endl;
 	
 	cout << p << endl;
 	

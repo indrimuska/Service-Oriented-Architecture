@@ -52,12 +52,14 @@ public:
 			return registerServer(sk);
 		if (!request.compare(SRC_REG_REQ))
 			return registerService(sk);
-		if (!request.compare(SRV_REG_DISP))
+		if (!request.compare(SRV_REG_DISP)){
 			cout << "è stata richiesta una display " << endl;
 			return displayRegisteredServers(sk);
-		if (!request.compare(SRC_REG_DISP))
+		}
+		if (!request.compare(SRC_REG_DISP)){
 			cout << "è stata richiesta la display dei servizi " << endl;
 			return displayRegisteredServices(sk);
+		}
 		return true;
 	}
 	bool confirmConnection(Socket * sk) {
@@ -133,6 +135,8 @@ public:
 		return true;
 	}
 	bool registerService(Socket * sk) {
+		string serverParameters;
+		sk->receiveString(serverParameters);
 		cout << "Eseguo registerService" << endl;
 		string serviceToReg;
 		sk->receiveString(serviceToReg);

@@ -22,7 +22,7 @@ public:
 		dimension = 0;
 	}
 	parameter_value(void * value, size_t dimension) {
-		dimension = 0;
+		this->dimension = 0;
 		setValue(value, dimension);
 	}
 	parameter_value(const parameter_value &p) {
@@ -42,7 +42,6 @@ public:
 		return dimension;
 	}
 	void operator=(const parameter_value &p) {
-		std::cout << "call to parameter_value::operator=\n";
 		setValue(p.value, p.dimension);
 	}
 	~parameter_value() {
@@ -62,9 +61,7 @@ public:
 		init(direction, type);
 	}
 	parameter(param_direction direction, param_type type, parameter_value value) {
-		std::cout << "initializzation\n";
 		init(direction, type);
-		std::cout << "initialize parameter_value\n";
 		setValue(value);
 	}
 	void init(param_direction direction, param_type type) {
@@ -73,11 +70,6 @@ public:
 	}
 	void setValue(parameter_value value) {
 		this->value = value;
-		int int_value1, int_value2;
-		value.get((void *) &int_value1);
-		std::cout << "int_value1: " << int_value1 << "\n";
-		this->value.get((void *) &int_value2);
-		std::cout << "int_value2: " << int_value2 << "\n";
 	}
 	void * getValue() {
 		void * generic_value;
@@ -104,15 +96,8 @@ public:
 				o << "\nvalue:     " << double_value;
 			}
 		}
-		if (p.type == STRING) {
-			o << "STRING";
-			if (pv.getDimension() != 0) {
-				std::string string_value;
-				pv.get((void *) &string_value);
-				o << "\nvalue:     " << string_value;
-			}
-		}
-		if (p.type == BUFFER) o << "BUFFER";
+		if (p.type == STRING) o << "STRING\nvalue:     value not representable";
+		if (p.type == BUFFER) o << "BUFFER\nvalue:     value not representable";
 		return o << std::endl;
 	}
 };
