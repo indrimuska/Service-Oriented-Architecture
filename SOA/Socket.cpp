@@ -62,9 +62,10 @@ bool Socket::sendFile(string filename) {
 }
 bool Socket::serializeObject(void * object, size_t length, string &filename) {
 	ofstream file;
+	srand((int) time(0));
 	stringstream ss_filename;
-	ss_filename << rand();
-	filename = ss_filename.str().c_str();
+	ss_filename << rand() << rand();
+	filename = ss_filename.str();
 	file.open(filename.c_str(), ios_base::binary);
 	if (!file.good()) {
 		cerr << "Impossibile serializzare l'oggetto\n";

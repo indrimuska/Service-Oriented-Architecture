@@ -9,6 +9,7 @@
 #ifndef SOA_Socket_h
 #define SOA_Socket_h
 
+#include <time.h>
 #include <cstdlib>
 #include <netdb.h>
 #include <sstream>
@@ -24,8 +25,6 @@ using namespace std;
 class Socket {
 private:
 	int sk;
-	bool serializeObject(void * object, size_t length, string &filename);
-	bool deserializeObject(void * object, size_t length, string filename);
 public:
 	Socket();
 	Socket(int sk);
@@ -39,6 +38,8 @@ public:
 	bool receiveObject(void * object, size_t length);
 	bool operator==(const Socket &operand);
 	bool closeSocket();
+	bool serializeObject(void * object, size_t length, string &filename);
+	bool deserializeObject(void * object, size_t length, string filename);
 };
 
 #endif

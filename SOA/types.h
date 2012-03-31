@@ -28,6 +28,7 @@ struct param {
 	param_type		type;
 	param_value		value;
 	
+	param(){}
 	param(param_direction d, param_type t) {
 		this->direction = d;
 		this->type = t;
@@ -46,3 +47,5 @@ struct param {
 							(p.type == BUFFER ? "BUFFER" : "UNKNOWN")))) << '\n';
 	}
 };
+
+#endif

@@ -19,6 +19,7 @@
 #define SRV_REG_DISP    "I want to know who is registered"
 #define SRC_REG_REQ		"Hey, I have a new service for any client!"
 #define SRC_REG_RESP	"Well, your service is now registred"
+#define SRC_REG_DISP    "I want to know the available services"
 #define SRV_UNREG_REQ	"I don't want to serv clients anymore"
 #define SRV_UNREG_RESP	"Starting from now, you will not contacted"
 #define SRC_UNREG_REQ	"Sorry, I can't give a service"

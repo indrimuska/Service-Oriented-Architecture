@@ -15,8 +15,8 @@
 #include "types.h"
 #include "Communicator.h"
 
-#define SRC_REQ		"C'mon server, give me this service!"
-#define SRC_RESP	"Et-voilà, here is your service"
+#define SERVICE_REQ		"C'mon server, give me this service!"
+#define SERVICE_RESP	"Et-voilà, here is your service"
 
 using namespace std;
 
@@ -33,12 +33,13 @@ public:
 	void setService(string name, vector<param> parameters);
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio
-	bool setServer(string SPaddress, string SPport);
+	void setServer(string SPaddress, string SPport);
 	
 	// Usati dai Service Provider
 	bool serviceRegistration(Socket SRsocket);
 	bool serviceUnRegistration(Socket SRsocket);
-	void execute();
+	bool serveRequests(Socket * sk);
+	bool execute(Socket * sk);
 	
 	// Usati dai client
 	bool requestService();
