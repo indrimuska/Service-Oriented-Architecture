@@ -29,9 +29,10 @@ private:
 	size_t length;
 public:
 	Deserializer();
+	Deserializer(const Deserializer &d);
 	Deserializer(void * buffer, size_t length);
 	parameter getObject();
-	void operator=(const Deserializer &d);
+	Deserializer& operator=(const Deserializer &d);
 	~Deserializer();
 };
 

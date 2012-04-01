@@ -138,7 +138,9 @@ public:
 	}
 	bool registerService(Socket * sk) {
 		string serverInfo;
+
 		sk->receiveString(serverInfo); //per come sto facendo ora più che serverInfo dovrei passare separatamente indirizzo e porta
+		cout << "In questo momento dovrei aver già ricevuto serverInfo" << endl;
 		for (int i = 0; i < (int) SRservers.size(); i++) {
 			if (serverInfo != SRservers[i].identification) {
 				continue;
@@ -146,10 +148,11 @@ public:
 			if (i == (int) SRservers.size() - 1){
 				cout << "Server non registrato!" << endl;
 				cout << "Prima di registrare questo servizio è necessario registrare il server " << endl;
-				sk->sendString("non_registrato");
+				//sk->sendString("non_registrato");
 				return true;
 			}
 		}
+		sk->sendString("non_registrato");
 
 
 		string serverParameters;

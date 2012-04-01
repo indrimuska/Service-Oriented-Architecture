@@ -38,7 +38,7 @@ public:
 	bool sendString(string s_string);
 	bool sendFile(string filename);
 	bool sendBinary(void * binary, size_t length);
-	bool sendObject(Serializer &s);
+	bool sendObject(Serializer s);
 	bool sendObject(void * object, size_t length);
 	bool receiveInt(int &number);
 	bool receiveString(string &s_string);

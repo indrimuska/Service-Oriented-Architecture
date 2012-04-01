@@ -84,7 +84,7 @@ bool Socket::serializeObject(void * object, size_t length, string &filename) {
 	file.close();
 	return true;
 }
-bool Socket::sendObject(Serializer &s) {
+bool Socket::sendObject(Serializer s) {
 	return sendBinary(s.getSerialized(), s.getLength());
 }
 bool Socket::sendObject(void * object, size_t length) {
@@ -174,7 +174,7 @@ bool Socket::deserializeObject(void * object, size_t length, string filename) {
 	return true;
 }
 bool Socket::receiveObject(Deserializer &d) {
-	void * binary;
+	void * binary = NULL;
 	size_t length;
 	if (!receiveBinary(binary, length)) return false;
 	d = Deserializer(binary, length);

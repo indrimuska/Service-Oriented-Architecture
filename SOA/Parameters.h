@@ -13,9 +13,9 @@
 #include <iostream>
 #include <string.h>
 
-enum param_direction { IN, OUT };
+enum parameter_direction { IN, OUT };
 
-enum param_type { INT, DOUBLE, STRING, BUFFER };
+enum parameter_type { INT, DOUBLE, STRING, BUFFER };
 
 class parameter_value {
 private:
@@ -40,16 +40,16 @@ public:
 
 class parameter {
 private:
-	param_direction direction;
-	param_type type;
+	parameter_direction direction;
+	parameter_type type;
 	parameter_value value;
 public:
 	parameter();
-	parameter(param_direction direction, param_type type);
-	parameter(param_direction direction, param_type type, parameter_value value);
-	void init(param_direction direction, param_type type);
+	parameter(parameter_direction direction, parameter_type type);
+	parameter(parameter_direction direction, parameter_type type, parameter_value value);
+	void init(parameter_direction direction, parameter_type type);
 	void setValue(parameter_value value);
-	void getInfo(param_direction &direction, param_type &type);
+	void getInfo(parameter_direction &direction, parameter_type &type);
 	void getValue(int &int_value);
 	void getValue(double &double_value);
 	void getValue(std::string &string_value);

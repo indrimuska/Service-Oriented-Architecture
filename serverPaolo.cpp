@@ -76,8 +76,6 @@ int main(int argc, char ** argv) {
 		break;
 	case 3: {
 
-		string serverInfo = serverPaolo.getIP() + ":" + port;
-		serverRegister.sendString(serverInfo);
 
 
 
@@ -85,10 +83,16 @@ int main(int argc, char ** argv) {
 				<< endl;
 		string servReq = SRC_REG_REQ;
 		serverRegister.sendString(servReq);
+		cout << "Qui ho inviato la richiesta di registrazione del servizio" << endl;
+		//fino a qui OK
+		string serverInfo = serverPaolo.getIP() + ":" + port;
+		cout << "Sto per inviare serverInfo " << endl;
+	    serverRegister.sendString(serverInfo);
+		cout << "In questo momento ho già inviato serverInfo " << endl;
 
 		string infoRegistrazione;
 		serverRegister.receiveString(infoRegistrazione);
-		cout << infoRegistrazione << endl;
+		cout << "Info registrazione = " << infoRegistrazione << endl;
 		cout << "superato il controllo" << endl;
 		if(!infoRegistrazione.compare("non_registrato")) return true;
 

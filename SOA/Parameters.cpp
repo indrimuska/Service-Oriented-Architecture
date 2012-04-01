@@ -62,21 +62,21 @@ parameter_value::~parameter_value() {
 
 parameter::parameter() {
 }
-parameter::parameter(param_direction direction, param_type type) {
+parameter::parameter(parameter_direction direction, parameter_type type) {
 	init(direction, type);
 }
-parameter::parameter(param_direction direction, param_type type, parameter_value value) {
+parameter::parameter(parameter_direction direction, parameter_type type, parameter_value value) {
 	init(direction, type);
 	setValue(value);
 }
-void parameter::init(param_direction direction, param_type type) {
+void parameter::init(parameter_direction direction, parameter_type type) {
 	this->direction = direction;
 	this->type = type;
 }
 void parameter::setValue(parameter_value value) {
 	this->value = value;
 }
-void parameter::getInfo(param_direction &direction, param_type &type) {
+void parameter::getInfo(parameter_direction &direction, parameter_type &type) {
 	direction = this->direction;
 	type = this->type;
 	
