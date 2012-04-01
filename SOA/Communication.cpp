@@ -1,12 +1,12 @@
 //
-//  SOA/Socket.cpp
+//  SOA/Communication.cpp
 //  Service Oriented Architecture
 //
-//  Created by Indri Muska on 14/03/12.
+//  Created by Indri Muska on 01/04/12.
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "Socket.h"
+#include "Communication.h"
 
 Socket::Socket() {
 	sk = -1;
@@ -60,6 +60,15 @@ bool Socket::sendFile(string filename) {
 	free(content);
 	return true;
 }
+bool Socket::sendBinary(void * binary, size_t length) {
+	sendInt((int) length);
+	int i = (int) send(sk, binary, length, MSG_WAITALL);
+	if (i == -1 || i < (int) length) {
+		cerr << "Errore nel'invio di un insieme di bit\n";
+		return false;
+	}
+	return true;
+}
 bool Socket::serializeObject(void * object, size_t length, string &filename) {
 	ofstream file;
 	srand((int) time(0));
@@ -74,6 +83,9 @@ bool Socket::serializeObject(void * object, size_t length, string &filename) {
 	file.write((char *) object, length);
 	file.close();
 	return true;
+}
+bool Socket::sendObject(Serializer &s) {
+	return sendBinary(s.getSerialized(), s.getLength());
 }
 bool Socket::sendObject(void * object, size_t length) {
 	string filename;
@@ -137,6 +149,17 @@ bool Socket::receiveFile(string where, string &filename) {
 	}
 	return true;
 }
+bool Socket::receiveBinary(void * binary, size_t &length) {
+	length = receiveInt(sk);
+	binary = malloc(length);
+	bzero(binary, length);
+	int i = (int) recv(sk, binary, length, MSG_WAITALL);
+	if (i == -1 || i < (int) length) {
+		cerr << "Errore nella ricezione di un insieme di bit\n";
+		return false;
+	}
+	return true;
+}
 bool Socket::deserializeObject(void * object, size_t length, string filename) {
 	ifstream file;
 	file.open(filename.c_str(), ios_base::binary);
@@ -146,6 +169,9 @@ bool Socket::deserializeObject(void * object, size_t length, string filename) {
 	}
 	file.read((char *) object, length);
 	file.close();
+	return true;
+}
+bool Socket::receiveObject(Deserializer &d) {
 	return true;
 }
 bool Socket::receiveObject(void * object, size_t length) {
@@ -167,4 +193,96 @@ bool Socket::closeSocket() {
 		return false;
 	}
 	return true;
+}
+
+bool Communicator::startListener(string port, int backlog_queue) {
+	listenSocket = socket(PF_INET, SOCK_STREAM, 0);
+	if (listenSocket == -1) {
+		cerr << "Impossibile connettersi al server richiesto\n"
+		"Controllare che sia in linea e disponibile\n";
+		return false;
+	}
+	struct sockaddr_in server;
+	memset(&server, '\0', sizeof(server));
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = htonl(INADDR_ANY);
+	server.sin_port = htons(atoi(port.c_str()));
+	if (bind(listenSocket, (sockaddr *) &server, sizeof(server)) == -1) {
+		cerr << "Impossibile associare l'indirizzo al socket\n"
+		"Riprovare più tardi.\n";
+		return false;
+	}
+	if (listen(listenSocket, backlog_queue) == -1) {
+		cerr << "Impossibile mettersi in ascolto sul socket creato\n"
+		"Riprovare più tardi.\n";
+		return false;
+	}
+	return true;
+}
+bool Communicator::waitForConnection(Socket &clientSocket) {
+	struct sockaddr_in client;
+	socklen_t client_size = sizeof(client);
+	int client_socket = accept(listenSocket, (sockaddr *) &client, &client_size);
+	if (client_socket == -1) {
+		cerr << "Impossibile accettare la connessione.\n";
+		return false;
+	}
+	clientSocket = Socket(client_socket);
+	sockets.push_back(clientSocket);
+	return true;
+}
+bool Communicator::stopListener() {
+	if (close(listenSocket) == -1) {
+		cerr << "Impossibile chiudere la connessione.\n"
+		"Riprovare più tardi.\n";
+		return false;
+	}
+	return true;
+}
+bool Communicator::connectTo(string address, string port, Socket &S_socket) {
+	int sk = socket(PF_INET, SOCK_STREAM, 0);
+	if (sk == -1) {
+		cerr << "Impossibile connettersi al server richiesto\n"
+		"Controllare che sia in linea e disponibile\n";
+		return false;
+	}
+	struct sockaddr_in server;
+	memset(&server, '\0', sizeof(server));
+	server.sin_family = AF_INET;
+	server.sin_port = htons(atoi(port.c_str()));
+	if (!inet_pton(AF_INET, (char *) address.c_str(), &server.sin_addr.s_addr)) {
+		cerr << "Indirizzo non valido, il formato deve essere del tipo 127.0.0.1\n";
+		return false;
+	}
+	if (connect(sk, (sockaddr *) &server, sizeof(struct sockaddr)) == -1) {
+		cerr << "Impossibile connettersi al server richiesto\n"
+		"Controllare che sia in linea e disponibile\n";
+		return false;
+	}
+	S_socket = Socket(sk);
+	sockets.push_back(S_socket);
+	return true;
+}
+bool Communicator::closeCommunication(Socket socket) {
+	int i;
+	for (i = 0; i < (int) sockets.size(); i++)
+		if (sockets[i] == socket) break;
+	if (!sockets[i].closeSocket()) return false;
+	sockets.erase(sockets.begin() + i);
+	return true;
+}
+bool Communicator::closeAllCommunications() {
+	for (int i = 0; i < (int) sockets.size(); i++)
+		if (!sockets[i].closeSocket()) return false;
+	sockets.clear();
+	return true;
+}
+string Communicator::getIP() {
+	char hostname[128];
+	struct in_addr address;
+	struct hostent * ip;
+	gethostname(hostname, sizeof(hostname));
+	ip = gethostbyname(hostname);
+	memcpy(&address, ip->h_addr_list[0], sizeof(in_addr));
+	return inet_ntoa(address);
 }

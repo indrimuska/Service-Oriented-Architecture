@@ -53,11 +53,11 @@ bool SOA::serviceRegistration(Service s) {
 		cerr << "Impossibile connettersi al Server Register\n";
 		return false;
 	}
-	string ack;
 	if (!SRsocket.sendString(SRC_REG_REQ)) {
 		cerr << "Errore nella richiesta di registrazione del servizio\n";
 		return false;
 	}
+	string ack;
 	s.serviceRegistration(SRsocket);
 	if (!SRsocket.receiveString(ack) || ack.compare(SRC_REG_RESP)) {
 		cerr << "Errore nella conferma di registrazione del servizio\n" << ack << endl;

@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "SOA/SOA.h"
-#include "SOA/Communicator.h"
+#include "SOA/Communication.h"
 #include "SOA/ServerInformation.h"
 #include "SOA/ServiceInformation.h"
 
@@ -146,9 +146,11 @@ public:
 			if (i == (int) SRservers.size() - 1){
 				cout << "Server non registrato!" << endl;
 				cout << "Prima di registrare questo servizio è necessario registrare il server " << endl;
+				sk->sendString("non_registrato");
 				return true;
 			}
 		}
+
 
 		string serverParameters;
 		sk->receiveString(serverParameters);

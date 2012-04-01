@@ -8,13 +8,19 @@
 
 #include <iostream>
 
-#include "SOA/params.cpp"
+#include "SOA/Serializer.cpp"
 #include "SOA/Service.h"
 
 using namespace std;
 
 int main(int argc, char ** argv) {
 	//parameter p(IN, BUFFER, parameter_value(pino));
+	
+	//string pippo = "io so' pippo, tu?";
+	//parameter p(IN, STRING, parameter_value(pippo));
+	//Serializer s(p);
+	//Deserializer d(s.getSerialized(), s.getLength());
+	//cout << d.getObject() << endl;
 	
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, INT));
@@ -31,11 +37,7 @@ int main(int argc, char ** argv) {
 	
 	cout << "Sending parameter no. 1\n";
 	for (int i = 0; i < 1 + 0*(int) parameters.size(); i++) {
-		void * parameter_serialized;
-		size_t parameter_serialized_length;
-		parameters[i].serialize(parameter_serialized, parameter_serialized_length);
-		sk.sendObject(parameter_serialized, parameter_serialized_length);
-		parameters[i].serializeEnd(parameter_serialized);
+		sk.sendObject(Serializer(parameters[i]));
 	}
 	
 	comm.closeAllCommunications();

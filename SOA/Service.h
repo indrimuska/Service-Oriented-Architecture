@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include "types.h"
-#include "Communicator.h"
+#include "Communication.h"
 
 #define SERVICE_REQ		"C'mon server, give me this service!"
 #define SERVICE_RESP	"Et-voilà, here is your service"

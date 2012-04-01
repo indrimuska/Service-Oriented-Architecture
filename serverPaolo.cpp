@@ -85,6 +85,15 @@ int main(int argc, char ** argv) {
 				<< endl;
 		string servReq = SRC_REG_REQ;
 		serverRegister.sendString(servReq);
+
+		string infoRegistrazione;
+		serverRegister.receiveString(infoRegistrazione);
+		cout << infoRegistrazione << endl;
+		cout << "superato il controllo" << endl;
+		if(!infoRegistrazione.compare("non_registrato")) return true;
+
+
+		//------ qui già so se posso registrare il servizio
 		cout << "Scrivi il nome del servizio che vuoi registrate" << endl;
 		string serviceToReg;
 		cin >> serviceToReg;

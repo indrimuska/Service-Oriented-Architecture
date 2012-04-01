@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "Service.h"
-#include "Communicator.h"
+#include "Communication.h"
 
 class ServiceInformation {
 private:

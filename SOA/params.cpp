@@ -1,5 +1,5 @@
 //
-//  param.cpp
+//  SOA/param.cpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 31/03/12.
@@ -92,6 +92,11 @@ public:
 	void setValue(parameter_value value) {
 		this->value = value;
 	}
+	void getInfo(param_direction &direction, param_type &type) {
+		direction = this->direction;
+		type = this->type;
+		
+	}
 	void getValue(int &int_value) {
 		value.get((void *) &int_value);
 	}
@@ -109,17 +114,6 @@ public:
 	}
 	size_t getValueDimension() {
 		return value.getDimension();
-	}
-	void serialize(void * parameter_serialized, size_t parameter_serialized_length) {
-		// parameter_serialized need to be freed
-		parameter_serialized_length = sizeof(direction) + sizeof(type) + value.getDimension();
-		parameter_serialized = malloc(parameter_serialized_length);
-		memcpy(parameter_serialized, &direction, sizeof(direction));
-		memcpy((char *) parameter_serialized + sizeof(direction), &type, sizeof(type));
-		value.get((char *) parameter_serialized + sizeof(direction) + sizeof(type));
-	}
-	void serializeEnd(void * parameter_serialized) {
-		free(parameter_serialized);
 	}
 	friend std::ostream& operator<<(std::ostream &o, const parameter &p) {
 		o << "direction: ";
