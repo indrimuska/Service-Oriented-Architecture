@@ -12,7 +12,7 @@
 #include <vector>
 #include <iostream>
 
-#include "types.h"
+#include "Parameters.h"
 #include "Communication.h"
 
 #define SERVICE_REQ		"C'mon server, give me this service!"
@@ -23,14 +23,14 @@ using namespace std;
 class Service {
 private:
 	string name;
-	vector<param> inParameters;
-	vector<param> outParameters;
+	vector<parameter> inParameters;
+	vector<parameter> outParameters;
 	
 	string SPaddress;
 	string SPport;
 	
 public:
-	void setService(string name, vector<param> parameters);
+	void setService(string name, vector<parameter> parameters);
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio
 	void setServer(string SPaddress, string SPport);

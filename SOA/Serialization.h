@@ -9,7 +9,7 @@
 #ifndef SOA_Serialization_h
 #define SOA_Serialization_h
 
-#include "params.cpp"
+#include "Parameters.h"
 
 class Serializer {
 private:
@@ -28,8 +28,10 @@ private:
 	void * buffer;
 	size_t length;
 public:
+	Deserializer();
 	Deserializer(void * buffer, size_t length);
 	parameter getObject();
+	void operator=(const Deserializer &d);
 	~Deserializer();
 };
 

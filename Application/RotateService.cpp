@@ -13,10 +13,10 @@
 class RotateService : public Service {
 public:
 	RotateService() {
-		vector<param> parameters;
-		parameters.push_back(param(IN, INT));
-		parameters.push_back(param(IN, BUFFER));
-		parameters.push_back(param(OUT, BUFFER));
+		vector<parameter> parameters;
+		parameters.push_back(parameter(IN, INT));
+		parameters.push_back(parameter(IN, BUFFER));
+		parameters.push_back(parameter(OUT, BUFFER));
 		this->setService("rotate", parameters);
 	};
 };

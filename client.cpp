@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include "SOA/Serializer.cpp"
+#include "SOA/Serialization.h"
 #include "SOA/Service.h"
 
 using namespace std;
@@ -16,11 +16,19 @@ using namespace std;
 int main(int argc, char ** argv) {
 	//parameter p(IN, BUFFER, parameter_value(pino));
 	
-	//string pippo = "io so' pippo, tu?";
-	//parameter p(IN, STRING, parameter_value(pippo));
-	//Serializer s(p);
-	//Deserializer d(s.getSerialized(), s.getLength());
-	//cout << d.getObject() << endl;
+	string pippo = "io so' pippo, tu?";
+	parameter p(IN, STRING, parameter_value(pippo));
+	Serializer s(p);
+	Deserializer d(s.getSerialized(), s.getLength());
+	cout << "OK1\n";
+	cout << d.getObject() << endl;
+	cout << "OK2\n";
+	Deserializer d1 = d;
+	cout << "OK3\n";
+	cout << d1.getObject() << endl;
+	cout << "OK4\n";
+	
+	/*
 	
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, INT));

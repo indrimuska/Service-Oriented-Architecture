@@ -61,7 +61,7 @@ bool Socket::sendFile(string filename) {
 	return true;
 }
 bool Socket::sendBinary(void * binary, size_t length) {
-	sendInt((int) length);
+	if (!sendInt((int) length)) return false;
 	int i = (int) send(sk, binary, length, MSG_WAITALL);
 	if (i == -1 || i < (int) length) {
 		cerr << "Errore nel'invio di un insieme di bit\n";
@@ -149,8 +149,10 @@ bool Socket::receiveFile(string where, string &filename) {
 	}
 	return true;
 }
-bool Socket::receiveBinary(void * binary, size_t &length) {
-	length = receiveInt(sk);
+bool Socket::receiveBinary(void * binary, size_t &length) { // binary need to be freed
+	int i_length;
+	if (!receiveInt(i_length)) return false;
+	length = i_length;
 	binary = malloc(length);
 	bzero(binary, length);
 	int i = (int) recv(sk, binary, length, MSG_WAITALL);
@@ -172,6 +174,10 @@ bool Socket::deserializeObject(void * object, size_t length, string filename) {
 	return true;
 }
 bool Socket::receiveObject(Deserializer &d) {
+	void * binary;
+	size_t length;
+	if (!receiveBinary(binary, length)) return false;
+	d = Deserializer(binary, length);
 	return true;
 }
 bool Socket::receiveObject(void * object, size_t length) {

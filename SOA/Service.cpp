@@ -8,11 +8,11 @@
 
 #include "Service.h"
 
-void Service::setService(string name, vector<param> parameters) {
+void Service::setService(string name, vector<parameter> parameters) {
 	this->name = name;
 	for (int i = 0; i < (int) parameters.size(); i++) {
-		if (parameters[i].direction == IN) inParameters.push_back(parameters[i]);
-		else outParameters.push_back(parameters[i]);
+		//if (parameters[i].direction == IN) inParameters.push_back(parameters[i]);
+		//else outParameters.push_back(parameters[i]);
 	}
 }
 void Service::setServer(string SPaddress, string SPport) {
@@ -77,7 +77,7 @@ bool Service::requestService() {
 bool Service::serveRequests(Socket * sk) {
 	int params_capacity;
 	string request, name;
-	vector<param> received_params;
+	vector<parameter> received_params;
 	cout << "Ricevo una richiesta\n";
 	if (!sk->receiveString(request)) return false;
 	if (!request.compare(SERVICE_REQ)) {

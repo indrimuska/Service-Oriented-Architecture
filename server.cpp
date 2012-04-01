@@ -10,14 +10,14 @@
 #include <iostream>
 
 #include "SOA/SOA.h"
-#include "SOA/params.cpp"
+#include "SOA/Parameters.h"
 #include "Application/RotateService.cpp"
 
 using namespace std;
 
 int main(int argc, char ** argv) {
 	
-	vector<param> received_params;
+	vector<parameter> received_params;
 	
 	Socket sk;
 	Communicator comm;

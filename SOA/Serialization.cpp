@@ -32,6 +32,10 @@ Serializer::~Serializer() {
 	if (length > 0) free(buffer);
 }
 
+Deserializer::Deserializer() {
+	buffer = NULL;
+	length = 0;
+}
 Deserializer::Deserializer(void * buffer, size_t length) {
 	this->length = length;
 	this->buffer = malloc(length);
@@ -46,6 +50,18 @@ parameter Deserializer::getObject() {
 	value.setValue((char *) buffer + sizeof(param_direction) + sizeof(param_type), length - sizeof(param_direction) - sizeof(param_type));
 	return parameter(direction, type, value);
 }
-Deserializer::~Deserializer() {
+void Deserializer::operator=(const Deserializer &d) {
 	if (length > 0) free(buffer);
+	length = d.length;
+	buffer = malloc(d.length);
+	memcpy(buffer, d.buffer, d.length);
+}
+Deserializer::~Deserializer() {
+	std::cout << "oh pippo!\n";
+	if (length > 0) {
+		std::cout << "(" << length << ")refresh..\n";
+		if (buffer != NULL) std::cout << "i need to be free\n";
+		free(buffer);
+		std::cout << "done!\n\n";
+	}
 }
