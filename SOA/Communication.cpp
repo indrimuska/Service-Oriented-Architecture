@@ -87,6 +87,11 @@ bool Socket::serializeObject(void * object, size_t length, string &filename) {
 bool Socket::sendObject(Serializer s) {
 	return sendBinary(s.getSerialized(), s.getLength());
 }
+bool Socket::sendObject(Serializer2 &s) {
+	if (!sendInt((int) s.getLength())) return false;
+	if (!sendFile(s.getSerialized())) return false;
+	return true;
+}
 bool Socket::sendObject(void * object, size_t length) {
 	string filename;
 	if (!serializeObject(object, length, filename)) return false;
@@ -124,7 +129,6 @@ bool Socket::receiveFile(string where, string &filename) {
 	int dimension;
 	if (!receiveString(filename)) return false;
 	if (!receiveInt(dimension)) return false;
-	
 	char * binary = (char *) malloc(dimension + 1);
 	memset(binary, '\0', dimension + 1);
 	int i = (int) recv(sk, binary, dimension, MSG_WAITALL);
@@ -176,8 +180,22 @@ bool Socket::deserializeObject(void * object, size_t length, string filename) {
 bool Socket::receiveObject(Deserializer &d) {
 	void * binary = NULL;
 	size_t length;
+	cout << "\nreceiving binary\n";
 	if (!receiveBinary(binary, length)) return false;
-	d = Deserializer(binary, length);
+	cout << "received (" << length << ")\n\n";
+	cout << "\ncopying deserializer\n";
+	Deserializer d1(binary, length);
+	cout << "deserializer created\n";
+	d = d1;
+	cout << "done\n";
+	return true;
+}
+bool Socket::receiveObject(Deserializer2 &d) {
+	int length;
+	string filename;
+	if (!receiveInt(length)) return false;
+	if (!receiveFile(".", filename)) return false;
+	d = Deserializer2(filename, length);
 	return true;
 }
 bool Socket::receiveObject(void * object, size_t length) {

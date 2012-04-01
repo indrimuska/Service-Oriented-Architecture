@@ -99,6 +99,12 @@ void parameter::getValue(void * generic_value) {
 size_t parameter::getValueDimension() {
 	return value.getDimension();
 }
+bool parameter::operator==(const parameter &p) {
+	return p.direction == direction && p.type == type;
+}
+bool parameter::operator!=(const parameter &p) {
+	return p.direction != direction || p.type != type;
+}
 std::ostream& operator<<(std::ostream &o, const parameter &p) {
 	o << "direction: ";
 	o << (p.direction == IN ? "IN" : "OUT") << "\ntype:      ";

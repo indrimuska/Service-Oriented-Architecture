@@ -18,36 +18,50 @@ int main(int argc, char ** argv) {
 	
 	/*string pippo = "io so' pippo, tu?";
 	parameter p(IN, STRING, parameter_value(pippo));
-	Serializer s(p);
-	Deserializer d(s.getSerialized(), s.getLength());
-	cout << "OK1\n";
+	cout << p << endl;
+	
+	Serializer2 s(p);
+	Deserializer2 d(s.getSerialized(), s.getLength());
 	cout << d.getObject() << endl;
-	cout << "OK2\n";
 	
-	Deserializer d1 = d;
-	cout << "OK3\n";
-	cout << d1.getObject() << endl;
-	cout << "OK4\n";*/
+	Deserializer2 d1 = d;
+	cout << d1.getObject() << endl;*/
 	
+	/*string pippo = "io so' pippo, tu?";
+	parameter p(IN, STRING, parameter_value(pippo));
+	
+	for (int i = 0; i < 1000; i++) {
+		Serializer2 s(p);
+		Deserializer2 d(s.getSerialized(), s.getLength());
+		if (p != d.getObject()) cout << "NON SONO UGUALI (" << i << ")\n";
+	}*/
+	
+	//string gigi = "Io mi chiamo gigi";
+	int gigi = 10987;
 	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, INT));
-	parameters.push_back(parameter(IN, BUFFER));
-	parameters.push_back(parameter(OUT, BUFFER));
+	parameters.push_back(parameter(IN, INT, parameter_value(gigi)));
+	//parameters.push_back(parameter(IN, BUFFER));
+	//parameters.push_back(parameter(OUT, BUFFER));
 	
 	Socket sk;
 	Communicator comm;
 	comm.connectTo(argv[1], argv[2], sk);
 	
+	cout << "Sending size\n";
+	sk.sendInt((int) parameters.size());
+	cout << "sent\n\n";
+	
 	cout << "---parameters-------------\n\n";
-	for (int i = 0; i < (int) parameters.size(); i++) cout << parameters[i] << endl;
+	for (int i = 0; i < (int) parameters.size(); i++) {
+		cout << parameters[i] << endl;
+		Serializer2 s(parameters[i]);
+		sk.sendObject(s);
+	}
 	cout << "--------------------------\n\n";
 	
-	cout << "Sending parameter no. 1\n";
-	for (int i = 0; i < 1 + 0*(int) parameters.size(); i++) {
-		sk.sendObject(Serializer(parameters[i]));
-	}
-	
+	cout << "closing all communications\n";
 	comm.closeAllCommunications();
+	cout << "done\n\n";
 	
 	/************
 	

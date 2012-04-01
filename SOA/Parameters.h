@@ -55,6 +55,8 @@ public:
 	void getValue(std::string &string_value);
 	void getValue(void * generic_value);
 	size_t getValueDimension();
+	bool operator==(const parameter &p);
+	bool operator!=(const parameter &p);
 	friend std::ostream& operator<<(std::ostream &o, const parameter &p);
 };
 

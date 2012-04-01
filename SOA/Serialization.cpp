@@ -33,19 +33,24 @@ Serializer::~Serializer() {
 }
 
 Deserializer::Deserializer() {
+	std::cout << "\nempty constructor\n\n";
 	buffer = malloc(10);
 	length = 0;
 }
 Deserializer::Deserializer(const Deserializer &d) {
+	std::cout << "\ncopy constructor\n\n";
 	if (length > 0) free(buffer);
 	this->length = d.length;
 	this->buffer = malloc(d.length);
 	memcpy(this->buffer, d.buffer, d.length);
 }
 Deserializer::Deserializer(void * buffer, size_t length) {
+	std::cout << "\nregular constructor\n\n";
 	this->length = length;
 	this->buffer = malloc(length);
+	std::cout << "so the error is here\n";
 	memcpy(this->buffer, buffer, length);
+	std::cout << "or not?\n";
 }
 parameter Deserializer::getObject() {
 	parameter_direction direction;
@@ -58,6 +63,7 @@ parameter Deserializer::getObject() {
 	return parameter(direction, type, value);
 }
 Deserializer& Deserializer::operator=(const Deserializer &d) {
+	std::cout << "\noperator=\n\n";
 	if (length > 0) free(buffer);
 	this->length = d.length;
 	this->buffer = malloc(d.length);

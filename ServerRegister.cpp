@@ -45,13 +45,16 @@ public:
 		comm.waitForConnection(*sk);
 		if (!sk->receiveString(request))
 			return false;
-		cout << request << endl;
-		if (!request.compare(CONN_ACK_REQ))
+		cout << "La richiesta è: "<< request << endl;
+		if (!request.compare(CONN_ACK_REQ)){
 			return confirmConnection(sk);
-		if (!request.compare(SRV_REG_REQ))
+		}
+		if (!request.compare(SRV_REG_REQ)){
 			return registerServer(sk);
-		if (!request.compare(SRC_REG_REQ))
+		}
+		if (!request.compare(SRC_REG_REQ)){
 			return registerService(sk);
+		}
 		if (!request.compare(SRV_REG_DISP)) {
 			cout << "è stata richiesta una display " << endl;
 			return displayRegisteredServers(sk);
@@ -115,8 +118,23 @@ public:
 		cout << "porta = " + serInf.Sport << endl;
 		cout << "È stato inserito con successo\n";
 		int nuovaDim = SRservers.size();
-		cout << "Nuova dimensione del registro = " << endl;
+		cout << "Nuova dimensione del registro (paolo check) = " << endl;
 		cout << nuovaDim << endl;
+		//da qui solo per fare debug, va tolta perché questa è la display
+		cout << "------------------------------------" << endl;
+				cout << "|  Indirizzo Server | Porta Server |" << endl;
+				cout << "------------------------------------" << endl;
+				for (int i = 0; i < (int) SRservers.size(); i++) {
+					ServerInformation siShow = SRservers[i];
+					cout
+							<< "|   " + siShow.Saddress + "       |   " + siShow.Sport
+									+ "\t   |" << endl;
+					cout << "------------------------------------" << endl;
+					//cout<< "Indirizzo server = " + siShow.Saddress
+					//				+ ", porta Server = " + siShow.Sport << endl;
+				}
+
+		//fino a qui da togliere, serve solo per debug
 		return true;
 
 	}
@@ -137,12 +155,16 @@ public:
 		return true;
 	}
 	bool registerService(Socket * sk) {
+		cout << "Operazioni di register service" << endl;
 		string serverInfo;
-
+		cout << "1: ricezione stringa Info server " << endl;
 		sk->receiveString(serverInfo); //per come sto facendo ora più che serverInfo dovrei passare separatamente indirizzo e porta
-		cout << "In questo momento dovrei aver già ricevuto serverInfo" << endl;
-		for (int i = 0; i < (int) SRservers.size(); i++) {
+		cout << "1 OK: ricevuta stringa Info Server = " << endl;
+		cout << serverInfo << endl;
+		//cout << "In questo momento dovrei aver già ricevuto serverInfo" << endl;
+		/*for (int i = 0; i < (int) SRservers.size(); i++) {
 			if (serverInfo != SRservers[i].identification) {
+				cout << "***** faccio continue ed esco dal ciclo ***** " << endl;
 				continue;
 			}
 			if (i == (int) SRservers.size() - 1){
@@ -151,11 +173,13 @@ public:
 				//sk->sendString("non_registrato");
 				return true;
 			}
-		}
+		}*/
+		cout << "2: invio info sulla registrazione del server" << endl;
 		sk->sendString("non_registrato");
 
 
-		string serverParameters;
+		/*string serverParameters;
+		cout << "***********" << endl;
 		sk->receiveString(serverParameters);
 		cout << "Eseguo registerService" << endl;
 		string serviceToReg;
@@ -166,7 +190,7 @@ public:
 		if (servicesIt == SRservices.end()) {
 			cout << "Voglio registrare: " + serviceToReg << endl;
 			ServiceInformation si = ServiceInformation(serviceToReg); //qui creo una nuova ServiceInformation per un particolare tipo di servizio
-		}
+		}*/
 		return true;
 	}
 	bool unregisterService(Socket * sk) {

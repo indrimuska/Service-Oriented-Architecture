@@ -39,12 +39,14 @@ public:
 	bool sendFile(string filename);
 	bool sendBinary(void * binary, size_t length);
 	bool sendObject(Serializer s);
+	bool sendObject(Serializer2 &s);
 	bool sendObject(void * object, size_t length);
 	bool receiveInt(int &number);
 	bool receiveString(string &s_string);
 	bool receiveFile(string where, string &filename);
 	bool receiveBinary(void * binary, size_t &length);
 	bool receiveObject(Deserializer &d);
+	bool receiveObject(Deserializer2 &d);
 	bool receiveObject(void * object, size_t length);
 	bool operator==(const Socket &operand);
 	bool closeSocket();

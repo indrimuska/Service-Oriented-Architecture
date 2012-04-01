@@ -17,14 +17,30 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
+	cout << "\nwaiting for clients\n";
+	
 	vector<parameter> received_params;
 	
 	Socket sk;
 	Communicator comm;
 	comm.startListener(argv[1]);
 	comm.waitForConnection(sk);
+	cout << "client connected\n\n";
 	
-	//sk.receiveObject(<#void *object#>, <#size_t length#>)
+	int parameters_size;
+	cout << "Receiving size\n";
+	sk.receiveInt(parameters_size);
+	cout << "received\n\n";
+	
+	cout << "---parameters-------------\n\n";
+	for (int i = 0; i < parameters_size; i++) {
+		Deserializer2 d;
+		sk.receiveObject(d);
+		cout << d.getObject() << endl;
+		//received_params.push_back(d.getObject());
+		//cout << parameters[i] << endl;
+	}
+	cout << "--------------------------\n\n";
 	
 	comm.closeAllCommunications();
 	
