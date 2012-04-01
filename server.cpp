@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "SOA/SOA.h"
+#include "SOA/params.cpp"
 #include "Application/RotateService.cpp"
 
 using namespace std;
@@ -23,27 +24,7 @@ int main(int argc, char ** argv) {
 	comm.startListener(argv[1]);
 	comm.waitForConnection(sk);
 	
-	int size;
-	if (!sk.receiveInt(size)) return 0;
-	
-	cout << "size ricevuto: " << size << endl;
-	
-	int d;
-	if (!sk.receiveInt(d)) return 0;
-	param * t = (param *) malloc(d);
-	if (!sk.receiveObject((void *) t, d)) return 0;
-	received_params.push_back(* t);
-	cout << * t << endl;
-	free(t);
-	
-	for (int i = 0; i < 0*size; i++) {
-		int dimension;
-		if (!sk.receiveInt(dimension)) return 0;
-		param * temp = (param *) malloc(dimension);
-		if (!sk.receiveObject((void *) temp, dimension)) return 0;
-		received_params.push_back(* temp);
-		cout << i+1 << ")\n" << * temp << endl;
-	}
+	//sk.receiveObject(<#void *object#>, <#size_t length#>)
 	
 	comm.closeAllCommunications();
 	

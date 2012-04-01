@@ -57,6 +57,7 @@ int main(int argc, char ** argv) {
 		cout << "Porta su cui far girare questo server: ";
 		string localServerPort;
 		cin >> localServerPort;
+		port = localServerPort; //mi salvo la port che poi verrà utilizzata sempre per questo server
 		string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
 		serverRegister.sendString(serverInfo);
 		serverRegister.sendString(serverPaolo.getIP());
@@ -74,6 +75,12 @@ int main(int argc, char ** argv) {
 	}
 		break;
 	case 3: {
+
+		string serverInfo = serverPaolo.getIP() + ":" + port;
+		serverRegister.sendString(serverInfo);
+
+
+
 		cout << "È stato scelto di fare la registrazione di un servizio"
 				<< endl;
 		string servReq = SRC_REG_REQ;

@@ -14,47 +14,28 @@
 using namespace std;
 
 int main(int argc, char ** argv) {
+	//parameter p(IN, BUFFER, parameter_value(pino));
 	
-	
-	char value[] = "My hammond has lost!";
-	cout << sizeof(char)*sizeof(value) << endl;
-	
-	//parameter() {
-	//parameter(param_direction direction, param_type type) {
-	//parameter(param_direction direction, param_type type, parameter_value value) {
-	//void init(param_direction direction, param_type type) {
-	//void setValue(parameter_value value) {
-	
-	parameter p(IN, STRING, parameter_value((void *) value, sizeof(char)*sizeof(value)));
-	
-	cout << "VALUE: " << string((char *) p.getValue()) << endl;
-	
-	cout << p << endl;
-	
-	
-	/*
-	
-	vector<param> parameters;
-	parameters.push_back(param(IN, INT));
-	parameters.push_back(param(IN, BUFFER));
-	parameters.push_back(param(OUT, BUFFER));
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, INT));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
 	
 	Socket sk;
 	Communicator comm;
 	comm.connectTo(argv[1], argv[2], sk);
 	
-	cout << "\nparameters:\n";
-	cout << " - size:   " << parameters.size() << endl;
-	cout << " - values: " << endl;
+	cout << "---parameters-------------\n\n";
+	for (int i = 0; i < (int) parameters.size(); i++) cout << parameters[i] << endl;
+	cout << "--------------------------\n\n";
 	
-	cout << parameters[0] << endl;
-	sk.sendInt((int) sizeof(parameters[0]));
-	sk.sendObject((void *) &parameters[0], sizeof(parameters[0]));
-	
-	for (int i = 0; i < 0*(int) parameters.size(); i++) {
-		cout << i+1 << ")\n" << parameters[i] << endl;
-		sk.sendInt((int) sizeof(parameters[i]));
-		sk.sendObject((void *) &parameters[i], sizeof(parameters[i]));
+	cout << "Sending parameter no. 1\n";
+	for (int i = 0; i < 1 + 0*(int) parameters.size(); i++) {
+		void * parameter_serialized;
+		size_t parameter_serialized_length;
+		parameters[i].serialize(parameter_serialized, parameter_serialized_length);
+		sk.sendObject(parameter_serialized, parameter_serialized_length);
+		parameters[i].serializeEnd(parameter_serialized);
 	}
 	
 	comm.closeAllCommunications();

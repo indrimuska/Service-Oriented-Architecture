@@ -21,6 +21,18 @@ public:
 		value = NULL;
 		dimension = 0;
 	}
+	parameter_value(int &value) {
+		dimension = 0;
+		setValue(value);
+	}
+	parameter_value(double &value) {
+		dimension = 0;
+		setValue(value);
+	}
+	parameter_value(std::string &value) {
+		dimension = 0;
+		setValue(value);
+	}
 	parameter_value(void * value, size_t dimension) {
 		this->dimension = 0;
 		setValue(value, dimension);
@@ -28,6 +40,15 @@ public:
 	parameter_value(const parameter_value &p) {
 		dimension = 0;
 		setValue(p.value, p.dimension);
+	}
+	void setValue(int &value) {
+		setValue((void *) &value, sizeof(int));
+	}
+	void setValue(double &value) {
+		setValue((void *) &value, sizeof(double));
+	}
+	void setValue(std::string &value) {
+		setValue((void *) value.c_str(), value.size());
 	}
 	void setValue(void * value, size_t dimension) {
 		if (this->dimension > 0) free(value);
@@ -71,10 +92,34 @@ public:
 	void setValue(parameter_value value) {
 		this->value = value;
 	}
-	void * getValue() {
-		void * generic_value;
+	void getValue(int &int_value) {
+		value.get((void *) &int_value);
+	}
+	void getValue(double &double_value) {
+		value.get((void *) &double_value);
+	}
+	void getValue(std::string &string_value) {
+		char c_string_value[value.getDimension()+1];
+		value.get((void *) &c_string_value);
+		c_string_value[value.getDimension()] = '\0';
+		string_value = c_string_value;
+	}
+	void getValue(void * generic_value) {
 		value.get(generic_value);
-		return generic_value;
+	}
+	size_t getValueDimension() {
+		return value.getDimension();
+	}
+	void serialize(void * parameter_serialized, size_t parameter_serialized_length) {
+		// parameter_serialized need to be freed
+		parameter_serialized_length = sizeof(direction) + sizeof(type) + value.getDimension();
+		parameter_serialized = malloc(parameter_serialized_length);
+		memcpy(parameter_serialized, &direction, sizeof(direction));
+		memcpy((char *) parameter_serialized + sizeof(direction), &type, sizeof(type));
+		value.get((char *) parameter_serialized + sizeof(direction) + sizeof(type));
+	}
+	void serializeEnd(void * parameter_serialized) {
+		free(parameter_serialized);
 	}
 	friend std::ostream& operator<<(std::ostream &o, const parameter &p) {
 		o << "direction: ";
@@ -82,7 +127,7 @@ public:
 		parameter_value pv = p.value;
 		if (p.type == INT) {
 			o << "INT";
-			if (pv.getDimension() != 0) {
+			if (pv.getDimension() > 0) {
 				int int_value;
 				pv.get((void *) &int_value);
 				o << "\nvalue:     " << int_value;
@@ -90,14 +135,25 @@ public:
 		}
 		if (p.type == DOUBLE) {
 			o << "DOUBLE";
-			if (pv.getDimension() != 0) {
+			if (pv.getDimension() > 0) {
 				double double_value;
 				pv.get((void *) &double_value);
 				o << "\nvalue:     " << double_value;
 			}
 		}
-		if (p.type == STRING) o << "STRING\nvalue:     value not representable";
-		if (p.type == BUFFER) o << "BUFFER\nvalue:     value not representable";
+		if (p.type == STRING) {
+			o << "STRING";
+			if (pv.getDimension() > 0) {
+				char string_value[pv.getDimension()+1];
+				pv.get((void *) &string_value);
+				string_value[pv.getDimension()] = '\0';
+				o << "\nvalue:     " << string_value;
+			}
+		}
+		if (p.type == BUFFER) {
+			o << "BUFFER";
+			if (pv.getDimension() > 0) o << "\nvalue:     value not representable";
+		}
 		return o << std::endl;
 	}
 };

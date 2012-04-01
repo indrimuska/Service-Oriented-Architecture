@@ -52,11 +52,11 @@ public:
 			return registerServer(sk);
 		if (!request.compare(SRC_REG_REQ))
 			return registerService(sk);
-		if (!request.compare(SRV_REG_DISP)){
+		if (!request.compare(SRV_REG_DISP)) {
 			cout << "è stata richiesta una display " << endl;
 			return displayRegisteredServers(sk);
 		}
-		if (!request.compare(SRC_REG_DISP)){
+		if (!request.compare(SRC_REG_DISP)) {
 			cout << "è stata richiesta la display dei servizi " << endl;
 			return displayRegisteredServices(sk);
 		}
@@ -72,7 +72,7 @@ public:
 	}
 	bool registerServer(Socket * sk) {
 		cout << "Entro in registerServer\n";
-		int dim = (int)SRservers.size();
+		int dim = (int) SRservers.size();
 		cout << "Dimensione del registro = " << endl;
 		cout << dim << endl;
 		cout << "forse" << endl;
@@ -91,7 +91,7 @@ public:
 			cout << "indirizzo = " + serInf.Saddress << endl;
 			cout << "porta = " + serInf.Sport << endl;
 			cout << "È stato inserito con successo\n";
-			int nuovaDim = (int)SRservers.size();
+			int nuovaDim = (int) SRservers.size();
 			cout << "Nuova dimensione del registro = " << endl;
 			cout << nuovaDim << endl;
 			return true;
@@ -127,14 +127,29 @@ public:
 		cout << "------------------------------------" << endl;
 		for (int i = 0; i < (int) SRservers.size(); i++) {
 			ServerInformation siShow = SRservers[i];
-		cout << "|   " + siShow.Saddress +    "       |   " +  siShow.Sport + "\t   |" << endl;
-		cout << "------------------------------------" << endl;
+			cout
+					<< "|   " + siShow.Saddress + "       |   " + siShow.Sport
+							+ "\t   |" << endl;
+			cout << "------------------------------------" << endl;
 			//cout<< "Indirizzo server = " + siShow.Saddress
 			//				+ ", porta Server = " + siShow.Sport << endl;
 		}
 		return true;
 	}
 	bool registerService(Socket * sk) {
+		string serverInfo;
+		sk->receiveString(serverInfo); //per come sto facendo ora più che serverInfo dovrei passare separatamente indirizzo e porta
+		for (int i = 0; i < (int) SRservers.size(); i++) {
+			if (serverInfo != SRservers[i].identification) {
+				continue;
+			}
+			if (i == (int) SRservers.size() - 1){
+				cout << "Server non registrato!" << endl;
+				cout << "Prima di registrare questo servizio è necessario registrare il server " << endl;
+				return true;
+			}
+		}
+
 		string serverParameters;
 		sk->receiveString(serverParameters);
 		cout << "Eseguo registerService" << endl;
@@ -153,19 +168,21 @@ public:
 		return true;
 	}
 	bool displayRegisteredServices(Socket * sk) {
-			cout << "Eseguo displayRegisteredServices\n";
+		cout << "Eseguo displayRegisteredServices\n";
+		cout << "-----------------------------------------------" << endl;
+		cout << "| Servizio |  Indirizzo Server | Porta Server |" << endl;
+		cout << "-----------------------------------------------" << endl;
+		for (int i = 0; i < (int) SRservers.size(); i++) {
+			ServerInformation siShow = SRservers[i];
+			cout
+					<< "|   " + siShow.Saddress + "       |   " + siShow.Sport
+							+ "\t   |" << endl;
 			cout << "-----------------------------------------------" << endl;
-			cout << "| Servizio |  Indirizzo Server | Porta Server |" << endl;
-			cout << "-----------------------------------------------" << endl;
-			for (int i = 0; i < (int) SRservers.size(); i++) {
-				ServerInformation siShow = SRservers[i];
-			cout << "|   " + siShow.Saddress +    "       |   " +  siShow.Sport + "\t   |" << endl;
-			cout << "-----------------------------------------------" << endl;
-				//cout<< "Indirizzo server = " + siShow.Saddress
-				//				+ ", porta Server = " + siShow.Sport << endl;
-			}
-			return true;
+			//cout<< "Indirizzo server = " + siShow.Saddress
+			//				+ ", porta Server = " + siShow.Sport << endl;
 		}
+		return true;
+	}
 
 	bool provideServiceInformation(Socket * sk) {
 		string serviceName;
