@@ -39,16 +39,15 @@ int main(int argc, char ** argv) {
 	 */
 
 	cout << " * LOCAL SERVER * \n\n";
-	cout << "Porta del server Register: ";
-	cin >> port;
+	//cout << "Porta del server Register: ";
+	//cin >> port;
 	//server.startListener(argv[1]);
-	serverPaolo.connectTo("127.0.0.1", port, serverRegister);
+	//serverPaolo.connectTo("127.0.0.1", port, serverRegister);
 
 	while (1) {
 		cout << endl << "-------------------------------------------------------" << endl;
 		cout << "Scegli l'operazione da effettuare" << endl;
-		cout << "Premi 1 se vuoi impostare il service register a cui collegarsi" << endl;
-
+		cout << "Premi 1 se vuoi impostare il service register a cui collegarsi (setServerRegistrer)" << endl;
 		cout << "Premi 2 se vuoi visualizzare tutti i server registrati" << endl;
 		cout << "Premi 3 se vuoi registrare un servizio (per farlo devi aver già registrato il server)" << endl;
 		cout << "Premi 4 se vuoi visualizzare tutti i SERVIZI registrati" << endl;
@@ -64,9 +63,11 @@ int main(int argc, char ** argv) {
 			string SRaddress, SRport;
 			cout << "Digitare l'indirizzo del service register: es 127.0.0.1" << endl;
 			cin >> SRaddress;
+			cout << SRaddress << endl;
 			cout << "Digitare il numero di porta del service register" << endl;
 			cin >> SRport;
-			if (!global.serverRegistration(SRaddress, SRport)) return 0;
+			cout << SRport << endl;
+			if (!global.setServerRegister(SRaddress, SRport)) return 0;
 		}
 		break;
 

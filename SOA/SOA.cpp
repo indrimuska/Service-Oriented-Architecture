@@ -10,7 +10,9 @@
 
 bool SOA::setServerRegister(string SRaddress, string SRport) {
 	this->SRaddress = SRaddress;
+
 	this->SRport = SRport;
+
 	Socket SRsocket;
 	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
 		cerr << "Impossibile connettersi al Server Register\n";
@@ -27,6 +29,10 @@ bool SOA::setServerRegister(string SRaddress, string SRport) {
 	return true;
 }
 bool SOA::serverRegistration(string SPaddress, string SPport) {
+	cout << "SPaddress: " << SPaddress << endl;
+	cout << "SPport: " << SPport << endl;
+	cout << "SRaddress: " << SRaddress << endl;
+	cout << "SRport: " << SRport << endl;
 	Socket SRsocket;
 	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
 		cerr << "Impossibile connettersi al Server Register\n";

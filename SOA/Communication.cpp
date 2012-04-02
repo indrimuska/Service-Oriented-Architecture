@@ -55,7 +55,7 @@ bool Socket::sendFile(string filename) {
 	int i = (int) send(sk, content, info.st_size, 0);
 	if (i == -1 || i < info.st_size) {
 		cerr << "Errore nell'invio del file\n";
-		return 0;
+		return false;
 	}
 	free(content);
 	return true;
@@ -84,10 +84,7 @@ bool Socket::serializeObject(void * object, size_t length, string &filename) {
 	file.close();
 	return true;
 }
-bool Socket::sendObject(Serializer s) {
-	return sendBinary(s.getSerialized(), s.getLength());
-}
-bool Socket::sendObject(Serializer2 &s) {
+bool Socket::sendObject(Serializer &s) {
 	if (!sendInt((int) s.getLength())) return false;
 	if (!sendFile(s.getSerialized())) return false;
 	return true;
@@ -178,24 +175,11 @@ bool Socket::deserializeObject(void * object, size_t length, string filename) {
 	return true;
 }
 bool Socket::receiveObject(Deserializer &d) {
-	void * binary = NULL;
-	size_t length;
-	cout << "\nreceiving binary\n";
-	if (!receiveBinary(binary, length)) return false;
-	cout << "received (" << length << ")\n\n";
-	cout << "\ncopying deserializer\n";
-	Deserializer d1(binary, length);
-	cout << "deserializer created\n";
-	d = d1;
-	cout << "done\n";
-	return true;
-}
-bool Socket::receiveObject(Deserializer2 &d) {
 	int length;
 	string filename;
 	if (!receiveInt(length)) return false;
 	if (!receiveFile(".", filename)) return false;
-	d = Deserializer2(filename, length);
+	d = Deserializer(filename, length);
 	return true;
 }
 bool Socket::receiveObject(void * object, size_t length) {
@@ -274,6 +258,7 @@ bool Communicator::connectTo(string address, string port, Socket &S_socket) {
 	memset(&server, '\0', sizeof(server));
 	server.sin_family = AF_INET;
 	server.sin_port = htons(atoi(port.c_str()));
+	//cout << address << endl;
 	if (!inet_pton(AF_INET, (char *) address.c_str(), &server.sin_addr.s_addr)) {
 		cerr << "Indirizzo non valido, il formato deve essere del tipo 127.0.0.1\n";
 		return false;

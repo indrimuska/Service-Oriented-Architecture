@@ -14,52 +14,12 @@
 using namespace std;
 
 int main(int argc, char ** argv) {
-	//parameter p(IN, BUFFER, parameter_value(pino));
 	
-	/*string pippo = "io so' pippo, tu?";
-	parameter p(IN, STRING, parameter_value(pippo));
-	cout << p << endl;
-	
-	Serializer2 s(p);
-	Deserializer2 d(s.getSerialized(), s.getLength());
-	cout << d.getObject() << endl;
-	
-	Deserializer2 d1 = d;
-	cout << d1.getObject() << endl;*/
-	
-	string pippo = "io so' pippo, tu?";
-	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, STRING, parameter_value(pippo)));
-	parameters.push_back(parameter(IN, BUFFER));
-	parameters.push_back(parameter(OUT, BUFFER));
-	
-	for (int i = 0; i < 10; i++) {
-		Serializer2 s(parameters[1]);
-		Deserializer2 d(s.getSerialized(), s.getLength());
-		if (parameters[1] != d.getObject()) cout << "NON SONO UGUALI (" << i << ")\n";
-	}
-	
-	/*string gigi = "Io mi chiamo gigi";
-	parameter p(IN, STRING, parameter_value(gigi));
-	cout << endl << p << endl;
-	
-	Serializer2 s(p);
-	
-	Deserializer2 d(s.getSerialized(), s.getLength());
-	cout << d.getObject() << endl;
-	
-	//Socket sk;
-	//Communicator comm;
-	//comm.connectTo(argv[1], argv[2], sk);
-	//sk.sendObject(s);
-	
-	
-	
-	/*string gigi = "Io mi chiamo gigi";
+	string gigi = "Io mi chiamo gigi";
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, STRING, parameter_value(gigi)));
-	//parameters.push_back(parameter(IN, BUFFER));
-	//parameters.push_back(parameter(OUT, BUFFER));
+	parameters.push_back(parameter(OUT, STRING, parameter_value(gigi)));
+	parameters.push_back(parameter(IN, STRING, parameter_value(gigi)));
 	
 	Socket sk;
 	Communicator comm;
@@ -72,7 +32,7 @@ int main(int argc, char ** argv) {
 	cout << "---parameters-------------\n\n";
 	for (int i = 0; i < (int) parameters.size(); i++) {
 		cout << parameters[i] << endl;
-		Serializer2 s(parameters[i]);
+		Serializer s(parameters[i]);
 		sk.sendObject(s);
 	}
 	cout << "--------------------------\n\n";

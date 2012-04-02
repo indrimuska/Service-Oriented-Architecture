@@ -27,24 +27,20 @@ int main(int argc, char ** argv) {
 	comm.waitForConnection(sk);
 	cout << "client connected\n\n";
 	
-	Deserializer2 d;
-	sk.receiveObject(d);
-	cout << d.getObject() << endl;
-	
-	/*int parameters_size;
+	int parameters_size;
 	cout << "Receiving size\n";
 	sk.receiveInt(parameters_size);
 	cout << "received\n\n";
 	
 	cout << "---parameters-------------\n\n";
 	for (int i = 0; i < parameters_size; i++) {
-		Deserializer2 d;
+		Deserializer d;
 		sk.receiveObject(d);
 		cout << d.getObject() << endl;
 		//received_params.push_back(d.getObject());
 		//cout << parameters[i] << endl;
 	}
-	cout << "--------------------------\n\n";*/
+	cout << "--------------------------\n\n";
 	
 	comm.closeAllCommunications();
 	
