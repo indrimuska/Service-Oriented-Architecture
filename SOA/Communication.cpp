@@ -103,7 +103,7 @@ bool Socket::sendObject(void * object, size_t length) {
 	return true;
 }
 bool Socket::receiveInt(int &number) {
-	int i = (int) recv(sk, &number, sizeof(int), 0);
+	int i = (int) recv(sk, &number, sizeof(int), MSG_WAITALL);
 	if (i == -1 || i < (int) sizeof(int)) {
 		cerr << "Errore nella ricezione di un intero\n";
 		return false;

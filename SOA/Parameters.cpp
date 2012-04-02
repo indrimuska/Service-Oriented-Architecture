@@ -57,6 +57,9 @@ void parameter_value::operator=(const parameter_value &p) {
 	setValue(p.value, p.dimension);
 }
 parameter_value::~parameter_value() {
+	//std::cout << "\nfree (" << dimension << ")\n";
+	//if (dimension > 0) free(value);
+	//std::cout << "done\n";
 	free(value);
 }
 

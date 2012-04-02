@@ -47,6 +47,7 @@ public:
 			return false;
 		cout << "La richiesta è: "<< request << endl;
 		if (!request.compare(CONN_ACK_REQ)){
+			cout << "Mi manda una conn_ack_req" << endl;
 			return confirmConnection(sk);
 		}
 		if (!request.compare(SRV_REG_REQ)){
@@ -66,6 +67,7 @@ public:
 		return true;
 	}
 	bool confirmConnection(Socket * sk) {
+		cout << "entro in confirmConnection" << endl;
 		if (!sk->sendString(CONN_ACK_RESP)) {
 			cerr << "Impossibile confermare la connessione\n";
 			return false;

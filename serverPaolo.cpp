@@ -24,6 +24,11 @@ int main(int argc, char ** argv) {
 	Communicator serverPaolo;
 	string port;
 	string localServerPort = "";
+	SOA global;
+
+	/*global.setServerRegister(SRaddress, SRport);
+		if (!global.serverRegistration(SPaddress, SPport)) return 0;
+		if (!global.serviceRegistration(rotate)) return 0;*/
 
 	/*Da utilizzare poi per le demo su lan
 	 // Connessione al Service Register
@@ -42,18 +47,30 @@ int main(int argc, char ** argv) {
 	while (1) {
 		cout << endl << "-------------------------------------------------------" << endl;
 		cout << "Scegli l'operazione da effettuare" << endl;
-		cout << "Premi 1 se vuoi registrare un server" << endl;
+		cout << "Premi 1 se vuoi impostare il service register a cui collegarsi" << endl;
+
 		cout << "Premi 2 se vuoi visualizzare tutti i server registrati" << endl;
 		cout << "Premi 3 se vuoi registrare un servizio (per farlo devi aver già registrato il server)" << endl;
 		cout << "Premi 4 se vuoi visualizzare tutti i SERVIZI registrati" << endl;
 		cout << "Premi 5 per vedere le impostazioni di questo server" << endl;
+		cout << "Premi 6 se vuoi registrare un server" << endl;
 		cout << "-------------------------------------------------------" << endl;
 		int richiesta;
 		cin >> richiesta;
 
 		switch (richiesta) {
 
-		case 1: {
+		case 1:{
+			string SRaddress, SRport;
+			cout << "Digitare l'indirizzo del service register: es 127.0.0.1" << endl;
+			cin >> SRaddress;
+			cout << "Digitare il numero di porta del service register" << endl;
+			cin >> SRport;
+			if (!global.serverRegistration(SRaddress, SRport)) return 0;
+		}
+		break;
+
+		case 6: {
 			if(localServerPort != ""){
 				cout << "Questo server è stato già registrato" << endl;
 				break;

@@ -27,19 +27,37 @@ int main(int argc, char ** argv) {
 	Deserializer2 d1 = d;
 	cout << d1.getObject() << endl;*/
 	
-	/*string pippo = "io so' pippo, tu?";
-	parameter p(IN, STRING, parameter_value(pippo));
-	
-	for (int i = 0; i < 1000; i++) {
-		Serializer2 s(p);
-		Deserializer2 d(s.getSerialized(), s.getLength());
-		if (p != d.getObject()) cout << "NON SONO UGUALI (" << i << ")\n";
-	}*/
-	
-	//string gigi = "Io mi chiamo gigi";
-	int gigi = 10987;
+	string pippo = "io so' pippo, tu?";
 	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, INT, parameter_value(gigi)));
+	parameters.push_back(parameter(IN, STRING, parameter_value(pippo)));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
+	
+	for (int i = 0; i < 10; i++) {
+		Serializer2 s(parameters[1]);
+		Deserializer2 d(s.getSerialized(), s.getLength());
+		if (parameters[1] != d.getObject()) cout << "NON SONO UGUALI (" << i << ")\n";
+	}
+	
+	/*string gigi = "Io mi chiamo gigi";
+	parameter p(IN, STRING, parameter_value(gigi));
+	cout << endl << p << endl;
+	
+	Serializer2 s(p);
+	
+	Deserializer2 d(s.getSerialized(), s.getLength());
+	cout << d.getObject() << endl;
+	
+	//Socket sk;
+	//Communicator comm;
+	//comm.connectTo(argv[1], argv[2], sk);
+	//sk.sendObject(s);
+	
+	
+	
+	/*string gigi = "Io mi chiamo gigi";
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, STRING, parameter_value(gigi)));
 	//parameters.push_back(parameter(IN, BUFFER));
 	//parameters.push_back(parameter(OUT, BUFFER));
 	

@@ -27,7 +27,11 @@ int main(int argc, char ** argv) {
 	comm.waitForConnection(sk);
 	cout << "client connected\n\n";
 	
-	int parameters_size;
+	Deserializer2 d;
+	sk.receiveObject(d);
+	cout << d.getObject() << endl;
+	
+	/*int parameters_size;
 	cout << "Receiving size\n";
 	sk.receiveInt(parameters_size);
 	cout << "received\n\n";
@@ -40,7 +44,7 @@ int main(int argc, char ** argv) {
 		//received_params.push_back(d.getObject());
 		//cout << parameters[i] << endl;
 	}
-	cout << "--------------------------\n\n";
+	cout << "--------------------------\n\n";*/
 	
 	comm.closeAllCommunications();
 	
