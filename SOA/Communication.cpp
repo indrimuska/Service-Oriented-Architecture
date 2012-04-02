@@ -89,16 +89,6 @@ bool Socket::sendObject(Serializer &s) {
 	if (!sendFile(s.getSerialized())) return false;
 	return true;
 }
-bool Socket::sendObject(void * object, size_t length) {
-	string filename;
-	if (!serializeObject(object, length, filename)) return false;
-	if (!sendFile(filename)) return false;
-	if (remove(filename.c_str())) {
-		cerr << "Impossibile eliminare l'oggetto serializzato\n";
-		return false;
-	}
-	return true;
-}
 bool Socket::receiveInt(int &number) {
 	int i = (int) recv(sk, &number, sizeof(int), MSG_WAITALL);
 	if (i == -1 || i < (int) sizeof(int)) {
@@ -180,16 +170,6 @@ bool Socket::receiveObject(Deserializer &d) {
 	if (!receiveInt(length)) return false;
 	if (!receiveFile(".", filename)) return false;
 	d = Deserializer(filename, length);
-	return true;
-}
-bool Socket::receiveObject(void * object, size_t length) {
-	string where = ".", filename;
-	if (!receiveFile(where, filename)) return false;
-	if (!deserializeObject(object, length, where + '/' + filename)) return false;
-	if (remove((where + '/' + filename).c_str())) {
-		cerr << "Impossibile eliminare l'oggetto serializzato\n";
-		return false;
-	}
 	return true;
 }
 bool Socket::operator==(const Socket &operand) {
