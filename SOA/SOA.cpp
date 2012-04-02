@@ -38,11 +38,13 @@ bool SOA::serverRegistration(string SPaddress, string SPport) {
 		cerr << "Impossibile connettersi al Server Register\n";
 		return false;
 	}
+	cout << "SOA::serverRegistration -- Dopo la connessione" << endl;
 	string ack;
 	if (!SRsocket.sendString(SRV_REG_REQ)) {
 		cerr << "Errore nella richiesta di registrazione del server\n";
 		return false;
 	}
+	cout << "SOA::serverRegistration -- Dopo l'invio di SRV_REG_REQ" << endl;
 	if (!SRsocket.sendString(SPaddress + ':' + SPport)) {
 		cerr << "Errore nella registrazione del server\n";
 		return false;

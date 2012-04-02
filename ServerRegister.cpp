@@ -78,16 +78,21 @@ public:
 	bool registerServer(Socket * sk) {
 		cout << "Entro in registerServer\n";
 		int dim = (int) SRservers.size();
-		cout << "Dimensione del registro = " << endl;
-		cout << dim << endl;
-		cout << "forse" << endl;
+		cout << "Dimensione del registro = " << dim << endl;
 		string serverToReg; //serverToReg is a string that must have the format "address:port"
 		sk->receiveString(serverToReg);
-		if (SRservers.size() == 0) {
-			cout << "faccio l'inserimento in seguito di size = 0" << endl;
-			string address, port;
-			sk->receiveString(address);
-			sk->receiveString(port);
+		cout << "Server da Registrare = " << serverToReg << endl;
+		string address, port;
+		int risultato = serverToReg.find_first_of(":");
+		cout << "Il carattere : si trova al carattere numero " << risultato << endl;
+		address = serverToReg.substr(0, risultato);
+		int dimensione = serverToReg.size();
+		port = serverToReg.substr(risultato + 1, dimensione);
+		cout << "Indirizzo ottenuto tramite la funzione substring: " << address << endl;
+		cout << "Porta ottenuta tramite la funzione substring: " << port << endl;
+		//if (SRservers.size() == 0) {
+
+			//address = serverToReg.
 			ServerInformation serInf = ServerInformation(serverToReg, address,
 					port);
 			SIit = SRservers.begin();
@@ -97,11 +102,11 @@ public:
 			cout << "porta = " + serInf.Sport << endl;
 			cout << "È stato inserito con successo\n";
 			int nuovaDim = (int) SRservers.size();
-			cout << "Nuova dimensione del registro = " << endl;
-			cout << nuovaDim << endl;
+			cout << "Nuova dimensione del registro = " << nuovaDim << endl;
+			sk->sendString(SRV_REG_RESP);
 			return true;
-		}
-		for (int i = 0; i < (int) SRservers.size(); i++) {
+		//}
+		/*for (int i = 0; i < (int) SRservers.size(); i++) {
 			if (serverToReg == SRservers[i].identification) {
 				cout << "Questo server è già registrato\n";
 				return true;
@@ -137,6 +142,8 @@ public:
 				}
 
 		//fino a qui da togliere, serve solo per debug
+		 *
+		 */
 		return true;
 
 	}

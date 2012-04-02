@@ -63,16 +63,37 @@ int main(int argc, char ** argv) {
 			string SRaddress, SRport;
 			cout << "Digitare l'indirizzo del service register: es 127.0.0.1" << endl;
 			cin >> SRaddress;
-			cout << SRaddress << endl;
+			//cout << SRaddress << endl;
 			cout << "Digitare il numero di porta del service register" << endl;
 			cin >> SRport;
-			cout << SRport << endl;
-			if (!global.setServerRegister(SRaddress, SRport)) return 0;
+			//cout << SRport << endl;
+			if (!global.setServerRegister(SRaddress, SRport)){
+				SRaddress = "";
+				SRport = "";
+				cout << "Impossibile registrare il service register" << endl;
+			} else {
+				cout << "Registrazione del service register avvenuta correttamente" << endl;
+			}
+
+
 		}
 		break;
 
 		case 6: {
-			if(localServerPort != ""){
+			string SPaddress = serverPaolo.getIP();
+			cout << "Porta su cui far girare questo server: ";
+			cin >> localServerPort;
+			cout << "SERVER REGISTER - SRaddress: " << global.SRaddress << endl;
+			cout << "SERVER REGISTER - SRport: " << global.SRport << endl;
+			cout << "LOCAL SERVER - SPaddress: " << SPaddress << endl;
+			cout << "LOCAL SERVER - SPport: " << localServerPort << endl;
+			if (!global.serverRegistration(SPaddress, localServerPort)){
+				cout << "Impossibile registrare il server" << endl;
+				return 0; //questo return va tolto, al posto va gestito l'errore, in modo che il server rimanga comunque attivo
+			}
+			//global.serverRegistration(SPaddress, localServerPort);
+
+			/*if(localServerPort != ""){
 				cout << "Questo server è stato già registrato" << endl;
 				break;
 			}
@@ -91,6 +112,8 @@ int main(int argc, char ** argv) {
 
 			serverRegister.sendString(localServerPort);
 			cout << "Voglio registrare: " + serverInfo << endl;
+			*/
+
 		}
 			break;
 		case 2: {

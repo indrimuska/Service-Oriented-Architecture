@@ -10,6 +10,7 @@
 #define SOA_Serialization_h
 
 #include <fstream>
+#include <sstream>
 
 #include "Parameters.h"
 
@@ -43,31 +44,6 @@ public:
 	parameter getObject();
 	Deserializer& operator=(const Deserializer &d);
 	~Deserializer();
-};
-
-class OLD_Serializer {
-private:
-	void * buffer;
-	size_t length;
-public:
-	OLD_Serializer(parameter p);
-	void * getSerialized();
-	void * getSerialized(size_t &legth);
-	size_t getLength();
-	~OLD_Serializer();
-};
-
-class OLD_Deserializer {
-private:
-	void * buffer;
-	size_t length;
-public:
-	OLD_Deserializer();
-	OLD_Deserializer(const OLD_Deserializer &d);
-	OLD_Deserializer(void * buffer, size_t length);
-	parameter getObject();
-	OLD_Deserializer& operator=(const OLD_Deserializer &d);
-	~OLD_Deserializer();
 };
 
 #endif

@@ -62,10 +62,10 @@ bool Service::requestService() {
 	for (int i = 0; i < (int) inParameters.size(); i++) {
 		// TODO: inviare i parametri
 	}
-	if (!serviceProvider.sendObject((void *) &inParameters, inParameters.capacity())) {
+	/*if (!serviceProvider.sendObject((void *) &inParameters, inParameters.capacity())) {
 		cerr << "Errore nell'invio dei parametri del servizio richiesto\n";
 		return false;
-	}
+	}*/
 	cout << "Ricevo la conferma\n";
 	if (!serviceProvider.receiveString(ack) || ack.compare(SERVICE_RESP)) {
 		cerr << "Errore nella conferma di accettazione del servizio\n" << ack << endl;
@@ -83,8 +83,8 @@ bool Service::serveRequests(Socket * sk) {
 	if (!request.compare(SERVICE_REQ)) {
 		cout << "Ricevo nome del servizio e parametri\n";
 		if (sk->receiveString(name) &&// !name.compare(this->name) &&
-			sk->receiveInt(params_capacity) &&// params_capacity == (int) inParameters.capacity() &&
-			sk->receiveObject((void *) &received_params, params_capacity)) {
+			sk->receiveInt(params_capacity) /*&& params_capacity == (int) inParameters.capacity() &&
+			sk->receiveObject((void *) &received_params, params_capacity)*/) {
 			if (sk->sendString(SERVICE_RESP)) return execute(sk);
 		} else {
 			if (name.compare(this->name)) {

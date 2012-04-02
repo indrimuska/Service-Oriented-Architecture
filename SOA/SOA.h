@@ -31,11 +31,12 @@ using namespace std;
 
 class SOA {
 private:
+
+
+public:
 	string SRaddress;
 	string SRport;
 	Communicator comm;
-	
-public:
 	bool setServerRegister(string SRaddres, string SRport);
 	bool serverRegistration(string SPaddres, string SPport);
 	bool serviceRegistration(Service s);
