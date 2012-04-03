@@ -56,12 +56,7 @@ void parameter_value::operator=(const parameter_value &p) {
 	setValue(p.value, p.dimension);
 }
 parameter_value::~parameter_value() {
-	//std::cout << "\nfree (" << dimension << ")\n";
-	if (dimension > 0) {
-		std::cout << "ID=" << id << "\n";
-		free(value);
-	}
-	//std::cout << "done\n";
+	if (dimension > 0) free(value);
 	//free(value);
 }
 
@@ -79,11 +74,7 @@ void parameter::init(parameter_direction direction, parameter_type type) {
 	this->type = type;
 }
 void parameter::setValue(parameter_value value) {
-	//std::cout << "setValue\n";
-	value.setID(6);
 	this->value = value;
-	this->value.setID(7);
-	//std::cout << "end setValue\n";
 }
 void parameter::getInfo(parameter_direction &direction, parameter_type &type) {
 	direction = this->direction;
@@ -105,6 +96,12 @@ void parameter::getValue(std::string &string_value) {
 void parameter::getValue(void * generic_value) {
 	value.get(generic_value);
 }
+parameter_direction parameter::getDirection() {
+	return direction;
+}
+parameter_type parameter::getType() {
+	return type;
+}
 size_t parameter::getValueDimension() {
 	return value.getDimension();
 }
@@ -118,7 +115,6 @@ std::ostream& operator<<(std::ostream &o, const parameter &p) {
 	o << "direction: ";
 	o << (p.direction == IN ? "IN" : "OUT") << "\ntype:      ";
 	parameter_value * pv = new parameter_value(p.value);
-	pv->setID(8);
 	if (p.type == INT) {
 		o << "INT";
 		if (pv->getDimension()) {

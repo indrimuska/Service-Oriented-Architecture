@@ -94,7 +94,6 @@ parameter Deserializer::getObject() {
 	parameter_direction direction;
 	parameter_type type;
 	parameter_value value;
-	value.setID(5);
 	ifstream file;
 	file.open(filename.c_str(), ios_base::binary);
 	if (!file.good()) {

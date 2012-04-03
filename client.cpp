@@ -15,17 +15,17 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
-	double pippo = 0987654324567890.98765435678;
+	/*double pippo = 0987654324567890.98765435678;
 	string gigi = "Io mi chiamo gigi";
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, STRING, parameter_value(gigi)));
 	parameters.push_back(parameter(IN, STRING));
 	parameters.push_back(parameter(OUT, STRING));
 	parameters.push_back(parameter(OUT, DOUBLE, parameter_value(pippo)));
-	//parameters.push_back(parameter(IN, BUFFER));
-	//parameters.push_back(parameter(OUT, BUFFER));
-	//parameters.push_back(parameter(IN, INT));
-	//parameters.push_back(parameter(OUT, INT));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
+	parameters.push_back(parameter(IN, INT));
+	parameters.push_back(parameter(OUT, INT));
 	
 	Socket sk;
 	Communicator comm;
@@ -46,28 +46,26 @@ int main(int argc, char ** argv) {
 	
 	cout << "closing all communications\n";
 	comm.closeAllCommunications();
-	cout << "done\n\n";
-	
-	/************
+	cout << "done\n\n";*/
 	
 	string SPaddress, SPport;
 	
-	//cout << "Insert service provider address: ";
-	//cin >> SPaddress;
-	//cout << "Insert service provider port:    ";
-	//cin >> SPport;
-	SPaddress = argv[1];
-	SPport = argv[2];
+	cout << "Insert service provider address: ";
+	cin >> SPaddress;
+	cout << "Insert service provider port:    ";
+	cin >> SPport;
+	//SPaddress = argv[1];
+	//SPport = argv[2];
 	
 	Service rotate;
 	rotate.setServer(SPaddress, SPport);
 	
-	vector<param> parameters;
-	parameters.push_back(param(IN, INT));
-	parameters.push_back(param(IN, BUFFER));
-	parameters.push_back(param(OUT, BUFFER));
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, INT));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
 	rotate.setService("rotate", parameters);
 	
-	rotate.requestService();*/
+	rotate.requestService();
 	
 }

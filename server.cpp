@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
-	system("clear");
+	/*system("clear");
 	cout << "\nwaiting for clients\n";
 	
 	vector<parameter> received_params;
@@ -27,31 +27,36 @@ int main(int argc, char ** argv) {
 	comm.startListener(argv[1]);
 	
 	int i = 0;
+	int perse = 0;
 	
 	while (1) {
 		comm.waitForConnection(sk);
 		system("clear");
-		cout << "client connected [" << ++i << "]\n\n";
+		cout << "client connected [" << ++i << "|" << perse << "]\n\n";
 		
 		int parameters_size;
 		cout << "Receiving size\n";
-		if (!sk.receiveInt(parameters_size)) break;
+		if (!sk.receiveInt(parameters_size)) {
+			perse++;
+			break;
+		}
 		cout << "received\n\n";
 		
 		cout << "---parameters-------------\n\n";
 		for (int i = 0; i < parameters_size; i++) {
 			Deserializer d;
-			if (!sk.receiveObject(d)) break;
-			cout << d.getObject() << endl;
-			//received_params.push_back(d.getObject());
-			//cout << parameters[i] << endl;
+			if (!sk.receiveObject(d)) {
+				perse++;
+				break;
+			}
+			//cout << d.getObject() << endl;
+			received_params.push_back(d.getObject());
+			cout << received_params[i] << endl;
 		}
 		cout << "--------------------------\n\n";
 	}
 	
-	comm.closeAllCommunications();
-	
-	/*
+	comm.closeAllCommunications();*/
 	
 	string SPaddress, SPport;
 	string SRaddress, SRport;
@@ -59,26 +64,26 @@ int main(int argc, char ** argv) {
 	// Avvio del server
 	//cout << "Set port number: ";
 	//cin >> SPport;
-	SPport = argv[1];
 	Communicator comm;
 	comm.startListener(SPport);
 	SPaddress = comm.getIP();
+	SPport = argv[1];
 	
 	// Inizializzaione del servizio
 	RotateService rotate;
 	rotate.setServer(SPaddress, SPport);
 	
 	// Connessione al Service Register
-	/*cout << "Insert server register address: ";
-	cin >> SRaddress;
-	cout << "Insert server register port:    ";
-	cin >> SRport;*/
-	/*
-	SOA global;
-	/*global.setServerRegister(SRaddress, SRport);
-	if (!global.serverRegistration(SPaddress, SPport)) return 0;
-	if (!global.serviceRegistration(rotate)) return 0;*/
-	/*
+	//cout << "Insert server register address: ";
+	//cin >> SRaddress;
+	//cout << "Insert server register port:    ";
+	//cin >> SRport;
+	
+	//SOA global;
+	//global.setServerRegister(SRaddress, SRport);
+	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
+	//if (!global.serviceRegistration(rotate)) return 0;
+	
 	while (1) {
 		// In attesa di connessione con i client...
 		cout << "\nIn attesa di connessioni...\n";
@@ -90,5 +95,5 @@ int main(int argc, char ** argv) {
 	}
 	
 	// Chiusura di tutte le connessioni
-	comm.closeAllCommunications();*/
+	comm.closeAllCommunications();
 }

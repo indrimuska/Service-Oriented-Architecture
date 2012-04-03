@@ -21,11 +21,7 @@ class parameter_value {
 private:
 	void * value;
 	size_t dimension;
-	int id;
 public:
-	void setID(int id) {
-		this->id = id;
-	}
 	parameter_value();
 	parameter_value(int &value);
 	parameter_value(double &value);
@@ -58,6 +54,8 @@ public:
 	void getValue(double &double_value);
 	void getValue(std::string &string_value);
 	void getValue(void * generic_value);
+	parameter_direction getDirection();
+	parameter_type getType();
 	size_t getValueDimension();
 	bool operator==(const parameter &p);
 	bool operator!=(const parameter &p);
