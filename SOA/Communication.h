@@ -48,8 +48,6 @@ public:
 	bool closeSocket();
 };
 
-using namespace std;
-
 class Communicator {
 private:
 	int listenSocket;

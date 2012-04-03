@@ -170,6 +170,13 @@ bool Socket::receiveObject(Deserializer &d) {
 	if (!receiveInt(length)) return false;
 	if (!receiveFile(".", filename)) return false;
 	d = Deserializer(filename, length);
+	if (FILE * file = fopen(filename.c_str(), "r")) {
+		fclose(file);
+		if (remove(filename.c_str())) {
+			cerr << "L'oggetto ricevuto non può essere rimosso\n";
+			return false;
+		}
+	}
 	return true;
 }
 bool Socket::operator==(const Socket &operand) {

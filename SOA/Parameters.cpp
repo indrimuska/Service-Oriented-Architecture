@@ -9,7 +9,6 @@
 #include "Parameters.h"
 
 parameter_value::parameter_value() {
-	value = NULL;
 	dimension = 0;
 }
 parameter_value::parameter_value(int &value) {
@@ -58,9 +57,12 @@ void parameter_value::operator=(const parameter_value &p) {
 }
 parameter_value::~parameter_value() {
 	//std::cout << "\nfree (" << dimension << ")\n";
-	//if (dimension > 0) free(value);
+	if (dimension > 0) {
+		std::cout << "ID=" << id << "\n";
+		free(value);
+	}
 	//std::cout << "done\n";
-	free(value);
+	//free(value);
 }
 
 parameter::parameter() {
@@ -77,7 +79,11 @@ void parameter::init(parameter_direction direction, parameter_type type) {
 	this->type = type;
 }
 void parameter::setValue(parameter_value value) {
+	//std::cout << "setValue\n";
+	value.setID(6);
 	this->value = value;
+	this->value.setID(7);
+	//std::cout << "end setValue\n";
 }
 void parameter::getInfo(parameter_direction &direction, parameter_type &type) {
 	direction = this->direction;
@@ -111,35 +117,37 @@ bool parameter::operator!=(const parameter &p) {
 std::ostream& operator<<(std::ostream &o, const parameter &p) {
 	o << "direction: ";
 	o << (p.direction == IN ? "IN" : "OUT") << "\ntype:      ";
-	parameter_value pv = p.value;
+	parameter_value * pv = new parameter_value(p.value);
+	pv->setID(8);
 	if (p.type == INT) {
 		o << "INT";
-		if (pv.getDimension() > 0) {
+		if (pv->getDimension()) {
 			int int_value;
-			pv.get((void *) &int_value);
+			pv->get((void *) &int_value);
 			o << "\nvalue:     " << int_value;
 		}
 	}
 	if (p.type == DOUBLE) {
 		o << "DOUBLE";
-		if (pv.getDimension() > 0) {
+		if (pv->getDimension()) {
 			double double_value;
-			pv.get((void *) &double_value);
+			pv->get((void *) &double_value);
 			o << "\nvalue:     " << double_value;
 		}
 	}
 	if (p.type == STRING) {
 		o << "STRING";
-		if (pv.getDimension() > 0) {
-			char string_value[pv.getDimension()+1];
-			pv.get((void *) &string_value);
-			string_value[pv.getDimension()] = '\0';
+		if (pv->getDimension()) {
+			char string_value[pv->getDimension()+1];
+			pv->get((void *) &string_value);
+			string_value[pv->getDimension()] = '\0';
 			o << "\nvalue:     " << string_value;
 		}
 	}
 	if (p.type == BUFFER) {
 		o << "BUFFER";
-		if (pv.getDimension() > 0) o << "\nvalue:     value not representable";
+		if (pv->getDimension()) o << "\nvalue:     value not representable";
 	}
+	//delete pv;
 	return o << std::endl;
 }

@@ -21,7 +21,11 @@ class parameter_value {
 private:
 	void * value;
 	size_t dimension;
+	int id;
 public:
+	void setID(int id) {
+		this->id = id;
+	}
 	parameter_value();
 	parameter_value(int &value);
 	parameter_value(double &value);

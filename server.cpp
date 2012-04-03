@@ -17,6 +17,7 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
+	system("clear");
 	cout << "\nwaiting for clients\n";
 	
 	vector<parameter> received_params;
@@ -24,23 +25,29 @@ int main(int argc, char ** argv) {
 	Socket sk;
 	Communicator comm;
 	comm.startListener(argv[1]);
-	comm.waitForConnection(sk);
-	cout << "client connected\n\n";
 	
-	int parameters_size;
-	cout << "Receiving size\n";
-	sk.receiveInt(parameters_size);
-	cout << "received\n\n";
+	int i = 0;
 	
-	cout << "---parameters-------------\n\n";
-	for (int i = 0; i < parameters_size; i++) {
-		Deserializer d;
-		sk.receiveObject(d);
-		cout << d.getObject() << endl;
-		//received_params.push_back(d.getObject());
-		//cout << parameters[i] << endl;
+	while (1) {
+		comm.waitForConnection(sk);
+		system("clear");
+		cout << "client connected [" << ++i << "]\n\n";
+		
+		int parameters_size;
+		cout << "Receiving size\n";
+		if (!sk.receiveInt(parameters_size)) break;
+		cout << "received\n\n";
+		
+		cout << "---parameters-------------\n\n";
+		for (int i = 0; i < parameters_size; i++) {
+			Deserializer d;
+			if (!sk.receiveObject(d)) break;
+			cout << d.getObject() << endl;
+			//received_params.push_back(d.getObject());
+			//cout << parameters[i] << endl;
+		}
+		cout << "--------------------------\n\n";
 	}
-	cout << "--------------------------\n\n";
 	
 	comm.closeAllCommunications();
 	

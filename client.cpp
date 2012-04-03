@@ -22,24 +22,25 @@ int main(int argc, char ** argv) {
 	parameters.push_back(parameter(IN, STRING));
 	parameters.push_back(parameter(OUT, STRING));
 	parameters.push_back(parameter(OUT, DOUBLE, parameter_value(pippo)));
-	parameters.push_back(parameter(IN, BUFFER));
-	parameters.push_back(parameter(OUT, BUFFER));
-	parameters.push_back(parameter(IN, INT));
-	parameters.push_back(parameter(OUT, INT));
+	//parameters.push_back(parameter(IN, BUFFER));
+	//parameters.push_back(parameter(OUT, BUFFER));
+	//parameters.push_back(parameter(IN, INT));
+	//parameters.push_back(parameter(OUT, INT));
 	
 	Socket sk;
 	Communicator comm;
 	comm.connectTo(argv[1], argv[2], sk);
 	
 	cout << "Sending size\n";
-	sk.sendInt((int) parameters.size());
+	if (!sk.sendInt((int) parameters.size())) return 0;
 	cout << "sent\n\n";
 	
 	cout << "---parameters-------------\n\n";
 	for (int i = 0; i < (int) parameters.size(); i++) {
 		cout << parameters[i] << endl;
 		Serializer s(parameters[i]);
-		sk.sendObject(s);
+		//Deserializer d(s.getSerialized(), s.getLength());
+		if (!sk.sendObject(s)) break;
 	}
 	cout << "--------------------------\n\n";
 	
