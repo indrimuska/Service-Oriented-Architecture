@@ -77,7 +77,7 @@ bool SOA::serviceRegistration(Service s) {
 }
 bool SOA::serverUnRegistration(string SPaddress, string SPport) {
 	Socket SRsocket;
-	if (!comm.connectTo(SPaddress, SRport, SRsocket)) {
+	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
 		cerr << "Impossibile connettersi al Server Register\n";
 		return false;
 	}

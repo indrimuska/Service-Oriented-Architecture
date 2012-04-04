@@ -100,8 +100,8 @@ parameter Deserializer::getObject() {
 		cerr << "Errore durante la de-serializzazione dell'oggetto\n";
 		return parameter();
 	}
-	file.read((char *) &direction, sizeof(parameter_direction));
-	file.read((char *) &type, sizeof(parameter_type));
+	file.read((char *) &direction, sizeof(int));
+	file.read((char *) &type, sizeof(int));
 	size_t parameter_value_dimension = length - sizeof(parameter_direction) - sizeof(parameter_type);
 	if (parameter_value_dimension > 0) {
 		void * buffer = malloc(parameter_value_dimension);
@@ -109,7 +109,7 @@ parameter Deserializer::getObject() {
 		value.setValue(buffer, parameter_value_dimension);
 	}
 	file.close();
-	return parameter(direction, type, value);
+	return parameter_value_dimension > 0 ? parameter(direction, type, value) : parameter(direction, type);
 }
 Deserializer& Deserializer::operator=(const Deserializer &d) {
 	filename = findName(d.filename);

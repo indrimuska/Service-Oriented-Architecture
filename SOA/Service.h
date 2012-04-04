@@ -30,6 +30,9 @@ private:
 	string SPport;
 	
 public:
+	bool sendParameters(Socket &serviceProvider);
+	bool receiveParameters(Socket * sk, int parameters_size, vector<parameter> &parameters);
+	
 	void setService(string name, vector<parameter> parameters);
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio

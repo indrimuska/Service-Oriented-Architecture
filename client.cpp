@@ -15,6 +15,18 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
+	/*string gigi = "Io sono gigi e te un tu mi pigi!";
+	parameter p(IN, STRING, parameter_value(gigi));
+	//cout << p << endl;
+	Serializer s(p);
+	
+	Socket sk;
+	Communicator comm;
+	if (!comm.connectTo(argv[1], argv[2], sk)) return 0;
+	if (!sk.sendInt((int) s.getLength())) return 0;
+	if (!sk.sendFile(s.getSerialized())) return 0;
+	comm.closeAllCommunications();*/
+	
 	/*double pippo = 0987654324567890.98765435678;
 	string gigi = "Io mi chiamo gigi";
 	vector<parameter> parameters;
@@ -50,12 +62,12 @@ int main(int argc, char ** argv) {
 	
 	string SPaddress, SPport;
 	
-	cout << "Insert service provider address: ";
-	cin >> SPaddress;
-	cout << "Insert service provider port:    ";
-	cin >> SPport;
-	//SPaddress = argv[1];
-	//SPport = argv[2];
+	//cout << "Insert service provider address: ";
+	//cin >> SPaddress;
+	//cout << "Insert service provider port:    ";
+	//cin >> SPport;
+	SPaddress = argv[1];
+	SPport = argv[2];
 	
 	Service rotate;
 	rotate.setServer(SPaddress, SPport);
@@ -66,6 +78,8 @@ int main(int argc, char ** argv) {
 	parameters.push_back(parameter(OUT, BUFFER));
 	rotate.setService("rotate", parameters);
 	
-	rotate.requestService();
+	cout << "\n---RICHIESTA DEL SERVIZIO rotate---\n";
+	if (!rotate.requestService()) return 0;
+	else cout << "---RICHIESTA CONFERMATA------------\n\n";
 	
 }

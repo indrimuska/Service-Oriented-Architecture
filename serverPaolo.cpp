@@ -27,8 +27,8 @@ int main(int argc, char ** argv) {
 	SOA global;
 
 	/*global.setServerRegister(SRaddress, SRport);
-		if (!global.serverRegistration(SPaddress, SPport)) return 0;
-		if (!global.serviceRegistration(rotate)) return 0;*/
+	 if (!global.serverRegistration(SPaddress, SPport)) return 0;
+	 if (!global.serviceRegistration(rotate)) return 0;*/
 
 	/*Da utilizzare poi per le demo su lan
 	 // Connessione al Service Register
@@ -45,88 +45,129 @@ int main(int argc, char ** argv) {
 	//serverPaolo.connectTo("127.0.0.1", port, serverRegister);
 
 	while (1) {
-		cout << endl << "-------------------------------------------------------" << endl;
+		cout << endl
+				<< "-------------------------------------------------------"
+				<< endl;
+
 		cout << "Scegli l'operazione da effettuare" << endl;
-		cout << "Premi 1 se vuoi impostare il service register a cui collegarsi (setServerRegistrer)" << endl;
-		cout << "Premi 2 se vuoi visualizzare tutti i server registrati" << endl;
-		cout << "Premi 3 se vuoi registrare un servizio (per farlo devi aver già registrato il server)" << endl;
-		cout << "Premi 4 se vuoi visualizzare tutti i SERVIZI registrati" << endl;
-		cout << "Premi 5 per vedere le impostazioni di questo server" << endl;
-		cout << "Premi 6 se vuoi registrare un server" << endl;
-		cout << "-------------------------------------------------------" << endl;
+		cout
+				<< "Premi 1 se vuoi impostare il service register a cui collegarsi (setServerRegistrer)"
+				<< endl;
+		cout << "Premi 2 se vuoi registrare il server" << endl;
+		cout << "Premi 3 se vuoi deregistrare il server" << endl;
+		cout << "Premi 4 se vuoi visualizzare tutti i server registrati"
+				<< endl;
+		cout
+				<< "Premi 5 se vuoi registrare un servizio (per farlo devi aver già registrato il server)"
+				<< endl;
+		cout << "Premi 6 se vuoi visualizzare tutti i SERVIZI registrati"
+				<< endl;
+		cout << "Premi 7 per vedere le impostazioni di questo server" << endl;
+
+		cout << "-------------------------------------------------------"
+				<< endl;
 		int richiesta;
 		cin >> richiesta;
 
 		switch (richiesta) {
 
-		case 1:{
+		case 1: {
 			string SRaddress, SRport;
-			cout << "Digitare l'indirizzo del service register: es 127.0.0.1" << endl;
+			cout << "Digitare l'indirizzo del service register: es 127.0.0.1"
+					<< endl;
 			cin >> SRaddress;
 			//cout << SRaddress << endl;
 			cout << "Digitare il numero di porta del service register" << endl;
 			cin >> SRport;
 			//cout << SRport << endl;
-			if (!global.setServerRegister(SRaddress, SRport)){
+			if (!global.setServerRegister(SRaddress, SRport)) {
 				SRaddress = "";
 				SRport = "";
 				cout << "Impossibile registrare il service register" << endl;
 			} else {
-				cout << "Registrazione del service register avvenuta correttamente" << endl;
+				cout
+						<< "Registrazione del service register avvenuta correttamente"
+						<< endl;
 			}
 
-
 		}
-		break;
+			break;
 
-		case 6: {
+		case 2: {
 			string SPaddress = serverPaolo.getIP();
-			cout << "Porta su cui far girare questo server: ";
-			cin >> localServerPort;
-			cout << "SERVER REGISTER - SRaddress: " << global.SRaddress << endl;
-			cout << "SERVER REGISTER - SRport: " << global.SRport << endl;
-			cout << "LOCAL SERVER - SPaddress: " << SPaddress << endl;
-			cout << "LOCAL SERVER - SPport: " << localServerPort << endl;
-			if (!global.serverRegistration(SPaddress, localServerPort)){
-				cout << "Impossibile registrare il server" << endl;
-				return 0; //questo return va tolto, al posto va gestito l'errore, in modo che il server rimanga comunque attivo
+			if (!(localServerPort.empty())) {
+				cout
+						<< "È stato già registrato il server, impossibile registrarlo nuovamente"
+						<< endl;
+			} else {
+				cout << "Porta su cui far girare questo server: ";
+				cin >> localServerPort;
+				cout << "SERVER REGISTER - SRaddress: " << global.SRaddress
+						<< endl;
+				cout << "SERVER REGISTER - SRport: " << global.SRport << endl;
+				cout << "LOCAL SERVER - SPaddress: " << SPaddress << endl;
+				cout << "LOCAL SERVER - SPport: " << localServerPort << endl;
+				if (!global.serverRegistration(SPaddress, localServerPort)) {
+					localServerPort = "";
+					cout << "Impossibile registrare il server" << endl;
+					//return 0; //questo return va tolto, al posto va gestito l'errore, in modo che il server rimanga comunque attivo
+				}
 			}
 			//global.serverRegistration(SPaddress, localServerPort);
 
 			/*if(localServerPort != ""){
-				cout << "Questo server è stato già registrato" << endl;
-				break;
-			}
-			cout << "È stato scelto di fare la registrazione di un server"
-					<< endl;
-			string regReq = SRV_REG_REQ;
-			serverRegister.sendString(regReq);
+			 cout << "Questo server è stato già registrato" << endl;
+			 break;
+			 }
+			 cout << "È stato scelto di fare la registrazione di un server"
+			 << endl;
+			 string regReq = SRV_REG_REQ;
+			 serverRegister.sendString(regReq);
 
-			cout << serverPaolo.getIP() << endl;
-			cout << "Porta su cui far girare questo server: ";
-			cin >> localServerPort;
-			port = localServerPort; //mi salvo la port che poi verrà utilizzata sempre per questo server
-			string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
-			serverRegister.sendString(serverInfo);
-			serverRegister.sendString(serverPaolo.getIP());
+			 cout << serverPaolo.getIP() << endl;
+			 cout << "Porta su cui far girare questo server: ";
+			 cin >> localServerPort;
+			 port = localServerPort; //mi salvo la port che poi verrà utilizzata sempre per questo server
+			 string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
+			 serverRegister.sendString(serverInfo);
+			 serverRegister.sendString(serverPaolo.getIP());
 
-			serverRegister.sendString(localServerPort);
-			cout << "Voglio registrare: " + serverInfo << endl;
-			*/
+			 serverRegister.sendString(localServerPort);
+			 cout << "Voglio registrare: " + serverInfo << endl;
+			 */
 
-		}
-			break;
-		case 2: {
-			cout << "È stato scelto di visualizzare i server registrati"
-					<< endl;
-			string regDisp = SRV_REG_DISP;
-			serverRegister.sendString(regDisp);
-			cout
-					<< "Ho inviato la richiesta per visualizzare i server registrati: " << regDisp
-					<< endl;
 		}
 			break;
 		case 3: {
+			string SPaddress = serverPaolo.getIP();
+			if (localServerPort.empty()) {
+				cout << "Il server non è stato registrato" << endl;
+			}
+			if (!global.serverUnRegistration(SPaddress, localServerPort)) {
+				return 0; //questo return va tolto, al posto va gestito l'errore, in modo che il server rimanga comunque attivo
+			}
+			localServerPort = "";
+			cout << "Server deregistrato correttamente!" << endl;
+
+
+		}
+			break;
+		case 4: { //anche per questo devo definire il protocollo in SOA
+			cout << "È stato scelto di visualizzare i server registrati"
+					<< endl;
+			serverPaolo.connectTo(global.SRaddress, global.SRport,
+					serverRegister);
+			string regDisp = SRV_REG_DISP;
+			serverRegister.sendString(regDisp);
+			cout
+					<< "Ho inviato la richiesta per visualizzare i server registrati: "
+					<< regDisp << endl;
+			string result;
+			serverRegister.receiveString(result);
+			cout << result;
+		}
+			break;
+		case 5: {
 
 			cout << "È stato scelto di fare la registrazione di un servizio"
 					<< endl;
@@ -172,7 +213,7 @@ int main(int argc, char ** argv) {
 		}
 			break;
 
-		case 4: {
+		case 6: {
 			cout << "È stato scelto di visualizzare tutti i servizi registrati "
 					<< endl;
 			string regDispServices = SRC_REG_DISP;
@@ -183,13 +224,12 @@ int main(int argc, char ** argv) {
 			cout << SRC_REG_DISP << endl;
 		}
 			break;
-		case 5: {
-					cout << "Indirizzo IP: " << serverPaolo.getIP() << endl;
-					cout << "Porta del server: " <<  localServerPort <<endl;
-				}
-				break;
+		case 7: {
+			cout << "Indirizzo IP: " << serverPaolo.getIP() << endl;
+			cout << "Porta del server: " << localServerPort << endl;
 		}
-
+			break;
+		}
 
 	}
 

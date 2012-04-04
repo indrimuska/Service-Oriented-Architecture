@@ -17,6 +17,28 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
+	/*string gigi = "Io sono gigi e te un tu mi pigi!";
+	parameter p(IN, STRING, parameter_value(gigi));
+	
+	Socket sk;
+	Communicator comm;
+	comm.startListener(argv[1]);
+	cout << "Waiting for clients...\n";
+	int i = 0;
+	int s = 0;
+	while (1) {
+		i++;
+		int length;
+		string filename;
+		if (!comm.waitForConnection(sk)) return 0;
+		if (!sk.receiveInt(length)) continue;
+		if (!sk.receiveFile(".", filename)) continue;
+		Deserializer d(filename, length);
+		if (p != d.getObject()) cout << "Sbagliato " << ++s << "/" << i << "\n";
+		remove(filename.c_str());
+	}
+	comm.closeAllCommunications();*/
+	
 	/*system("clear");
 	cout << "\nwaiting for clients\n";
 	
@@ -49,9 +71,9 @@ int main(int argc, char ** argv) {
 				perse++;
 				break;
 			}
-			//cout << d.getObject() << endl;
-			received_params.push_back(d.getObject());
-			cout << received_params[i] << endl;
+			cout << d.getObject() << endl;
+			//received_params.push_back(d.getObject());
+			//cout << received_params[i] << endl;
 		}
 		cout << "--------------------------\n\n";
 	}
@@ -64,10 +86,11 @@ int main(int argc, char ** argv) {
 	// Avvio del server
 	//cout << "Set port number: ";
 	//cin >> SPport;
-	Communicator comm;
-	comm.startListener(SPport);
-	SPaddress = comm.getIP();
 	SPport = argv[1];
+	
+	Communicator comm;
+	if (!comm.startListener(SPport)) return 0;
+	SPaddress = comm.getIP();
 	
 	// Inizializzaione del servizio
 	RotateService rotate;
@@ -86,7 +109,7 @@ int main(int argc, char ** argv) {
 	
 	while (1) {
 		// In attesa di connessione con i client...
-		cout << "\nIn attesa di connessioni...\n";
+		//cout << "\nIn attesa di connessioni ("<<SPaddress<<":"<<SPport<<")...\n";
 		Socket * sk = new Socket();
 		comm.waitForConnection(* sk);
 		rotate.serveRequests(sk);

@@ -64,6 +64,9 @@ public:
 			cout << "è stata richiesta la display dei servizi " << endl;
 			return displayRegisteredServices(sk);
 		}
+		if (!request.compare(SRV_UNREG_REQ)){
+			return unregisterServer(sk);
+		}
 		return true;
 	}
 	bool confirmConnection(Socket * sk) {
@@ -91,7 +94,18 @@ public:
 		cout << "Indirizzo ottenuto tramite la funzione substring: " << address << endl;
 		cout << "Porta ottenuta tramite la funzione substring: " << port << endl;
 		//if (SRservers.size() == 0) {
-
+		bool salta = false;
+		for (int i = 0; i < (int) SRservers.size(); i++) {
+			if (serverToReg == SRservers[i].identification) {
+				cout <<"Gia registrato" << endl;
+				salta = true;
+			}
+		}
+		if (salta == true){
+			string inviaErrore = "Questo server è già registrato\n";
+			sk->sendString(inviaErrore);
+			return true;
+		} else {
 			//address = serverToReg.
 			ServerInformation serInf = ServerInformation(serverToReg, address,
 					port);
@@ -105,6 +119,7 @@ public:
 			cout << "Nuova dimensione del registro = " << nuovaDim << endl;
 			sk->sendString(SRV_REG_RESP);
 			return true;
+		}
 		//}
 		/*for (int i = 0; i < (int) SRservers.size(); i++) {
 			if (serverToReg == SRservers[i].identification) {
@@ -146,21 +161,30 @@ public:
 		 */
 		return true;
 
+
 	}
 	bool displayRegisteredServers(Socket * sk) {
 		cout << "Eseguo displayRegisteredServers\n";
-		cout << "------------------------------------" << endl;
-		cout << "|  Indirizzo Server | Porta Server |" << endl;
-		cout << "------------------------------------" << endl;
+		string ritornoDisplay;
+		ritornoDisplay += "-----------------------------------------------------------------\n";
+		if (SRservers.size() == 0){
+		ritornoDisplay += "| Non ci sono al momento server disponibili, riprova in seguito |\n";
+		} else {
+			ritornoDisplay += "|   Nome del Server\t|\tIndirizzo\t|\tPorta\t|\n";
+		}
+		ritornoDisplay += "-----------------------------------------------------------------\n";
 		for (int i = 0; i < (int) SRservers.size(); i++) {
 			ServerInformation siShow = SRservers[i];
-			cout
-					<< "|   " + siShow.Saddress + "       |   " + siShow.Sport
-							+ "\t   |" << endl;
-			cout << "------------------------------------" << endl;
+			ritornoDisplay += "|   " + siShow.identification;
+			ritornoDisplay += "\t|\t" + siShow.Saddress + "\t|\t" + siShow.Sport + "\t|\n";
+		ritornoDisplay += "-----------------------------------------------------------------\n";
+
+
 			//cout<< "Indirizzo server = " + siShow.Saddress
 			//				+ ", porta Server = " + siShow.Sport << endl;
 		}
+		cout << ritornoDisplay;
+		sk->sendString(ritornoDisplay);
 		return true;
 	}
 	bool registerService(Socket * sk) {
@@ -202,6 +226,32 @@ public:
 		}*/
 		return true;
 	}
+	bool unregisterServer(Socket * sk) {
+		cout << "Entro in unregisterServer\n";
+		string serverToUnReg;
+		sk->receiveString(serverToUnReg);
+		cout << serverToUnReg << endl;
+		string address, port;
+		int risultato = serverToUnReg.find_first_of(":");
+		cout << "Il carattere : si trova al carattere numero " << risultato << endl;
+		address = serverToUnReg.substr(0, risultato);
+		int dimensione = serverToUnReg.size();
+		port = serverToUnReg.substr(risultato + 1, dimensione);
+		cout << "Indirizzo ottenuto tramite la funzione substring: " << address << endl;
+		cout << "Porta ottenuta tramite la funzione substring: " << port << endl;
+		ServerInformation serInf = ServerInformation(serverToUnReg, address, port);
+		for (int i = 0; i < (int) SRservers.size(); i++) {
+			if (serverToUnReg == SRservers[i].identification) {
+				SRservers.erase(SRservers.begin() + i);
+				break;
+			}
+		}
+		//SIit = SRservers[indice];
+		//qui va tolto serverToUnReg da SRservers
+		//SRservers.erase(SIit);
+		sk->sendString(SRV_UNREG_RESP);
+		return true;
+		}
 	bool unregisterService(Socket * sk) {
 		return true;
 	}
@@ -255,7 +305,7 @@ int main(int argc, char ** argv) {
 		cout << "Connection closed\n";
 	}
 
-	serverRegister.~ServerRegister();
+	//serverRegister.~ServerRegister();
 
 	return 1;
 }

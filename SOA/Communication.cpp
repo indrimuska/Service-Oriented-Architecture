@@ -45,14 +45,15 @@ bool Socket::sendFile(string filename) {
 		return false;
 	}
 	char * content = (char *) malloc(info.st_size);
-	if ((int) fread(content, 1, info.st_size, file) < info.st_size) {
+	if ((int) fread(content, 1, info.st_size, file) < static_cast<int>(info.st_size)) {
 		cerr << "Impossibile leggere il contenuto del file\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
 	if (!sendString(filename)) return false;
-	if (!sendInt(static_cast<int>(info.st_size))) return false;
-	int i = (int) send(sk, content, info.st_size, 0);
+	int dimension = static_cast<int>(info.st_size);
+	if (!sendInt(dimension)) return false;
+	int i = (int) send(sk, content, dimension, MSG_WAITALL);
 	if (i == -1 || i < info.st_size) {
 		cerr << "Errore nell'invio del file\n";
 		return false;
