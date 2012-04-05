@@ -8,6 +8,8 @@
 
 #include "Communication.h"
 
+#define MTU_SIZE 1500
+
 Socket::Socket() {
 	sk = -1;
 }
@@ -50,6 +52,7 @@ bool Socket::sendFile(string filename) {
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
+	fclose(file);
 	if (!sendString(filename)) return false;
 	int dimension = static_cast<int>(info.st_size);
 	if (!sendInt(dimension)) return false;
@@ -62,7 +65,6 @@ bool Socket::sendFile(string filename) {
 	return true;
 }
 bool Socket::sendBinary(void * binary, size_t length) {
-	if (!sendInt((int) length)) return false;
 	int i = (int) send(sk, binary, length, MSG_WAITALL);
 	if (i == -1 || i < (int) length) {
 		cerr << "Errore nel'invio di un insieme di bit\n";
@@ -88,6 +90,35 @@ bool Socket::serializeObject(void * object, size_t length, string &filename) {
 bool Socket::sendObject(Serializer &s) {
 	if (!sendInt((int) s.getLength())) return false;
 	if (!sendFile(s.getSerialized())) return false;
+	return true;
+}
+bool Socket::sendParameter(parameter &p) {
+	parameter_direction direction = p.getDirection();
+	if (!sendBinary((void *) &direction, sizeof(parameter_direction))) return false;
+	parameter_type type = p.getType();
+	if (!sendBinary((void *) &type, sizeof(parameter_type))) return false;
+	if (!sendInt((int) p.getValueDimension())) return false;
+	if (p.getValueDimension()) {
+		void * buffer = malloc(p.getValueDimension());
+		p.getValue(buffer);
+		if (!sendBinary(buffer, p.getValueDimension())) return false;
+	}
+	return true;
+}
+bool Socket::receiveParameter(parameter &p) {
+	parameter_direction direction;
+	if (!receiveBinary((void *) &direction, sizeof(parameter_direction))) return false;
+	parameter_type type;
+	if (!receiveBinary((void *) &type, sizeof(parameter_type))) return false;
+	int length;
+	if (!receiveInt(length)) return false;
+	if (length > 0) {
+		void * buffer = malloc(length);
+		if (!receiveBinary((void *) buffer, length)) return false;
+		parameter_value value;
+		value.setValue(buffer, length);
+		p = parameter(direction, type, value);
+	} else p = parameter(direction, type);
 	return true;
 }
 bool Socket::receiveInt(int &number) {
@@ -141,11 +172,7 @@ bool Socket::receiveFile(string where, string &filename) {
 	}
 	return true;
 }
-bool Socket::receiveBinary(void * binary, size_t &length) { // binary need to be freed
-	int i_length;
-	if (!receiveInt(i_length)) return false;
-	length = i_length;
-	binary = malloc(length);
+bool Socket::receiveBinary(void * binary, size_t length) {
 	bzero(binary, length);
 	int i = (int) recv(sk, binary, length, MSG_WAITALL);
 	if (i == -1 || i < (int) length) {

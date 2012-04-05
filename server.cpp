@@ -17,27 +17,31 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
-	/*string gigi = "Io sono gigi e te un tu mi pigi!";
-	parameter p(IN, STRING, parameter_value(gigi));
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, INT));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
 	
 	Socket sk;
 	Communicator comm;
 	comm.startListener(argv[1]);
 	cout << "Waiting for clients...\n";
-	int i = 0;
-	int s = 0;
+	int sbagliati = 0;
 	while (1) {
-		i++;
-		int length;
-		string filename;
+		int parameters_size;
 		if (!comm.waitForConnection(sk)) return 0;
-		if (!sk.receiveInt(length)) continue;
-		if (!sk.receiveFile(".", filename)) continue;
-		Deserializer d(filename, length);
-		if (p != d.getObject()) cout << "Sbagliato " << ++s << "/" << i << "\n";
-		remove(filename.c_str());
+		if (!sk.receiveInt(parameters_size)) continue;
+		for (int i = 0; i < parameters_size; i++) {
+			parameter rp;
+			sk.receiveParameter(rp);
+			if (parameters[i] != rp) {
+				cout << "sbagliato (" << ++sbagliati << ")\n";
+				//cout << "Parameter " << i << " expected to be:\n" << parameters[i];
+				//cout << "Parameter received is:\n" << d.getObject() << endl;
+			}
+		}
 	}
-	comm.closeAllCommunications();*/
+	comm.closeAllCommunications();
 	
 	/*system("clear");
 	cout << "\nwaiting for clients\n";
@@ -80,6 +84,11 @@ int main(int argc, char ** argv) {
 	
 	comm.closeAllCommunications();*/
 	
+	/*vector<parameter> parameters, received_parameters;
+	parameters.push_back(parameter(IN, INT));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
+	
 	string SPaddress, SPport;
 	string SRaddress, SRport;
 	
@@ -107,16 +116,31 @@ int main(int argc, char ** argv) {
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	
+	cout << "\nIn attesa di connessioni (" << SPaddress << ":" << SPport << ")...\n";
 	while (1) {
 		// In attesa di connessione con i client...
 		//cout << "\nIn attesa di connessioni ("<<SPaddress<<":"<<SPport<<")...\n";
 		Socket * sk = new Socket();
 		comm.waitForConnection(* sk);
-		rotate.serveRequests(sk);
+		if (rotate.receiveParameters(sk, received_parameters)) {
+			if (parameters.size() != received_parameters.size()) {
+				cout << "dimensione errata\n";
+			} else
+			for (int i = 0; i < (int) received_parameters.size(); i++) {
+				if (parameters[i] != received_parameters[i]) {
+					cout << "sbagliato\n";
+					//cout << "Parameter " << i << " expected to be:\n" << parameters[i];
+					//cout << "Parameter received is:\n" << d.getObject() << endl;
+					break;
+				}
+			}
+		}
+		//rotate.serveRequests(sk);
 		sk->closeSocket();
 		delete sk;
 	}
 	
 	// Chiusura di tutte le connessioni
-	comm.closeAllCommunications();
+	comm.closeAllCommunications();*/
+	
 }

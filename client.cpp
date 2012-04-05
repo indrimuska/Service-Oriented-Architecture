@@ -15,17 +15,22 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
-	/*string gigi = "Io sono gigi e te un tu mi pigi!";
-	parameter p(IN, STRING, parameter_value(gigi));
+	int pippo = 534;
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, INT, parameter_value(pippo)));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
 	//cout << p << endl;
-	Serializer s(p);
 	
 	Socket sk;
 	Communicator comm;
 	if (!comm.connectTo(argv[1], argv[2], sk)) return 0;
-	if (!sk.sendInt((int) s.getLength())) return 0;
-	if (!sk.sendFile(s.getSerialized())) return 0;
-	comm.closeAllCommunications();*/
+	if (!sk.sendInt((int) parameters.size())) return 0;
+	for (int i = 0; i < (int) parameters.size(); i++) {
+		sk.sendParameter(parameters[i]);
+		cout << "sent\n";
+	}
+	comm.closeAllCommunications();
 	
 	/*double pippo = 0987654324567890.98765435678;
 	string gigi = "Io mi chiamo gigi";
@@ -60,7 +65,7 @@ int main(int argc, char ** argv) {
 	comm.closeAllCommunications();
 	cout << "done\n\n";*/
 	
-	string SPaddress, SPport;
+	/*string SPaddress, SPport;
 	
 	//cout << "Insert service provider address: ";
 	//cin >> SPaddress;
@@ -78,8 +83,19 @@ int main(int argc, char ** argv) {
 	parameters.push_back(parameter(OUT, BUFFER));
 	rotate.setService("rotate", parameters);
 	
+	cout << "\n---PARAMETRI inizio---\n\n";
+	for (int i = 0; i < (int) parameters.size(); i++) cout << parameters[i];
+	cout << "\n---PARAMETRI fine-----\n";
+	
 	cout << "\n---RICHIESTA DEL SERVIZIO rotate---\n";
-	if (!rotate.requestService()) return 0;
-	else cout << "---RICHIESTA CONFERMATA------------\n\n";
+	Socket sp;
+	Communicator comm;
+	comm.connectTo(SPaddress, SPport, sp);
+	rotate.sendParameters(sp);
+	comm.closeAllCommunications();
+	//if (rotate.requestService())
+	cout << "---RICHIESTA CONFERMATA------------\n";
+	
+	cout << endl;*/
 	
 }

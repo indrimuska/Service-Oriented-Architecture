@@ -9,7 +9,6 @@
 #ifndef SOA_Communication_h
 #define SOA_Communication_h
 
-#include <time.h>
 #include <vector>
 #include <cstdlib>
 #include <netdb.h>
@@ -39,11 +38,13 @@ public:
 	bool sendFile(string filename);
 	bool sendBinary(void * binary, size_t length);
 	bool sendObject(Serializer &s);
+	bool sendParameter(parameter &p);
 	bool receiveInt(int &number);
 	bool receiveString(string &s_string);
 	bool receiveFile(string where, string &filename);
-	bool receiveBinary(void * binary, size_t &length);
+	bool receiveBinary(void * binary, size_t length);
 	bool receiveObject(Deserializer &d);
+	bool receiveParameter(parameter &p);
 	bool operator==(const Socket &operand);
 	bool closeSocket();
 };
