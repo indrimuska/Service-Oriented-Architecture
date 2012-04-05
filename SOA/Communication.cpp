@@ -206,6 +206,21 @@ bool Communicator::waitForConnection(Socket &clientSocket) {
 	sockets.push_back(clientSocket);
 	return true;
 }
+bool Communicator::waitForConnection(Socket &clientSocket, string &clientAddress) {
+	struct sockaddr_in client;
+	socklen_t client_size = sizeof(client);
+	int client_socket = accept(listenSocket, (sockaddr *) &client, &client_size);
+	if (client_socket == -1) {
+		cerr << "Impossibile accettare la connessione.\n";
+		return false;
+	}
+	clientSocket = Socket(client_socket);
+	char client_address[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &client.sin_addr, client_address, INET_ADDRSTRLEN);
+	clientAddress = client_address;
+	sockets.push_back(clientSocket);
+	return true;
+}
 bool Communicator::stopListener() {
 	if (close(listenSocket) == -1) {
 		cerr << "Impossibile chiudere la connessione.\n"

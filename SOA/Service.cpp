@@ -142,6 +142,6 @@ bool Service::serveRequests(Socket * sk) {
 	return execute(sk);
 }
 bool Service::execute(Socket * sk) {
-	cout << "Esecuzione del servizio\n\n";
+	cout << "Esecuzione del servizio\n";
 	return true;
 }

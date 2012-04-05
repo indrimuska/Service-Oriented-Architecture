@@ -48,7 +48,9 @@ int main(int argc, char ** argv) {
 		// In attesa di connessione con i client...
 		cout << "In attesa di connessioni ("<<SPaddress<<":"<<SPport<<")...\n";
 		Socket sk;
-		comm.waitForConnection(sk);
+		string add;
+		comm.waitForConnection(sk, add);
+		cout << "si è connesso " << add << endl;
 		rotate.serveRequests(&sk);
 		sk.closeSocket();
 	}
