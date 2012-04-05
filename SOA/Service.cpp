@@ -34,67 +34,36 @@ bool Service::serviceUnRegistration(Socket SRsocket) {
 	return true;
 }
 bool Service::sendParameters(Socket &serviceProvider) {
-	if (!serviceProvider.sendInt((int) inParameters.size())) return 0;
-	for (int i = 0; i < (int) inParameters.size(); i++) {
-		Serializer s(inParameters[i]);
-		if (!serviceProvider.sendObject(s)) return 0;
-	}
-	/*if (!serviceProvider.sendInt((int) inParameters.size())) {
+	int parameters_size = (int) inParameters.size();
+	if (!serviceProvider.sendInt(parameters_size)) {
 		cerr << "Errore nell'invio del numero di parametri del servizio\n";
 		return false;
 	}
-	for (int i = 0; i < (int) inParameters.size(); i++) {
-		Serializer s(inParameters[0]);
-		if (!serviceProvider.sendObject(s)) {
+	for (int i = 0; i < parameters_size; i++) {
+		if (!serviceProvider.sendParameter(inParameters[i])) {
 			cerr << "Errore durante l'invio di uno dei parametri del servizio\n";
 			return false;
 		}
-	}*/
+	}
 	return true;
 }
 bool Service::receiveParameters(Socket * sk, vector<parameter> &parameters) {
-	int parameters_size;
-	if (!sk->receiveInt(parameters_size)) return false;
-	for (int i = 0; i < parameters_size; i++) {
-		Deserializer d;
-		if (!sk->receiveObject(d)) return false;
-		if (inParameters[i] != d.getObject()) {
-			cout << "sbagliato\n";
-			//cout << "Parameter " << i << " expected to be:\n" << parameters[i];
-			//cout << "Parameter received is:\n" << d.getObject() << endl;
-			return false;
-		}
-		parameters.push_back(d.getObject());
-	}
-	/*
 	int parameters_size;
 	if (!sk->receiveInt(parameters_size)) {
 		cerr << "Errore durante la ricezione del numero di parametri\n";
 		return false;
 	}
 	for (int i = 0; i < parameters_size; i++) {
-		Deserializer d;
-		if (!sk->receiveObject(d)) {
+		parameter p;
+		if (!sk->receiveParameter(p)) {
 			cerr << "Errore durante la ricezione di un parametro\n";
 			return false;
 		}
-		parameters.push_back(d.getObject());
-	}*/
+		parameters.push_back(p);
+	}
 	return true;
 }
 bool Service::requestService() {
-	Socket serviceProvider;
-	Communicator c;
-	string ack;
-	if (!c.connectTo(SPaddress, SPport, serviceProvider)) return false;
-	if (!sendParameters(serviceProvider)) return false;
-	if (!serviceProvider.receiveString(ack) || ack.compare(SERVICE_RESP)) {
-		cerr << "La richiesta di servizio non è stata accettata\n" << ack << endl;
-		return false;
-	}
-	c.closeAllCommunications();
-	return true;
-	/*********************
 	Communicator comm;
 	Socket serviceProvider;
 	if (!comm.connectTo(SPaddress, SPport, serviceProvider)) return false;
@@ -116,35 +85,10 @@ bool Service::requestService() {
 		cerr << "La richiesta di servizio non è stata accettata\n" << ack << endl;
 		return false;
 	}
-	//serviceProvider.closeSocket();
 	comm.closeAllCommunications();
-	return true;*/
+	return true;
 }
 bool Service::serveRequests(Socket * sk) {
-	vector<parameter> received_params;
-	if (!receiveParameters(sk, received_params)) return false;
-	for (int i = 0; i < (int) received_params.size(); i++) {
-		if (inParameters[i] != received_params[i]) {
-			stringstream error;
-			error << "Parametri di ingresso non corretti (" << i << ":";
-			error << (received_params[i].getDirection() == IN ? "IN" : "OUT") << ",";
-			if (received_params[i].getType() == INT) error << "INT";
-			if (received_params[i].getType() == DOUBLE) error << "DOUBLE";
-			if (received_params[i].getType() == STRING) error << "STRING";
-			if (received_params[i].getType() == BUFFER) error << "BUFFER";
-			error << "|" << (inParameters[i].getDirection() == IN ? "IN" : "OUT") << ",";
-			if (inParameters[i].getType() == INT) error << "INT";
-			if (inParameters[i].getType() == DOUBLE) error << "DOUBLE";
-			if (inParameters[i].getType() == STRING) error << "STRING";
-			if (inParameters[i].getType() == BUFFER) error << "BUFFER";
-			error << ")";
-			cerr << "Richiesta con " << error.str() << endl;
-			sk->sendString(error.str());
-			return false;
-		}
-	}
-	return true;
-	/*********************
 	string request, name;
 	vector<parameter> received_params;
 	if (!sk->receiveString(request)) return false;
@@ -195,9 +139,9 @@ bool Service::serveRequests(Socket * sk) {
 		cerr << "Errore durante l'invio della conferma di accettazione del servizio\n";
 		return false;
 	}
-	return execute(sk);*/
+	return execute(sk);
 }
 bool Service::execute(Socket * sk) {
-	//cout << "Esecuzione del servizio\n\n";
+	cout << "Esecuzione del servizio\n\n";
 	return true;
 }

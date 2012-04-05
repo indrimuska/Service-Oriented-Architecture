@@ -8,8 +8,6 @@
 
 #include "Communication.h"
 
-#define MTU_SIZE 1500
-
 Socket::Socket() {
 	sk = -1;
 }
@@ -72,26 +70,6 @@ bool Socket::sendBinary(void * binary, size_t length) {
 	}
 	return true;
 }
-bool Socket::serializeObject(void * object, size_t length, string &filename) {
-	ofstream file;
-	srand((int) time(0));
-	stringstream ss_filename;
-	ss_filename << rand() << rand();
-	filename = ss_filename.str();
-	file.open(filename.c_str(), ios_base::binary);
-	if (!file.good()) {
-		cerr << "Impossibile serializzare l'oggetto\n";
-		return false;
-	}
-	file.write((char *) object, length);
-	file.close();
-	return true;
-}
-bool Socket::sendObject(Serializer &s) {
-	if (!sendInt((int) s.getLength())) return false;
-	if (!sendFile(s.getSerialized())) return false;
-	return true;
-}
 bool Socket::sendParameter(parameter &p) {
 	parameter_direction direction = p.getDirection();
 	if (!sendBinary((void *) &direction, sizeof(parameter_direction))) return false;
@@ -103,22 +81,6 @@ bool Socket::sendParameter(parameter &p) {
 		p.getValue(buffer);
 		if (!sendBinary(buffer, p.getValueDimension())) return false;
 	}
-	return true;
-}
-bool Socket::receiveParameter(parameter &p) {
-	parameter_direction direction;
-	if (!receiveBinary((void *) &direction, sizeof(parameter_direction))) return false;
-	parameter_type type;
-	if (!receiveBinary((void *) &type, sizeof(parameter_type))) return false;
-	int length;
-	if (!receiveInt(length)) return false;
-	if (length > 0) {
-		void * buffer = malloc(length);
-		if (!receiveBinary((void *) buffer, length)) return false;
-		parameter_value value;
-		value.setValue(buffer, length);
-		p = parameter(direction, type, value);
-	} else p = parameter(direction, type);
 	return true;
 }
 bool Socket::receiveInt(int &number) {
@@ -181,30 +143,20 @@ bool Socket::receiveBinary(void * binary, size_t length) {
 	}
 	return true;
 }
-bool Socket::deserializeObject(void * object, size_t length, string filename) {
-	ifstream file;
-	file.open(filename.c_str(), ios_base::binary);
-	if (!file.good()) {
-		cerr << "Impossibile de-serializzare l'oggetto\n";
-		return false;
-	}
-	file.read((char *) object, length);
-	file.close();
-	return true;
-}
-bool Socket::receiveObject(Deserializer &d) {
+bool Socket::receiveParameter(parameter &p) {
+	parameter_direction direction;
+	if (!receiveBinary((void *) &direction, sizeof(parameter_direction))) return false;
+	parameter_type type;
+	if (!receiveBinary((void *) &type, sizeof(parameter_type))) return false;
 	int length;
-	string filename;
 	if (!receiveInt(length)) return false;
-	if (!receiveFile(".", filename)) return false;
-	d = Deserializer(filename, length);
-	if (FILE * file = fopen(filename.c_str(), "r")) {
-		fclose(file);
-		if (remove(filename.c_str())) {
-			cerr << "L'oggetto ricevuto non può essere rimosso\n";
-			return false;
-		}
-	}
+	if (length > 0) {
+		void * buffer = malloc(length);
+		if (!receiveBinary((void *) buffer, length)) return false;
+		parameter_value value;
+		value.setValue(buffer, length);
+		p = parameter(direction, type, value);
+	} else p = parameter(direction, type);
 	return true;
 }
 bool Socket::operator==(const Socket &operand) {

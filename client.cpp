@@ -8,64 +8,13 @@
 
 #include <iostream>
 
-#include "SOA/Serialization.h"
 #include "SOA/Service.h"
 
 using namespace std;
 
 int main(int argc, char ** argv) {
 	
-	int pippo = 534;
-	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, INT, parameter_value(pippo)));
-	parameters.push_back(parameter(IN, BUFFER));
-	parameters.push_back(parameter(OUT, BUFFER));
-	//cout << p << endl;
-	
-	Socket sk;
-	Communicator comm;
-	if (!comm.connectTo(argv[1], argv[2], sk)) return 0;
-	if (!sk.sendInt((int) parameters.size())) return 0;
-	for (int i = 0; i < (int) parameters.size(); i++) {
-		sk.sendParameter(parameters[i]);
-		cout << "sent\n";
-	}
-	comm.closeAllCommunications();
-	
-	/*double pippo = 0987654324567890.98765435678;
-	string gigi = "Io mi chiamo gigi";
-	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, STRING, parameter_value(gigi)));
-	parameters.push_back(parameter(IN, STRING));
-	parameters.push_back(parameter(OUT, STRING));
-	parameters.push_back(parameter(OUT, DOUBLE, parameter_value(pippo)));
-	parameters.push_back(parameter(IN, BUFFER));
-	parameters.push_back(parameter(OUT, BUFFER));
-	parameters.push_back(parameter(IN, INT));
-	parameters.push_back(parameter(OUT, INT));
-	
-	Socket sk;
-	Communicator comm;
-	comm.connectTo(argv[1], argv[2], sk);
-	
-	cout << "Sending size\n";
-	if (!sk.sendInt((int) parameters.size())) return 0;
-	cout << "sent\n\n";
-	
-	cout << "---parameters-------------\n\n";
-	for (int i = 0; i < (int) parameters.size(); i++) {
-		cout << parameters[i] << endl;
-		Serializer s(parameters[i]);
-		//Deserializer d(s.getSerialized(), s.getLength());
-		if (!sk.sendObject(s)) break;
-	}
-	cout << "--------------------------\n\n";
-	
-	cout << "closing all communications\n";
-	comm.closeAllCommunications();
-	cout << "done\n\n";*/
-	
-	/*string SPaddress, SPport;
+	string SPaddress, SPport;
 	
 	//cout << "Insert service provider address: ";
 	//cin >> SPaddress;
@@ -74,28 +23,18 @@ int main(int argc, char ** argv) {
 	SPaddress = argv[1];
 	SPport = argv[2];
 	
-	Service rotate;
-	rotate.setServer(SPaddress, SPport);
-	
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, INT));
 	parameters.push_back(parameter(IN, BUFFER));
 	parameters.push_back(parameter(OUT, BUFFER));
+	
+	Service rotate;
+	rotate.setServer(SPaddress, SPport);
 	rotate.setService("rotate", parameters);
 	
-	cout << "\n---PARAMETRI inizio---\n\n";
-	for (int i = 0; i < (int) parameters.size(); i++) cout << parameters[i];
-	cout << "\n---PARAMETRI fine-----\n";
+	cout << "Richiesta del servizio ROTATE:\n";
+	if (rotate.requestService()) cout << "richiesta accettata\n";
+	else cout << "richiesta rifiutata\n";
 	
-	cout << "\n---RICHIESTA DEL SERVIZIO rotate---\n";
-	Socket sp;
-	Communicator comm;
-	comm.connectTo(SPaddress, SPport, sp);
-	rotate.sendParameters(sp);
-	comm.closeAllCommunications();
-	//if (rotate.requestService())
-	cout << "---RICHIESTA CONFERMATA------------\n";
-	
-	cout << endl;*/
-	
+	cout << endl;	
 }

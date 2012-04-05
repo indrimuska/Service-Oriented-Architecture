@@ -20,16 +20,13 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include "Serialization.h"
+#include "Parameters.h"
 
 using namespace std;
 
 class Socket {
 private:
 	int sk;
-	
-	bool serializeObject(void * object, size_t length, string &filename);
-	bool deserializeObject(void * object, size_t length, string filename);
 public:
 	Socket();
 	Socket(int sk);
@@ -37,13 +34,11 @@ public:
 	bool sendString(string s_string);
 	bool sendFile(string filename);
 	bool sendBinary(void * binary, size_t length);
-	bool sendObject(Serializer &s);
 	bool sendParameter(parameter &p);
 	bool receiveInt(int &number);
 	bool receiveString(string &s_string);
 	bool receiveFile(string where, string &filename);
 	bool receiveBinary(void * binary, size_t length);
-	bool receiveObject(Deserializer &d);
 	bool receiveParameter(parameter &p);
 	bool operator==(const Socket &operand);
 	bool closeSocket();
