@@ -11,6 +11,7 @@
 
 #include "SOA/SOA.h"
 #include "Application/RotateService.cpp"
+#include "Application/HorizontalFlipService.cpp"
 
 using namespace std;
 
@@ -32,6 +33,9 @@ int main(int argc, char ** argv) {
 	RotateService rotate;
 	rotate.setServer(SPaddress, SPport);
 	
+	HorizontalFlipService horizontalFlip;
+	horizontalFlip.setServer(SPaddress, SPport);
+	
 	// Connessione al Service Register
 	//cout << "Insert server register address: ";
 	//cin >> SRaddress;
@@ -51,7 +55,8 @@ int main(int argc, char ** argv) {
 		string add;
 		comm.waitForConnection(sk, add);
 		cout << "si è connesso " << add << endl;
-		if (rotate.serveRequests(&sk)) cout << "richiesta servita\n";
+		//if (rotate.serveRequests(&sk)) cout << "richiesta servita\n";
+		if (horizontalFlip.serveRequests(&sk)) cout << "richiesta servita\n";
 		sk.closeSocket();
 		cout << endl;
 	}

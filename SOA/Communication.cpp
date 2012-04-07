@@ -154,12 +154,9 @@ bool Socket::receiveParameter(parameter &p) {
 	p = parameter(direction, type);
 	if (length > 0) {
 		void * buffer = malloc(length);
-		if (!receiveBinary((void *) buffer, length)) return false;
-		parameter_value value;
-		value.setValue(buffer, length);
+		if (!receiveBinary(buffer, length)) return false;
+		p.setValue(buffer, length);
 		free(buffer);
-		p.setValue(value);
-		//p.setValue(buffer, length);
 	}
 	return true;
 }

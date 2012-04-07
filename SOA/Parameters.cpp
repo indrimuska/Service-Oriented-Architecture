@@ -65,6 +65,22 @@ parameter::parameter() {
 parameter::parameter(parameter_direction direction, parameter_type type) {
 	init(direction, type);
 }
+parameter::parameter(parameter_direction direction, parameter_type type, int value) {
+	init(direction, type);
+	this->value.setValue(value);
+}
+parameter::parameter(parameter_direction direction, parameter_type type, double value) {
+	init(direction, type);
+	this->value.setValue(value);
+}
+parameter::parameter(parameter_direction direction, parameter_type type, std::string value) {
+	init(direction, type);
+	this->value.setValue(value);
+}
+parameter::parameter(parameter_direction direction, parameter_type type, void * value, size_t dimension) {
+	init(direction, type);
+	setValue(value, dimension);
+}
 parameter::parameter(parameter_direction direction, parameter_type type, parameter_value value) {
 	init(direction, type);
 	setValue(value);
@@ -75,6 +91,9 @@ void parameter::init(parameter_direction direction, parameter_type type) {
 }
 void parameter::setValue(parameter_value &value) {
 	this->value = value;
+}
+void parameter::setValue(void * value, size_t dimension) {
+	this->value.setValue(value, dimension);
 }
 void parameter::getInfo(parameter_direction &direction, parameter_type &type) {
 	direction = this->direction;

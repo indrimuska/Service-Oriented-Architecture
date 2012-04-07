@@ -45,10 +45,10 @@ int main(int argc, char ** argv) {
 	}
 	fclose(file);
 	
-	int degrees = 90;
+	//int degrees = 90;
 	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, INT, parameter_value(degrees)));
-	parameters.push_back(parameter(IN, BUFFER, parameter_value(content, dimension)));
+	//parameters.push_back(parameter(IN, INT, degrees));
+	parameters.push_back(parameter(IN, BUFFER, content, dimension));
 	parameters.push_back(parameter(OUT, BUFFER));
 	
 	delete content;
