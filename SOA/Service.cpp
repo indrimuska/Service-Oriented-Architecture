@@ -114,6 +114,12 @@ bool Service::requestService() {
 		cerr << "Impossibile connettersi al Service Provider\n";
 		return false;
 	}
+	// Questo invio serve al Service Provider per sapere quale servizio viene richiesto
+	if (!serviceProvider.sendString(name)) {
+		cerr << "Errore nell'invio del nome del servizio richiesto\n";
+		return false;
+	}
+	// Questo invio serve a controllare che il nome del servizio sia corretto
 	if (!serviceProvider.sendString(name)) {
 		cerr << "Errore nell'invio del nome del servizio richiesto\n";
 		return false;

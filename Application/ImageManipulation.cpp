@@ -16,6 +16,18 @@ ImageManipulation::ImageManipulation(string workDirectory) {
 }
 bool ImageManipulation::getImageFromBuffer(parameter &p, string filename) {
 	FILE * file;
+	if ((file = fopen(filename.c_str(), "w")) != 0) {
+		char response;
+		cout << "Il file '" << filename << "' esiste già. Sovrascriverlo [Y/N]? ";
+		while (response != 'Y' && response != 'N' && response != 'S') {
+			cin >> response;
+			response = toupper(response);
+			if (response == 'N') {
+				fclose(file);
+				return false;
+			}
+		}
+	}
 	if (!(file = fopen(filename.c_str(), "w"))) {
 		cerr << "Impossibile creare il file richiesto\n"
 		"Controllare di avere i permessi necessari\n";

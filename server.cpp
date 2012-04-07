@@ -52,11 +52,15 @@ int main(int argc, char ** argv) {
 	while (1) {
 		// In attesa di connessione con i client...
 		Socket sk;
-		string add;
+		string add, service;
 		comm.waitForConnection(sk, add);
 		cout << "si è connesso " << add << endl;
-		//if (rotate.serveRequests(&sk)) cout << "richiesta servita\n";
-		if (horizontalFlip.serveRequests(&sk)) cout << "richiesta servita\n";
+		if (!sk.receiveString(service)) continue;
+		if (!service.compare("rotate")) {
+			if (rotate.serveRequests(&sk)) cout << "richiesta servita\n";
+		} else {
+			if (horizontalFlip.serveRequests(&sk)) cout << "richiesta servita\n";
+		}
 		sk.closeSocket();
 		cout << endl;
 	}

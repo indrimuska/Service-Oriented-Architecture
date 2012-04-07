@@ -45,7 +45,7 @@ bool Socket::sendFile(string filename) {
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
-	char * content = (char *) malloc(dimension);
+	char * content = new char[dimension];
 	if ((int) fread(content, 1, dimension, file) < dimension) {
 		cerr << "Impossibile leggere il contenuto del file\n"
 		"Controllare di avere i permessi necessari\n";
@@ -59,7 +59,7 @@ bool Socket::sendFile(string filename) {
 		cerr << "Errore nell'invio del file\n";
 		return false;
 	}
-	free(content);
+	delete content;
 	return true;
 }
 bool Socket::sendBinary(void * binary, size_t length) {
@@ -95,16 +95,15 @@ bool Socket::receiveInt(int &number) {
 bool Socket::receiveString(string &s_string) {
 	int length;
 	if (!receiveInt(length)) return false;
-	char * c_string = (char *) malloc(length + 1);
+	char * c_string = new char[length + 1];
 	memset(c_string, '\0', length + 1);
 	int i = (int) recv(sk, c_string, length, MSG_WAITALL);
 	if (i == -1 || i < length) {
 		cerr << "Errore nella ricezione di una stringa\n";
 		return false;
 	}
-	c_string[length] = '\0';
 	s_string = string(c_string);
-	free(c_string);
+	delete c_string;
 	return true;
 }
 bool Socket::receiveFile(string where, string &filename) {
