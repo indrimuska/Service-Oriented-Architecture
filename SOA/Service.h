@@ -20,7 +20,23 @@
 
 using namespace std;
 
+class Response {
+private:
+	bool result;
+	string message;
+	string successfulMessage;
+public:
+	Response(string successfulMessage);
+	void setResult(bool result);
+	void setMessage(string message);
+	void setError(string error);
+	bool getResult();
+	string getMessage();
+};
+
 class Service {
+private:
+	Response * response;
 protected:
 	string SPaddress;
 	string SPport;
@@ -28,10 +44,16 @@ protected:
 	vector<parameter> inParameters;
 	vector<parameter> outParameters;
 	
-	
+	bool sendResponse(Socket &sk);
+	bool receiveResponse(Socket &sk);
 	bool sendParameters(Socket &serviceProvider);
 	bool receiveParameters(Socket * sk, vector<parameter> &parameters);
+	
+	// Da implmentare nell'applicazione
+	virtual bool execute(Socket * sk);
 public:
+	
+	Service();
 	
 	void setService(string name, vector<parameter> &parameters);
 	// Il server lo usa per fare richiesta di registrazione di un servizio
@@ -42,7 +64,6 @@ public:
 	bool serviceRegistration(Socket SRsocket);
 	bool serviceUnRegistration(Socket SRsocket);
 	bool serveRequests(Socket * sk);
-	virtual bool execute(Socket * sk);
 	
 	// Usati dai client
 	bool requestService();

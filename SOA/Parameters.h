@@ -23,14 +23,14 @@ private:
 	size_t dimension;
 public:
 	parameter_value();
-	parameter_value(int &value);
-	parameter_value(double &value);
-	parameter_value(std::string &value);
+	parameter_value(int value);
+	parameter_value(double value);
+	parameter_value(std::string value);
 	parameter_value(void * value, size_t dimension);
 	parameter_value(const parameter_value &p);
-	void setValue(int &value);
-	void setValue(double &value);
-	void setValue(std::string &value);
+	void setValue(int value);
+	void setValue(double value);
+	void setValue(std::string value);
 	void setValue(void * value, size_t dimension);
 	void get(void * object);
 	size_t getDimension();

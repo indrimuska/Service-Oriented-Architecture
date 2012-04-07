@@ -11,15 +11,15 @@
 parameter_value::parameter_value() {
 	dimension = 0;
 }
-parameter_value::parameter_value(int &value) {
+parameter_value::parameter_value(int value) {
 	dimension = 0;
 	setValue(value);
 }
-parameter_value::parameter_value(double &value) {
+parameter_value::parameter_value(double value) {
 	dimension = 0;
 	setValue(value);
 }
-parameter_value::parameter_value(std::string &value) {
+parameter_value::parameter_value(std::string value) {
 	dimension = 0;
 	setValue(value);
 }
@@ -31,13 +31,13 @@ parameter_value::parameter_value(const parameter_value &p) {
 	dimension = 0;
 	setValue(p.value, p.dimension);
 }
-void parameter_value::setValue(int &value) {
+void parameter_value::setValue(int value) {
 	setValue((void *) &value, sizeof(int));
 }
-void parameter_value::setValue(double &value) {
+void parameter_value::setValue(double value) {
 	setValue((void *) &value, sizeof(double));
 }
-void parameter_value::setValue(std::string &value) {
+void parameter_value::setValue(std::string value) {
 	setValue((void *) value.c_str(), value.size());
 }
 void parameter_value::setValue(void * value, size_t dimension) {

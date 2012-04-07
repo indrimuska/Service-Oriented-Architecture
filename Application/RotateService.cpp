@@ -15,11 +15,11 @@ public:
 		parameters.push_back(parameter(IN, INT));
 		parameters.push_back(parameter(IN, BUFFER));
 		parameters.push_back(parameter(OUT, BUFFER));
-		this->setService("rotate", parameters);
+		setService("rotate", parameters);
 	}
 	bool execute(Socket * sk) {
-		string inFile = "temp.gif";
-		string outFile = "rotated.gif";
+		string inFile = workDirectory + "/source.gif";
+		string outFile = workDirectory + "/rotated.gif";
 		getImageFromBuffer(inParameters[1], inFile);
 		int degrees;
 		inParameters[0].getValue(degrees);

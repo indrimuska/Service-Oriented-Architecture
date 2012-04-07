@@ -14,11 +14,11 @@ public:
 		vector<parameter> parameters;
 		parameters.push_back(parameter(IN, BUFFER));
 		parameters.push_back(parameter(OUT, BUFFER));
-		this->setService("rotate", parameters);
+		setService("horizontal flip", parameters);
 	}
 	bool execute(Socket * sk) {
-		string inFile = "temp.gif";
-		string outFile = "flipped.gif";
+		string inFile = workDirectory + "/source.gif";
+		string outFile = workDirectory + "/flipped.gif";
 		getImageFromBuffer(inParameters[0], inFile);
 		CImg<unsigned char> image(inFile.c_str());
 		image.mirror('x').save(outFile.c_str());

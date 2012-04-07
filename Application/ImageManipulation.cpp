@@ -8,19 +8,25 @@
 
 #include "ImageManipulation.h"
 
+ImageManipulation::ImageManipulation() {
+	workDirectory = ".";
+}
+ImageManipulation::ImageManipulation(string workDirectory) {
+	this->workDirectory = workDirectory;
+}
 bool ImageManipulation::getImageFromBuffer(parameter &p, string filename) {
-	char * buffer = new char[p.getValueDimension()];
-	p.getValue(buffer);
 	FILE * file;
 	if (!(file = fopen(filename.c_str(), "w"))) {
 		cerr << "Impossibile creare il file richiesto\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
-	int i = (int) fwrite(buffer, 1, p.getValueDimension(), file);
+	char * buffer = new char[p.getValueDimension()];
+	p.getValue(buffer);
+	size_t i = fwrite(buffer, 1, p.getValueDimension(), file);
 	fclose(file);
 	delete buffer;
-	if (i < (int) p.getValueDimension()) {
+	if (i < p.getValueDimension()) {
 		cerr << "Impossibile salvare il contenuto del file richiesto\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
@@ -51,4 +57,18 @@ bool ImageManipulation::putImageInBuffer(parameter &p, string filename) {
 	p.setValue(buffer, dimension);
 	delete buffer;
 	return true;
+}
+bool ImageManipulation::setImageAsParameter(parameter_direction direction, int parameter_number, string filename) {
+	parameter * p;
+	if (direction == IN) p = &inParameters[parameter_number];
+	else p = &outParameters[parameter_number];
+	return putImageInBuffer(* p, filename);
+}
+bool ImageManipulation::getImageFromParameter(parameter_direction direction, int parameter_number, string filename) {
+	for (int i = 0; i < (int) inParameters.size(); i++) cout << inParameters[i];
+	for (int i = 0; i < (int) outParameters.size(); i++) cout << outParameters[i];
+	parameter * p;
+	if (direction == IN) p = &inParameters[parameter_number];
+	else p = &outParameters[parameter_number];
+	return getImageFromBuffer(* p, filename);
 }

@@ -1,5 +1,5 @@
 //
-//  ImageManipulation.h
+//  Application/ImageManipulation.h
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 07/04/12.
@@ -19,9 +19,16 @@
 using namespace cimg_library;
 
 class ImageManipulation : public Service {
-public:
+protected:
+	string workDirectory;
+	
 	bool getImageFromBuffer(parameter &p, string filename);
 	bool putImageInBuffer(parameter &p, string filename);
+public:
+	ImageManipulation();
+	ImageManipulation(string workDirectory);
+	bool setImageAsParameter(parameter_direction direction, int parameter_number, string filename);
+	bool getImageFromParameter(parameter_direction direction, int parameter_number, string filename);
 };
 
 #endif

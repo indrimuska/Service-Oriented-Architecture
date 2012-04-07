@@ -111,7 +111,7 @@ bool Socket::receiveFile(string where, string &filename) {
 	int dimension;
 	if (!receiveString(filename)) return false;
 	if (!receiveInt(dimension)) return false;
-	char * binary = (char *) malloc(dimension + 1);
+	char * binary = new char[dimension + 1];
 	memset(binary, '\0', dimension + 1);
 	int i = (int) recv(sk, binary, dimension, MSG_WAITALL);
 	if (i == -1 || i < dimension) {
@@ -127,7 +127,7 @@ bool Socket::receiveFile(string where, string &filename) {
 	}
 	i = (int) fwrite(binary, 1, dimension, file);
 	fclose(file);
-	free(binary);
+	delete binary;
 	if (i < dimension) {
 		cerr << "Impossibile salvare il contenuto del file richiesto\n"
 		"Controllare di avere i permessi necessari\n";
