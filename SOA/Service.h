@@ -24,19 +24,20 @@ class Response {
 private:
 	bool result;
 	string message;
-	string successfulMessage;
+	vector<parameter> parameters;
 public:
-	Response(string successfulMessage);
+	Response();
 	void setResult(bool result);
-	void setMessage(string message);
 	void setError(string error);
+	void setMessage(string message);
 	bool getResult();
 	string getMessage();
+	vector<parameter> & getParameters();
+	void setParameters(vector<parameter> &parameters);
 };
 
 class Service {
 private:
-	Response * response;
 protected:
 	string SPaddress;
 	string SPport;
@@ -44,17 +45,14 @@ protected:
 	vector<parameter> inParameters;
 	vector<parameter> outParameters;
 	
-	bool sendResponse(Socket &sk);
-	bool receiveResponse(Socket &sk);
-	bool sendParameters(Socket &serviceProvider);
+	bool sendResponse(Socket &sk, Response &response);
+	bool receiveResponse(Socket &sk, Response &response);
+	bool sendParameters(Socket &serviceProvider, vector<parameter> &parameters);
 	bool receiveParameters(Socket * sk, vector<parameter> &parameters);
 	
 	// Da implmentare nell'applicazione
 	virtual bool execute(Socket * sk);
 public:
-	
-	Service();
-	
 	void setService(string name, vector<parameter> &parameters);
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio

@@ -65,8 +65,6 @@ bool ImageManipulation::setImageAsParameter(parameter_direction direction, int p
 	return putImageInBuffer(* p, filename);
 }
 bool ImageManipulation::getImageFromParameter(parameter_direction direction, int parameter_number, string filename) {
-	for (int i = 0; i < (int) inParameters.size(); i++) cout << inParameters[i];
-	for (int i = 0; i < (int) outParameters.size(); i++) cout << outParameters[i];
 	parameter * p;
 	if (direction == IN) p = &inParameters[parameter_number];
 	else p = &outParameters[parameter_number];

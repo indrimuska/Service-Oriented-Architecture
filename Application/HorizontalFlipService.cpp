@@ -17,6 +17,7 @@ public:
 		setService("horizontal flip", parameters);
 	}
 	bool execute(Socket * sk) {
+		Response response;
 		string inFile = workDirectory + "/source.gif";
 		string outFile = workDirectory + "/flipped.gif";
 		getImageFromBuffer(inParameters[0], inFile);

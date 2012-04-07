@@ -32,13 +32,13 @@ int main(int argc, char ** argv) {
 	
 	ImageManipulation horizontalFlip;
 	horizontalFlip.setServer(SPaddress, SPport);
-	horizontalFlip.setService("horizontal fli", parameters);
+	horizontalFlip.setService("horizontal flip", parameters);
 	horizontalFlip.setImageAsParameter(IN, 0, filename);
 	
 	cout << "Richiesta del servizio:\n";
 	if (horizontalFlip.requestService()) {
 		cout << "richiesta accettata\n";
-		//horizontalFlip.getImageFromParameter(OUT, 0, argv[4]);
+		horizontalFlip.getImageFromParameter(OUT, 0, argv[4]);
 	} else cout << "richiesta rifiutata\n";
 	
 	cout << endl;	
