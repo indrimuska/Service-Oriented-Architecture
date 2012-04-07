@@ -38,24 +38,24 @@ bool Socket::sendFile(string filename) {
 		"Controllare che il file esista e che si abbiano i permessi necessari\n";
 		return false;
 	}
+	int dimension = static_cast<int>(info.st_size);
 	FILE * file;
 	if (!(file = fopen(filename.c_str(), "r"))) {
 		cerr << "Impossibile aprire il file specificato\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
-	char * content = (char *) malloc(info.st_size);
-	if ((int) fread(content, 1, info.st_size, file) < static_cast<int>(info.st_size)) {
+	char * content = (char *) malloc(dimension);
+	if ((int) fread(content, 1, dimension, file) < dimension) {
 		cerr << "Impossibile leggere il contenuto del file\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
 	fclose(file);
 	if (!sendString(filename)) return false;
-	int dimension = static_cast<int>(info.st_size);
 	if (!sendInt(dimension)) return false;
 	int i = (int) send(sk, content, dimension, MSG_WAITALL);
-	if (i == -1 || i < info.st_size) {
+	if (i == -1 || i < dimension) {
 		cerr << "Errore nell'invio del file\n";
 		return false;
 	}
@@ -80,6 +80,7 @@ bool Socket::sendParameter(parameter &p) {
 		void * buffer = malloc(p.getValueDimension());
 		p.getValue(buffer);
 		if (!sendBinary(buffer, p.getValueDimension())) return false;
+		free(buffer);
 	}
 	return true;
 }
@@ -150,13 +151,16 @@ bool Socket::receiveParameter(parameter &p) {
 	if (!receiveBinary((void *) &type, sizeof(parameter_type))) return false;
 	int length;
 	if (!receiveInt(length)) return false;
+	p = parameter(direction, type);
 	if (length > 0) {
 		void * buffer = malloc(length);
 		if (!receiveBinary((void *) buffer, length)) return false;
 		parameter_value value;
 		value.setValue(buffer, length);
-		p = parameter(direction, type, value);
-	} else p = parameter(direction, type);
+		free(buffer);
+		p.setValue(value);
+		//p.setValue(buffer, length);
+	}
 	return true;
 }
 bool Socket::operator==(const Socket &operand) {

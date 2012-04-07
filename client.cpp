@@ -23,10 +23,35 @@ int main(int argc, char ** argv) {
 	SPaddress = argv[1];
 	SPport = argv[2];
 	
+	string filename = argv[3];
+	struct stat info;
+	if (stat(filename.c_str(), &info) == -1) {
+		cerr << "Impossibile determinare la dimensione del file specificato\n"
+		"Controllare che il file esista e che si abbiano i permessi necessari\n";
+		return false;
+	}
+	int dimension = static_cast<int>(info.st_size);
+	FILE * file;
+	if (!(file = fopen(filename.c_str(), "r"))) {
+		cerr << "Impossibile aprire il file specificato\n"
+		"Controllare di avere i permessi necessari\n";
+		return false;
+	}
+	char * content = (char *) malloc(dimension);
+	if ((int) fread(content, 1, dimension, file) < dimension) {
+		cerr << "Impossibile leggere il contenuto del file\n"
+		"Controllare di avere i permessi necessari\n";
+		return false;
+	}
+	fclose(file);
+	
+	int degrees = 90;
 	vector<parameter> parameters;
-	parameters.push_back(parameter(IN, INT));
-	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(IN, INT, parameter_value(degrees)));
+	parameters.push_back(parameter(IN, BUFFER, parameter_value(content, dimension)));
 	parameters.push_back(parameter(OUT, BUFFER));
+	
+	delete content;
 	
 	Service rotate;
 	rotate.setServer(SPaddress, SPport);

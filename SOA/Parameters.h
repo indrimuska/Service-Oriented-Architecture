@@ -48,7 +48,7 @@ public:
 	parameter(parameter_direction direction, parameter_type type);
 	parameter(parameter_direction direction, parameter_type type, parameter_value value);
 	void init(parameter_direction direction, parameter_type type);
-	void setValue(parameter_value value);
+	void setValue(parameter_value &value);
 	void getInfo(parameter_direction &direction, parameter_type &type);
 	void getValue(int &int_value);
 	void getValue(double &double_value);

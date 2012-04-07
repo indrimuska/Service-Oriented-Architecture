@@ -9,8 +9,8 @@
 #ifndef SOA_SOA_h
 #define SOA_SOA_h
 
-#include "Communication.h"
 #include "Service.h"
+#include "Communication.h"
 
 #define CONN_ACK_REQ	"Could you give an ACK for the connection, please?"
 #define CONN_ACK_RESP	"This is a simple ACK packet"

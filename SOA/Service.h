@@ -21,19 +21,19 @@
 using namespace std;
 
 class Service {
-private:
+protected:
+	string SPaddress;
+	string SPport;
 	string name;
 	vector<parameter> inParameters;
 	vector<parameter> outParameters;
 	
-	string SPaddress;
-	string SPport;
 	
-public:
 	bool sendParameters(Socket &serviceProvider);
 	bool receiveParameters(Socket * sk, vector<parameter> &parameters);
+public:
 	
-	void setService(string name, vector<parameter> parameters);
+	void setService(string name, vector<parameter> &parameters);
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio
 	void setServer(string SPaddress, string SPport);
@@ -42,7 +42,7 @@ public:
 	bool serviceRegistration(Socket SRsocket);
 	bool serviceUnRegistration(Socket SRsocket);
 	bool serveRequests(Socket * sk);
-	bool execute(Socket * sk);
+	virtual bool execute(Socket * sk);
 	
 	// Usati dai client
 	bool requestService();

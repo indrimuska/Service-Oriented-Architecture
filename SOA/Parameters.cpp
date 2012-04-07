@@ -73,7 +73,7 @@ void parameter::init(parameter_direction direction, parameter_type type) {
 	this->direction = direction;
 	this->type = type;
 }
-void parameter::setValue(parameter_value value) {
+void parameter::setValue(parameter_value &value) {
 	this->value = value;
 }
 void parameter::getInfo(parameter_direction &direction, parameter_type &type) {

@@ -10,7 +10,6 @@
 #include <iostream>
 
 #include "SOA/SOA.h"
-#include "SOA/Parameters.h"
 #include "Application/RotateService.cpp"
 
 using namespace std;
@@ -44,15 +43,17 @@ int main(int argc, char ** argv) {
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	
+	cout << "In attesa di connessioni (" << SPaddress << ":" << SPport << ")...\n\n";
+	
 	while (1) {
 		// In attesa di connessione con i client...
-		cout << "In attesa di connessioni ("<<SPaddress<<":"<<SPport<<")...\n";
 		Socket sk;
 		string add;
 		comm.waitForConnection(sk, add);
 		cout << "si è connesso " << add << endl;
-		rotate.serveRequests(&sk);
+		if (rotate.serveRequests(&sk)) cout << "richiesta servita\n";
 		sk.closeSocket();
+		cout << endl;
 	}
 	
 	// Chiusura di tutte le connessioni

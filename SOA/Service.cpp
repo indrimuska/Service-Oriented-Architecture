@@ -8,7 +8,7 @@
 
 #include "Service.h"
 
-void Service::setService(string name, vector<parameter> parameters) {
+void Service::setService(string name, vector<parameter> &parameters) {
 	this->name = name;
 	for (int i = 0; i < (int) parameters.size(); i++) {
 		if (parameters[i].getDirection() == IN) inParameters.push_back(parameters[i]);
@@ -133,7 +133,7 @@ bool Service::serveRequests(Socket * sk) {
 			cerr << "Richiesta con " << error.str() << endl;
 			sk->sendString(error.str());
 			return false;
-		}
+		} else inParameters[i] = received_params[i];
 	}
 	if (!sk->sendString(SERVICE_RESP)) {
 		cerr << "Errore durante l'invio della conferma di accettazione del servizio\n";
@@ -142,6 +142,6 @@ bool Service::serveRequests(Socket * sk) {
 	return execute(sk);
 }
 bool Service::execute(Socket * sk) {
-	cout << "Esecuzione del servizio\n";
+	cout << "Servizio non implementato\n";
 	return true;
 }
