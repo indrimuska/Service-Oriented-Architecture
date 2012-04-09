@@ -20,7 +20,7 @@ public:
 	bool execute(Socket * sk) {
 		string inFile = workDirectory + "/source.gif";
 		string outFile = workDirectory + "/rotated.gif";
-		getImageFromBuffer(inParameters[1], inFile);
+		getImageFromBuffer(inParameters[1], inFile, true);
 		int degrees;
 		inParameters[0].getValue(degrees);
 		CImg<unsigned char> image(inFile.c_str());

@@ -20,7 +20,7 @@ public:
 		Response response;
 		string inFile = workDirectory + "/source.gif";
 		string outFile = workDirectory + "/flipped.gif";
-		getImageFromBuffer(inParameters[0], inFile);
+		getImageFromBuffer(inParameters[0], inFile, true);
 		CImg<unsigned char> image(inFile.c_str());
 		image.mirror('x').save(outFile.c_str());
 		putImageInBuffer(outParameters[0], outFile);

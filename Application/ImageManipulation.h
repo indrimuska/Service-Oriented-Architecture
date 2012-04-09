@@ -22,7 +22,7 @@ class ImageManipulation : public Service {
 protected:
 	string workDirectory;
 	
-	bool getImageFromBuffer(parameter &p, string filename);
+	bool getImageFromBuffer(parameter &p, string filename, bool hideWarning = false);
 	bool putImageInBuffer(parameter &p, string filename);
 public:
 	ImageManipulation();

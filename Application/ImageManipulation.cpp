@@ -14,18 +14,16 @@ ImageManipulation::ImageManipulation() {
 ImageManipulation::ImageManipulation(string workDirectory) {
 	this->workDirectory = workDirectory;
 }
-bool ImageManipulation::getImageFromBuffer(parameter &p, string filename) {
+bool ImageManipulation::getImageFromBuffer(parameter &p, string filename, bool hideWarning) {
 	FILE * file;
-	if ((file = fopen(filename.c_str(), "w")) != 0) {
+	if (!hideWarning && (file = fopen(filename.c_str(), "r")) != 0) {
+		fclose(file);
 		char response;
 		cout << "Il file '" << filename << "' esiste già. Sovrascriverlo [Y/N]? ";
 		while (response != 'Y' && response != 'N' && response != 'S') {
 			cin >> response;
 			response = toupper(response);
-			if (response == 'N') {
-				fclose(file);
-				return false;
-			}
+			if (response == 'N') return false;
 		}
 	}
 	if (!(file = fopen(filename.c_str(), "w"))) {
