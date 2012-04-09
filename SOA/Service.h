@@ -37,7 +37,6 @@ public:
 };
 
 class Service {
-private:
 protected:
 	string SPaddress;
 	string SPport;

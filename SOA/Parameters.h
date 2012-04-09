@@ -52,8 +52,11 @@ public:
 	parameter(parameter_direction direction, parameter_type type, void * value, size_t dimension);
 	parameter(parameter_direction direction, parameter_type type, parameter_value value);
 	void init(parameter_direction direction, parameter_type type);
-	void setValue(parameter_value &value);
+	void setValue(int value);
+	void setValue(double value);
+	void setValue(std::string value);
 	void setValue(void * value, size_t dimension);
+	void setValue(parameter_value &value);
 	void getInfo(parameter_direction &direction, parameter_type &type);
 	void getValue(int &int_value);
 	void getValue(double &double_value);

@@ -1,5 +1,5 @@
 //
-//  server.cpp
+//  ImageManipulationServer.cpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 14/03/12.

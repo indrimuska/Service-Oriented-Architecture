@@ -9,7 +9,7 @@
 #include "ImageManipulation.h"
 
 ImageManipulation::ImageManipulation() {
-	workDirectory = ".";
+	workDirectory = "Servers/ImageManipulationServer/";
 }
 ImageManipulation::ImageManipulation(string workDirectory) {
 	this->workDirectory = workDirectory;
@@ -89,8 +89,8 @@ RotateService::RotateService() {
 	setService("rotate", parameters);
 }
 bool RotateService::execute(Socket * sk) {
-	string inFile = workDirectory + "/source.gif";
-	string outFile = workDirectory + "/rotated.gif";
+	string inFile = workDirectory + "source.gif";
+	string outFile = workDirectory + "rotated.gif";
 	getImageFromBuffer(inParameters[1], inFile, true);
 	int degrees;
 	inParameters[0].getValue(degrees);
@@ -112,8 +112,8 @@ HorizontalFlipService::HorizontalFlipService() {
 }
 bool HorizontalFlipService::execute(Socket * sk) {
 	Response response;
-	string inFile = workDirectory + "/source.gif";
-	string outFile = workDirectory + "/flipped.gif";
+	string inFile = workDirectory + "source.gif";
+	string outFile = workDirectory + "flipped.gif";
 	getImageFromBuffer(inParameters[0], inFile, true);
 	CImg<unsigned char> image(inFile.c_str());
 	image.mirror('x').save(outFile.c_str());
