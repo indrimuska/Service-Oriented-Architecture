@@ -10,8 +10,7 @@
 #include <iostream>
 
 #include "SOA/SOA.h"
-#include "Application/RotateService.cpp"
-#include "Application/HorizontalFlipService.cpp"
+#include "Application/ImageManipulation.h"
 
 using namespace std;
 

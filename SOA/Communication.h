@@ -9,6 +9,7 @@
 #ifndef SOA_Communication_h
 #define SOA_Communication_h
 
+#include <cstdio>
 #include <vector>
 #include <cstdlib>
 #include <netdb.h>

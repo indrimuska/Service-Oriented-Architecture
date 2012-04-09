@@ -31,4 +31,16 @@ public:
 	bool getImageFromParameter(parameter_direction direction, int parameter_number, string filename);
 };
 
+class RotateService : public ImageManipulation {
+public:
+	RotateService();
+	bool execute(Socket * sk);
+};
+
+class HorizontalFlipService : public ImageManipulation {
+public:
+	HorizontalFlipService();
+	bool execute(Socket * sk);
+};
+
 #endif

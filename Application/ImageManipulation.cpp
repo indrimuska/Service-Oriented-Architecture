@@ -80,3 +80,47 @@ bool ImageManipulation::getImageFromParameter(parameter_direction direction, int
 	else p = &outParameters[parameter_number];
 	return getImageFromBuffer(* p, filename);
 }
+
+RotateService::RotateService() {
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, INT));
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
+	setService("rotate", parameters);
+}
+bool RotateService::execute(Socket * sk) {
+	string inFile = workDirectory + "/source.gif";
+	string outFile = workDirectory + "/rotated.gif";
+	getImageFromBuffer(inParameters[1], inFile, true);
+	int degrees;
+	inParameters[0].getValue(degrees);
+	CImg<unsigned char> image(inFile.c_str());
+	image.rotate(degrees).save(outFile.c_str());
+	putImageInBuffer(outParameters[0], outFile);
+	if (remove(inFile.c_str()) || remove(outFile.c_str())) {
+		cerr << "Impossibile rimuovere i file temporanei\n";
+		return false;
+	}
+	return true;
+}
+
+HorizontalFlipService::HorizontalFlipService() {
+	vector<parameter> parameters;
+	parameters.push_back(parameter(IN, BUFFER));
+	parameters.push_back(parameter(OUT, BUFFER));
+	setService("horizontal flip", parameters);
+}
+bool HorizontalFlipService::execute(Socket * sk) {
+	Response response;
+	string inFile = workDirectory + "/source.gif";
+	string outFile = workDirectory + "/flipped.gif";
+	getImageFromBuffer(inParameters[0], inFile, true);
+	CImg<unsigned char> image(inFile.c_str());
+	image.mirror('x').save(outFile.c_str());
+	putImageInBuffer(outParameters[0], outFile);
+	if (remove(inFile.c_str()) || remove(outFile.c_str())) {
+		cerr << "Impossibile rimuovere i file temporanei\n";
+		return false;
+	}
+	return true;
+}
