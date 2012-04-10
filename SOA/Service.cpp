@@ -16,7 +16,7 @@ void Response::setResult(bool result) {
 }
 void Response::setError(string error) {
 	result = false;
-	setMessage(error);
+	setMessage("\033[1;31m" + error + "\033[0m");
 }
 void Response::setMessage(string message) {
 	this->message = message;
@@ -183,7 +183,6 @@ bool Service::serveRequests(Socket * sk) {
 		} else inParameters[i] = received_params[i];
 	}
 	if (!response.getResult()) {
-		cerr << response.getMessage() << endl;
 		if (!sendResponse(* sk, response))
 			cerr << "Errore nell'invio della risposta\n";
 		return false;
@@ -197,6 +196,6 @@ bool Service::serveRequests(Socket * sk) {
 	return true;
 }
 bool Service::execute(Socket * sk) {
-	cout << "Servizio non implementato\n";
+	cout << "\033[1;31mServizio non implementato\033[0m\n";
 	return true;
 }

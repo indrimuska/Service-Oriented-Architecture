@@ -1,5 +1,5 @@
 //
-//  SOA/param.cpp
+//  SOA/Parameters.cpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 31/03/12.
@@ -38,13 +38,13 @@ void parameter_value::setValue(double value) {
 	setValue((void *) &value, sizeof(double));
 }
 void parameter_value::setValue(std::string value) {
-	setValue((void *) value.c_str(), value.size());
+	setValue((void *) value.c_str(), value.length());
 }
 void parameter_value::setValue(void * value, size_t dimension) {
-	if (this->dimension > 0) free(value);
+	if (this->dimension > 0) free(this->value);
+	this->dimension = dimension;
 	this->value = malloc(dimension);
 	memcpy(this->value, value, dimension);
-	this->dimension = dimension;
 }
 void parameter_value::get(void * object) {
 	memcpy(object, value, dimension);
@@ -172,6 +172,6 @@ std::ostream& operator<<(std::ostream &o, const parameter &p) {
 		o << "BUFFER";
 		if (pv->getDimension()) o << "\nvalue:     value not representable";
 	}
-	//delete pv;
+	delete pv;
 	return o << std::endl;
 }

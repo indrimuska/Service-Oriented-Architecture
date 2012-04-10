@@ -14,7 +14,7 @@
 
 #include "SOA/SOA.h"
 #include "SOA/Service.h"
-#include "Application/RotateService.cpp"
+//#include "Application/RotateService.cpp"
 
 using namespace std;
 
@@ -182,7 +182,7 @@ int main(int argc, char ** argv) {
 			cout << "Qui ho inviato la richiesta di registrazione del servizio"
 					<< endl;
 			//fino a qui OK
-			string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
+			/*string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
 			cout << "Sto per inviare serverInfo = " << endl;
 			cout << serverInfo << endl;
 			serverRegister.sendString(serverInfo); //1
@@ -198,10 +198,12 @@ int main(int argc, char ** argv) {
 						<< "Prima di poter registrare un servizio è necessario che il server sia registrato"
 						<< endl;
 				return true;
+
 			}
+			*/
 
 			//------ qui già so se posso registrare il servizio
-			cout << "Scrivi il nome del servizio che vuoi registrate" << endl;
+			/*cout << "Scrivi il nome del servizio che vuoi registrate" << endl;
 			string serviceToReg;
 			cin >> serviceToReg;
 			//Service s = new Service(serviceToReg);
@@ -209,7 +211,7 @@ int main(int argc, char ** argv) {
 			RotateService rotate;
 			SOA global;
 			if (!global.serviceRegistration(rotate))
-				return 0;
+				return 0;*/
 		}
 			break;
 

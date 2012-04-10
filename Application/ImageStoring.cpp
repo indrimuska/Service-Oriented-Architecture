@@ -120,9 +120,9 @@ GetListService::GetListService() {
 }
 bool GetListService::execute(Socket * sk) {
 	DIR * directory;
-	string directory_list;
 	struct stat file_info;
 	struct dirent * dir_info;
+	string directory_list = "";
 	if (!(directory = opendir(workDirectory.c_str()))) {
 		cerr << "Errore durante la lettura della directory\n"
 		"Controllare di avere i permessi necessari\n";
@@ -134,7 +134,9 @@ bool GetListService::execute(Socket * sk) {
 		if (S_ISDIR(file_info.st_mode)) continue;
 		directory_list += string("\n") + dir_info->d_name;
 	}
-	outParameters[0].setValue(directory_list.substr(1, directory_list.length()));
+	if (directory_list == "") directory_list = "\033[1;33mNon ci sono immagini nel buffer list\033[0m";
+	else directory_list = directory_list.substr(1).c_str();
+	outParameters[0].setValue(directory_list);
 	closedir(directory);
 	return true;
 }

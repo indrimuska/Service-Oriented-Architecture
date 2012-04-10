@@ -54,13 +54,15 @@ int main(int argc, char ** argv) {
 	while (1) {
 		// In attesa di connessione con i client...
 		Socket sk;
+		bool result;
 		string add, service;
 		comm.waitForConnection(sk, add);
 		cout << "si è connesso " << add << endl;
 		if (!sk.receiveString(service)) continue;
-		if (!service.compare("store image")) if (storeImage.serveRequests(&sk)) cout << "richiesta servita\n";
-		if (!service.compare("get image")) if (getImage.serveRequests(&sk)) cout << "richiesta servita\n";
-		if (!service.compare("get list")) if (getList.serveRequests(&sk)) cout << "richiesta servita\n";
+		if (!service.compare("store image")) result = storeImage.serveRequests(&sk); else
+			if (!service.compare("get image")) result = getImage.serveRequests(&sk); else
+												result = getList.serveRequests(&sk);
+		if (result) cout << "richiesta servita\n";
 		sk.closeSocket();
 		cout << endl;
 	}

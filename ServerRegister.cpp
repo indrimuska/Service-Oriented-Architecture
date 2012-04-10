@@ -6,12 +6,12 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include <iostream>
 
 #include <map>
+#include <vector>
 #include <stdio.h>
 #include <string.h>
-#include <vector>
+#include <iostream>
 
 #include "SOA/SOA.h"
 #include "SOA/Communication.h"
@@ -50,12 +50,8 @@ public:
 			cout << "Mi manda una conn_ack_req" << endl;
 			return confirmConnection(sk);
 		}
-		if (!request.compare(SRV_REG_REQ)){
-			return registerServer(sk);
-		}
-		if (!request.compare(SRC_REG_REQ)){
-			return registerService(sk);
-		}
+		if (!request.compare(SRV_REG_REQ)) return registerServer(sk);
+		if (!request.compare(SRC_REG_REQ)) return registerService(sk);
 		if (!request.compare(SRV_REG_DISP)) {
 			cout << "è stata richiesta una display " << endl;
 			return displayRegisteredServers(sk);
@@ -64,9 +60,7 @@ public:
 			cout << "è stata richiesta la display dei servizi " << endl;
 			return displayRegisteredServices(sk);
 		}
-		if (!request.compare(SRV_UNREG_REQ)){
-			return unregisterServer(sk);
-		}
+		if (!request.compare(SRV_UNREG_REQ)) return unregisterServer(sk);
 		return true;
 	}
 	bool confirmConnection(Socket * sk) {
@@ -101,7 +95,7 @@ public:
 				salta = true;
 			}
 		}
-		if (salta == true){
+		if (salta == true) {
 			string inviaErrore = "Questo server è già registrato\n";
 			sk->sendString(inviaErrore);
 			return true;

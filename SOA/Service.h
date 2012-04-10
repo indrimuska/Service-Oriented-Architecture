@@ -32,7 +32,7 @@ public:
 	void setMessage(string message);
 	bool getResult();
 	string getMessage();
-	vector<parameter> & getParameters();
+	vector<parameter>& getParameters();
 	void setParameters(vector<parameter> &parameters);
 };
 
