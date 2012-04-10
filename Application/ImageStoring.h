@@ -12,6 +12,7 @@
 #include <string>
 #include <iostream>
 #include <dirent.h>
+#include <pthread.h>
 
 #include "../SOA/Service.h"
 
@@ -30,20 +31,26 @@ public:
 };
 
 class StoreImageService : public ImageStoring {
+private:
+	pthread_mutex_t * mutex;
 public:
-	StoreImageService();
+	StoreImageService(pthread_mutex_t * mutex);
 	bool execute(Socket * sk);
 };
 
 class GetImageService : public ImageStoring {
+private:
+	pthread_mutex_t * mutex;
 public:
-	GetImageService();
+	GetImageService(pthread_mutex_t * mutex);
 	bool execute(Socket * sk);
 };
 
 class GetListService : public ImageStoring {
+private:
+	pthread_mutex_t * mutex;
 public:
-	GetListService();
+	GetListService(pthread_mutex_t * mutex);
 	bool execute(Socket * sk);
 };
 

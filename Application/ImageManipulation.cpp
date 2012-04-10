@@ -78,7 +78,7 @@ bool ImageManipulation::getImageFromParameter(parameter_direction direction, int
 	parameter * p;
 	if (direction == IN) p = &inParameters[parameter_number];
 	else p = &outParameters[parameter_number];
-	return getImageFromBuffer(* p, filename);
+	return getImageFromBuffer(* p, workDirectory + '/' + filename);
 }
 
 RotateService::RotateService() {
@@ -89,12 +89,12 @@ RotateService::RotateService() {
 	setService("rotate", parameters);
 }
 bool RotateService::execute(Socket * sk) {
-	string inFile = workDirectory + "source.gif";
-	string outFile = workDirectory + "rotated.gif";
+	string inFile = "source.gif";
+	string outFile = "rotated.gif";
 	getImageFromBuffer(inParameters[1], inFile, true);
 	int degrees;
 	inParameters[0].getValue(degrees);
-	CImg<unsigned char> image(inFile.c_str());
+	CImg<unsigned char> image((workDirectory + '/' + inFile).c_str());
 	image.rotate(degrees).save(outFile.c_str());
 	putImageInBuffer(outParameters[0], outFile);
 	if (remove(inFile.c_str()) || remove(outFile.c_str())) {

@@ -78,7 +78,7 @@ bool ImageStoring::getImageFromParameter(parameter_direction direction, int para
 	parameter * p;
 	if (direction == IN) p = &inParameters[parameter_number];
 	else p = &outParameters[parameter_number];
-	return getImageFromBuffer(* p, filename);
+	return getImageFromBuffer(* p, workDirectory + '/' + filename);
 }
 string ImageStoring::getStringFromParameter(parameter_direction direction, int parameter_number) {
 	parameter * p;
@@ -89,7 +89,8 @@ string ImageStoring::getStringFromParameter(parameter_direction direction, int p
 	return string_value;
 }
 
-StoreImageService::StoreImageService() {
+StoreImageService::StoreImageService(pthread_mutex_t * mutex) {
+	this->mutex = mutex;
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, STRING));
 	parameters.push_back(parameter(IN, BUFFER));
@@ -98,10 +99,14 @@ StoreImageService::StoreImageService() {
 bool StoreImageService::execute(Socket * sk) {
 	string filename;
 	inParameters[0].getValue(filename);
-	return getImageFromBuffer(inParameters[1], workDirectory + filename, true);
+	pthread_mutex_lock(&mutex);
+	bool result = getImageFromBuffer(inParameters[1], workDirectory + '/' + filename, true);
+	pthread_mutex_unlock(&mutex);
+	return result;
 }
 
-GetImageService::GetImageService() {
+GetImageService::GetImageService(pthread_mutex_t * mutex) {
+	this->mutex = mutex;
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, STRING));
 	parameters.push_back(parameter(OUT, BUFFER));
@@ -110,10 +115,14 @@ GetImageService::GetImageService() {
 bool GetImageService::execute(Socket * sk) {
 	string filename;
 	inParameters[0].getValue(filename);
-	return putImageInBuffer(outParameters[0], filename);
+	pthread_mutex_lock(&mutex);
+	bool result = putImageInBuffer(outParameters[0], workDirectory + '/' + filename);
+	pthread_mutex_unlock(&mutex);
+	return result;
 }
 
-GetListService::GetListService() {
+GetListService::GetListService(pthread_mutex_t * mutex) {
+	this->mutex = mutex;
 	vector<parameter> parameters;
 	parameters.push_back(parameter(OUT, STRING));
 	setService("get list", parameters);
@@ -123,6 +132,7 @@ bool GetListService::execute(Socket * sk) {
 	struct stat file_info;
 	struct dirent * dir_info;
 	string directory_list = "";
+	pthread_mutex_lock(&mutex);
 	if (!(directory = opendir(workDirectory.c_str()))) {
 		cerr << "Errore durante la lettura della directory\n"
 		"Controllare di avere i permessi necessari\n";
@@ -130,7 +140,7 @@ bool GetListService::execute(Socket * sk) {
     }
 	while ((dir_info = readdir(directory))) {
 		if (dir_info->d_name[0] == '.') continue;
-		if (stat((workDirectory + dir_info->d_name).c_str(), &file_info)) continue;
+		if (stat((workDirectory + '/' + dir_info->d_name).c_str(), &file_info)) continue;
 		if (S_ISDIR(file_info.st_mode)) continue;
 		directory_list += string("\n") + dir_info->d_name;
 	}
@@ -138,5 +148,6 @@ bool GetListService::execute(Socket * sk) {
 	else directory_list = directory_list.substr(1).c_str();
 	outParameters[0].setValue(directory_list);
 	closedir(directory);
+	pthread_mutex_unlock(&mutex);
 	return true;
 }

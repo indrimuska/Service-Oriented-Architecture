@@ -24,12 +24,20 @@ int main(int argc, char ** argv) {
 	SPaddress = argv[1];
 	SPport = argv[2];
 	
+	string filename = string(argv[3]);
+	filename = filename.substr(filename.find_last_of("/")+1);
+	cout << "filename: " << filename << endl;
+	
 	cout << endl;
 	vector<parameter> parameters;
 	
-	/*// Inizializzazione del serivzio ROTATE
+	/////////////////////////////////////////////////////////////
+	// INIZIALIZZAZIONE DEI SERVIZI DA RICHIEDERE              //
+	/////////////////////////////////////////////////////////////
+	
+	// Inizializzazione del serivzio ROTATE
 	parameters.clear();
-	parameters.push_back(parameter(IN, INT, 15));
+	parameters.push_back(parameter(IN, INT, 90));
 	parameters.push_back(parameter(IN, BUFFER));
 	parameters.push_back(parameter(OUT, BUFFER));
 	
@@ -37,15 +45,6 @@ int main(int argc, char ** argv) {
 	rotate.setServer(SPaddress, SPport);
 	rotate.setService("rotate", parameters);
 	rotate.setImageAsParameter(IN, 1, argv[3]);
-	
-	cout << "Richiesta del servizio ROTATE:\n";
-	if (rotate.requestService()) {
-		cout << "richiesta accettata\n";
-		if (!rotate.getImageFromParameter(OUT, 0, argv[4])) cout << "impossibile creare l'immagine\n";
-		else cout << "creata immagine '" << argv[4] << "'\n";
-	} else cout << "richiesta rifiutata\n";
-	
-	cout << endl;
 	
 	// Inizializzazione del servizio HORIZONTAL FLIP
 	parameters.clear();
@@ -57,18 +56,9 @@ int main(int argc, char ** argv) {
 	horizontalFlip.setService("horizontal flip", parameters);
 	horizontalFlip.setImageAsParameter(IN, 0, argv[3]);
 	
-	cout << "Richiesta del servizio HORIZONTAL FLIP:\n";
-	if (horizontalFlip.requestService()) {
-		cout << "richiesta accettata\n";
-		if (!horizontalFlip.getImageFromParameter(OUT, 0, argv[5])) cout << "impossibile creare l'immagine\n";
-		else cout << "creata immagine '" << argv[5] << "'\n";
-	} else cout << "richiesta rifiutata\n";
-	
-	cout << endl;*/
-	
 	// Inizializzazione del servizio STORE IMAGE
 	parameters.clear();
-	parameters.push_back(parameter(IN, STRING, argv[3]));
+	parameters.push_back(parameter(IN, STRING, filename));
 	parameters.push_back(parameter(IN, BUFFER));
 	
 	ImageStoring storeImage;
@@ -76,29 +66,14 @@ int main(int argc, char ** argv) {
 	storeImage.setService("store image", parameters);
 	storeImage.setImageAsParameter(IN, 1, argv[3]);
 	
-	cout << "Richiesta del servizio STORE IMAGE:\n";
-	if (storeImage.requestService()) cout << "richiesta accettata\n";
-	else cout << "richiesta rifiutata\n";
-	
-	cout << endl;
-	
 	// Inizializzazione del servizio GET IMAGE
 	parameters.clear();
-	parameters.push_back(parameter(IN, STRING, argv[3]));
+	parameters.push_back(parameter(IN, STRING, filename));
 	parameters.push_back(parameter(OUT, BUFFER));
 	
 	ImageStoring getImage("Clients");
 	getImage.setServer(SPaddress, SPport);
 	getImage.setService("get image", parameters);
-	
-	cout << "Richiesta del servizio GET IMAGE:\n";
-	if (getImage.requestService()) {
-		cout << "richiesta accettata\n";
-		if (!getImage.getImageFromParameter(OUT, 0, argv[4])) cout << "impossibile creare l'immagine\n";
-		else cout << "creata immagine '" << argv[4] << "'\n";
-	} else cout << "richiesta rifiutata\n";
-	
-	cout << endl;
 	
 	// Inizializzazione del servizio GET LIST
 	parameters.clear();
@@ -108,9 +83,39 @@ int main(int argc, char ** argv) {
 	getList.setServer(SPaddress, SPport);
 	getList.setService("get list", parameters);
 	
+	/////////////////////////////////////////////////////////////
+	
+	cout << "Richiesta del servizio ROTATE:\n";
+	if (rotate.requestService()) {
+		cout << "richiesta accettata\n";
+		if (!rotate.getImageFromParameter(OUT, 0, argv[4])) cout << "impossibile creare l'immagine\n";
+		else cout << "creata immagine '" << argv[4] << "'\n";
+	} else cout << "richiesta rifiutata\n";
+	cout << endl;
+	
+	cout << "Richiesta del servizio HORIZONTAL FLIP:\n";
+	if (horizontalFlip.requestService()) {
+		cout << "richiesta accettata\n";
+		if (!horizontalFlip.getImageFromParameter(OUT, 0, argv[5])) cout << "impossibile creare l'immagine\n";
+		else cout << "creata immagine '" << argv[5] << "'\n";
+	} else cout << "richiesta rifiutata\n";
+	cout << endl;
+	
+	cout << "Richiesta del servizio STORE IMAGE:\n";
+	if (storeImage.requestService()) cout << "richiesta accettata\n";
+	else cout << "richiesta rifiutata\n";
+	cout << endl;
+	
+	cout << "Richiesta del servizio GET IMAGE:\n";
+	if (getImage.requestService()) {
+		cout << "richiesta accettata\n";
+		if (!getImage.getImageFromParameter(OUT, 0, argv[4])) cout << "impossibile creare l'immagine\n";
+		else cout << "creata immagine '" << argv[4] << "'\n";
+	} else cout << "richiesta rifiutata\n";
+	cout << endl;
+	
 	cout << "Richiesta del servizio GET LIST:\n";
 	if (getList.requestService()) cout << "richiesta accettata:\n" << getList.getStringFromParameter(OUT, 0) << endl;
 	else cout << "richiesta rifiutata\n";
-	
 	cout << endl;
 }

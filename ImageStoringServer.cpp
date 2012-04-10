@@ -16,6 +16,8 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 	
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+	
 	string SPaddress, SPport;
 	string SRaddress, SRport;
 	
@@ -29,13 +31,13 @@ int main(int argc, char ** argv) {
 	if (!comm.startListener(SPport)) return 0;
 	
 	// Inizializzaione dei servizi
-	StoreImageService storeImage;
+	StoreImageService storeImage(&mutex);
 	storeImage.setServer(SPaddress, SPport);
 	
-	GetImageService getImage;
+	GetImageService getImage(&mutex);
 	getImage.setServer(SPaddress, SPport);
 	
-	GetListService getList;
+	GetListService getList(&mutex);
 	getList.setServer(SPaddress, SPport);
 	
 	// Connessione al Service Register
