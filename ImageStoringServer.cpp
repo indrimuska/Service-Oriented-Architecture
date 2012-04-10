@@ -22,9 +22,8 @@ int main(int argc, char ** argv) {
 	string SRaddress, SRport;
 	
 	// Avvio del server
-	//cout << "Set port number: ";
-	//cin >> SPport;
-	SPport = argv[1];
+	cout << "Numero di porta: ";
+	cin >> SPport;
 	
 	Communicator comm;
 	SPaddress = comm.getIP();
@@ -51,16 +50,16 @@ int main(int argc, char ** argv) {
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	
-	cout << "In attesa di connessioni (" << SPaddress << ":" << SPport << ")...\n\n";
+	cout << "\nConnesso all'indirizzo " << SPaddress << ":" << SPport << "\nIn attesa di connessioni...\n\n";
 	
 	while (1) {
 		// In attesa di connessione con i client...
 		Socket sk;
 		bool result;
-		string add, service;
-		comm.waitForConnection(sk, add);
-		cout << "si è connesso " << add << endl;
+		string client, service;
+		comm.waitForConnection(sk, client);
 		if (!sk.receiveString(service)) continue;
+		cout << "Il client " << client << " si è connesso e richiede il servizio \033[1;34m" << service << "\033[0m\n";
 		if (!service.compare("store image")) result = storeImage.serveRequests(&sk); else
 			if (!service.compare("get image")) result = getImage.serveRequests(&sk); else
 												result = getList.serveRequests(&sk);

@@ -78,7 +78,14 @@ bool ImageManipulation::getImageFromParameter(parameter_direction direction, int
 	parameter * p;
 	if (direction == IN) p = &inParameters[parameter_number];
 	else p = &outParameters[parameter_number];
-	return getImageFromBuffer(* p, workDirectory + '/' + filename);
+	return getImageFromBuffer(* p, filename);
+}
+string ImageManipulation::getServiceName() {
+	return name;
+}
+parameter_value ImageManipulation::getParameterValue(parameter_direction direction, int parameter_number) {
+	if (direction == IN) return inParameters[parameter_number].getParameterValue();
+	else return outParameters[parameter_number].getParameterValue();
 }
 
 RotateService::RotateService() {
@@ -91,13 +98,13 @@ RotateService::RotateService() {
 bool RotateService::execute(Socket * sk) {
 	string inFile = "source.gif";
 	string outFile = "rotated.gif";
-	getImageFromBuffer(inParameters[1], inFile, true);
+	getImageFromBuffer(inParameters[1], workDirectory + inFile, true);
 	int degrees;
 	inParameters[0].getValue(degrees);
-	CImg<unsigned char> image((workDirectory + '/' + inFile).c_str());
-	image.rotate(degrees).save(outFile.c_str());
-	putImageInBuffer(outParameters[0], outFile);
-	if (remove(inFile.c_str()) || remove(outFile.c_str())) {
+	CImg<unsigned char> image((workDirectory + inFile).c_str());
+	image.rotate(degrees % 360).save((workDirectory + outFile).c_str());
+	putImageInBuffer(outParameters[0], workDirectory + outFile);
+	if (remove((workDirectory + inFile).c_str()) || remove((workDirectory + outFile).c_str())) {
 		cerr << "Impossibile rimuovere i file temporanei\n";
 		return false;
 	}
@@ -111,14 +118,13 @@ HorizontalFlipService::HorizontalFlipService() {
 	setService("horizontal flip", parameters);
 }
 bool HorizontalFlipService::execute(Socket * sk) {
-	Response response;
-	string inFile = workDirectory + "source.gif";
-	string outFile = workDirectory + "flipped.gif";
-	getImageFromBuffer(inParameters[0], inFile, true);
-	CImg<unsigned char> image(inFile.c_str());
-	image.mirror('x').save(outFile.c_str());
-	putImageInBuffer(outParameters[0], outFile);
-	if (remove(inFile.c_str()) || remove(outFile.c_str())) {
+	string inFile = "source.gif";
+	string outFile = "flipped.gif";
+	getImageFromBuffer(inParameters[0], workDirectory + inFile, true);
+	CImg<unsigned char> image((workDirectory + inFile).c_str());
+	image.mirror('x').save((workDirectory + outFile).c_str());
+	putImageInBuffer(outParameters[0], workDirectory + outFile);
+	if (remove((workDirectory + inFile).c_str()) || remove((workDirectory + outFile).c_str())) {
 		cerr << "Impossibile rimuovere i file temporanei\n";
 		return false;
 	}

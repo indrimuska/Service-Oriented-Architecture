@@ -64,6 +64,7 @@ public:
 	void getValue(void * generic_value);
 	parameter_direction getDirection();
 	parameter_type getType();
+	parameter_value getParameterValue();
 	size_t getValueDimension();
 	bool operator==(const parameter &p);
 	bool operator!=(const parameter &p);

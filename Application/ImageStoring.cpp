@@ -27,7 +27,7 @@ bool ImageStoring::getImageFromBuffer(parameter &p, string filename, bool hideWa
 		}
 	}
 	if (!(file = fopen(filename.c_str(), "w"))) {
-		cerr << "Impossibile creare il file richiesto\n"
+		cerr << "Impossibile creare il file richiesto (" << filename << ")\n"
 		"Controllare di avere i permessi necessari\n";
 		return false;
 	}
@@ -78,7 +78,7 @@ bool ImageStoring::getImageFromParameter(parameter_direction direction, int para
 	parameter * p;
 	if (direction == IN) p = &inParameters[parameter_number];
 	else p = &outParameters[parameter_number];
-	return getImageFromBuffer(* p, workDirectory + '/' + filename);
+	return getImageFromBuffer(* p, workDirectory + filename);
 }
 string ImageStoring::getStringFromParameter(parameter_direction direction, int parameter_number) {
 	parameter * p;
@@ -99,9 +99,9 @@ StoreImageService::StoreImageService(pthread_mutex_t * mutex) {
 bool StoreImageService::execute(Socket * sk) {
 	string filename;
 	inParameters[0].getValue(filename);
-	pthread_mutex_lock(&mutex);
-	bool result = getImageFromBuffer(inParameters[1], workDirectory + '/' + filename, true);
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_lock(mutex);
+	bool result = getImageFromBuffer(inParameters[1], workDirectory + filename, true);
+	pthread_mutex_unlock(mutex);
 	return result;
 }
 
@@ -115,9 +115,9 @@ GetImageService::GetImageService(pthread_mutex_t * mutex) {
 bool GetImageService::execute(Socket * sk) {
 	string filename;
 	inParameters[0].getValue(filename);
-	pthread_mutex_lock(&mutex);
-	bool result = putImageInBuffer(outParameters[0], workDirectory + '/' + filename);
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_lock(mutex);
+	bool result = putImageInBuffer(outParameters[0], workDirectory + filename);
+	pthread_mutex_unlock(mutex);
 	return result;
 }
 
@@ -132,7 +132,7 @@ bool GetListService::execute(Socket * sk) {
 	struct stat file_info;
 	struct dirent * dir_info;
 	string directory_list = "";
-	pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(mutex);
 	if (!(directory = opendir(workDirectory.c_str()))) {
 		cerr << "Errore durante la lettura della directory\n"
 		"Controllare di avere i permessi necessari\n";
@@ -140,7 +140,7 @@ bool GetListService::execute(Socket * sk) {
     }
 	while ((dir_info = readdir(directory))) {
 		if (dir_info->d_name[0] == '.') continue;
-		if (stat((workDirectory + '/' + dir_info->d_name).c_str(), &file_info)) continue;
+		if (stat((workDirectory + dir_info->d_name).c_str(), &file_info)) continue;
 		if (S_ISDIR(file_info.st_mode)) continue;
 		directory_list += string("\n") + dir_info->d_name;
 	}
@@ -148,6 +148,6 @@ bool GetListService::execute(Socket * sk) {
 	else directory_list = directory_list.substr(1).c_str();
 	outParameters[0].setValue(directory_list);
 	closedir(directory);
-	pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(mutex);
 	return true;
 }

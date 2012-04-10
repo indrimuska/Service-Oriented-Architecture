@@ -130,6 +130,9 @@ parameter_direction parameter::getDirection() {
 parameter_type parameter::getType() {
 	return type;
 }
+parameter_value parameter::getParameterValue() {
+	return value;
+}
 size_t parameter::getValueDimension() {
 	return value.getDimension();
 }

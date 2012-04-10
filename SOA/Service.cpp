@@ -40,6 +40,11 @@ void Service::setServer(string SPaddress, string SPport) {
 }
 void Service::setService(string name, vector<parameter> &parameters) {
 	this->name = name;
+	setParameters(parameters);
+}
+void Service::setParameters(vector<parameter> &parameters) {
+	inParameters.clear();
+	outParameters.clear();
 	for (int i = 0; i < (int) parameters.size(); i++) {
 		if (parameters[i].getDirection() == IN) inParameters.push_back(parameters[i]);
 		else outParameters.push_back(parameters[i]);
@@ -182,18 +187,15 @@ bool Service::serveRequests(Socket * sk) {
 			response.setError(s_error);
 		} else inParameters[i] = received_params[i];
 	}
-	if (!response.getResult()) {
-		if (!sendResponse(* sk, response))
-			cerr << "Errore nell'invio della risposta\n";
-		return false;
+	if (response.getResult()) {
+		if (!execute(sk)) response.setError("Errore durante l'esecuzione del servizio");
+		response.setParameters(outParameters);
 	}
-	if (!execute(sk)) response.setError("Errore durante l'esecuzione del servizio");
-	response.setParameters(outParameters);
 	if (!sendResponse(* sk, response)) {
 		cerr << "Errore nell'invio della risposta\n";
 		return false;
 	}
-	return true;
+	return response.getResult();
 }
 bool Service::execute(Socket * sk) {
 	cout << "\033[1;31mServizio non implementato\033[0m\n";
