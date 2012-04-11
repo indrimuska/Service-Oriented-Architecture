@@ -88,6 +88,34 @@ string ImageStoring::getStringFromParameter(parameter_direction direction, int p
 	p->getValue(string_value);
 	return string_value;
 }
+vector<string> ImageStoring::getStringVectorFromParameter(parameter_direction direction, int parameter_number, string delimiter) {
+	string stringToTokenize = getStringFromParameter(direction, parameter_number);
+	vector<string> tokens;
+	string::size_type delimiterPosition = 0, tokenPosition = 0, position = 0;
+	if (stringToTokenize.length() < 1) return tokens;
+	while(1){
+		delimiterPosition = stringToTokenize.find_first_of(delimiter, position);
+		tokenPosition = stringToTokenize.find_first_not_of(delimiter, position);
+		if (string::npos != delimiterPosition){
+			if (string::npos != tokenPosition){
+				if (tokenPosition < delimiterPosition)
+					tokens.push_back(stringToTokenize.substr(position, delimiterPosition - position));
+				else tokens.push_back("");
+			} else tokens.push_back("");
+			position = delimiterPosition + 1;
+		} else {
+			if (string::npos != tokenPosition)
+				tokens.push_back(stringToTokenize.substr(position));
+			else tokens.push_back("");
+			break;
+		}
+	}
+	return tokens;
+}
+parameter_value ImageStoring::getParameterValue(parameter_direction direction, int parameter_number) {
+	if (direction == IN) return inParameters[parameter_number].getParameterValue();
+	else return outParameters[parameter_number].getParameterValue();
+}
 
 StoreImageService::StoreImageService(pthread_mutex_t * mutex) {
 	this->mutex = mutex;

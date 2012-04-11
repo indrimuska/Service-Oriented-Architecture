@@ -63,7 +63,7 @@ int main(int argc, char ** argv) {
 		if (!service.compare("store image")) result = storeImage.serveRequests(&sk); else
 			if (!service.compare("get image")) result = getImage.serveRequests(&sk); else
 												result = getList.serveRequests(&sk);
-		if (result) cout << "richiesta servita\n";
+		if (result) cout << "Richiesta servita\n";
 		sk.closeSocket();
 		cout << endl;
 	}

@@ -31,6 +31,7 @@ public:
 	bool getImageFromParameter(parameter_direction direction, int parameter_number, string filename);
 	string getServiceName();
 	parameter_value getParameterValue(parameter_direction direction, int parameter_number);
+	void setParameterValue(parameter_direction direction, int parameter_number, parameter_value &value);
 };
 
 class RotateService : public ImageManipulation {

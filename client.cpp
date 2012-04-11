@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define NUM_ITERATIONS 10
+#define NUM_ITERATIONS 1
 
 int main(int argc, char ** argv) {
 	
@@ -86,9 +86,10 @@ int main(int argc, char ** argv) {
 	
 	// Leggo i file contenuti nella cartella Images
 	DIR * directory;
-	vector<string> files;
 	struct stat file_info;
 	struct dirent * dir_info;
+	vector<string> files_from_folder;
+	vector<string> files_from_server;
 	if (!(directory = opendir("Images"))) {
 		cerr << "Errore durante la lettura della directory\n"
 		"Controllare di avere i permessi necessari\n";
@@ -98,41 +99,100 @@ int main(int argc, char ** argv) {
 		if (dir_info->d_name[0] == '.') continue;
 		if (stat((string("Images/") + dir_info->d_name).c_str(), &file_info)) continue;
 		if (S_ISDIR(file_info.st_mode)) continue;
-		files.push_back(string("Images/") + dir_info->d_name);
+		files_from_folder.push_back(string("Images/") + dir_info->d_name);
 	}
-	if (!files.size()) {
+	if (!files_from_folder.size()) {
 		cerr << "\033[1;33mNon ci sono immagini nella cartella 'Images'\033[0m";
 		return 0;
 	}
 	
+	// TODO: mettere i JPEG al posto dei GIF
+	// TODO: controllare anche i parametri di uscita
+	
 	srand((int) time(NULL));
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
-		int file_index = (int) (rand() % files.size());
-		int operation_type = (int) (rand() % 2);
+		
+		// Scelta del posto in cui prelevare le immagini
+		int getImagesFromServer = (int) (rand() % 2);
+		vector<string> * files;
+		parameter_value result;
+		
+		// Scelta dell'operazione da richiedere al primo server
+		int operationType = (int) (rand() % 2);
 		ImageManipulation * operation;
-		if (operation_type == 0) operation = &rotate;
-		else operation = &horizontalFlip;
+		operation = operationType == 0 ? &rotate : &horizontalFlip;
+		
+		// Elenco delle operazioni da eseguire
+		int stepNumber = 0;
+		cout << "Listato di esecuzione:\n";
+		if (getImagesFromServer) cout << "  " << ++stepNumber << ". Richiesta dell'elenco delle immagini sul secondo server\n";
+		cout << "  " << ++stepNumber << ". Prelievo di un'immagine random tra quelle esistenti";
+		if (!getImagesFromServer) cout << " nella cartella Images";
+		cout << "\n";
+		cout << "  " << ++stepNumber << ". Richiesta del servizio " << operation->getServiceName() << " al primo server\n";
+		cout << "  " << ++stepNumber << ". Invio dell'immagine al secondo server\n";
+		if (!getImagesFromServer) cout << "  " << ++stepNumber << ". Richiesta dell'elenco delle immagini sul secondo server\n";
+		cout << endl;
+		
+		// Scelta dell'elenco delle immagini disponibili
+		if (getImagesFromServer) {
+			cout << "Richiesta del servizio \033[1;34mget list\033[0m:\n";
+			if (!getList.requestService()) {
+				cout << "\033[1;31mRichiesta rifiutata\033[0m\n\n";
+				continue;
+			}
+			cout << "\033[1;32mServizio confermato\033[0m\n\n";
+			files_from_server = getList.getStringVectorFromParameter(OUT, 0, "\n");
+			files = &files_from_server;
+		} else files = &files_from_folder;
+		
+		// Scelta del file da prelevare/inviare
+		int file_index = (int) (rand() % files->size());
+		
+		// Eventuale prelievo dell'immagine dal secondo server
+		if (getImagesFromServer) {
+			parameters.clear();
+			parameters.push_back(parameter(IN, STRING, files_from_server[file_index]));
+			parameters.push_back(parameter(OUT, BUFFER));
+			getImage.setParameters(parameters);
+			cout << "Richiesta del servizio \033[1;34mget image\033[0m:\n";
+			if (!getImage.requestService()) {
+				cout << "\033[1;31mRichiesta rifiutata\033[0m\n\n";
+				continue;
+			}
+			cout << "\033[1;32mServizio confermato\033[0m\n\n";
+			result = getImage.getParameterValue(OUT, 0);
+		}
+		
+		// Richiesta del servizio scelto al primo server
+		if (getImagesFromServer) operation->setParameterValue(IN, 1-operationType, result);
+		else operation->setImageAsParameter(IN, 1-operationType, files->at(file_index));
 		cout << "Richiesta del servizio \033[1;34m" << operation->getServiceName() << "\033[0m:\n";
-		operation->setImageAsParameter(IN, 1-operation_type, files[file_index]);
 		if (!operation->requestService()) {
-			cout << "Richiesta rifiutata\n\n";
+			cout << "\033[1;31mRichiesta rifiutata\033[0m\n\n";
 			continue;
 		}
 		cout << "\033[1;32mServizio confermato\033[0m\n\n";
-		parameter_value result = operation->getParameterValue(OUT, 0);
+		result = operation->getParameterValue(OUT, 0);
+		
+		// Richiesta di memorizzazione dell'immagine al secondo server
 		parameters.clear();
-		parameters.push_back(parameter(IN, STRING, files[file_index].substr(files[file_index].find_last_of("/")+1)));
+		parameters.push_back(parameter(IN, STRING, files->at(file_index).substr(files->at(file_index).find_last_of("/")+1)));
 		parameters.push_back(parameter(IN, BUFFER, result));
 		storeImage.setParameters(parameters);
 		cout << "Richiesta del servizio \033[1;34mstore image\033[0m:\n";
 		if (!storeImage.requestService()) {
-			cout << "Richiesta rifiutata\n\n";
+			cout << "\033[1;31mRichiesta rifiutata\033[0m\n\n";
 			continue;
 		}
 		cout << "\033[1;32mServizio confermato\033[0m\n\n";
-		cout << "Richiesta del servizio \033[1;34mget list\033[0m:\n";
-		if (getList.requestService()) cout << getList.getStringFromParameter(OUT, 0) << endl << endl;
-		else cout << "Richiesta rifiutata\n\n";
+		
+		// Eventuale elenco dei file presenti sul secondo server
+		if (!getImagesFromServer) {
+			cout << "Richiesta del servizio \033[1;34mget list\033[0m:\n";
+			if (getList.requestService()) cout << getList.getStringFromParameter(OUT, 0) << endl << endl;
+			else cout << "\033[1;31mRichiesta rifiutata\033[0m\n\n";
+		}
 	}
 	
 	

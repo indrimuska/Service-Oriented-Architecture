@@ -28,6 +28,8 @@ public:
 	bool setImageAsParameter(parameter_direction direction, int parameter_number, string filename);
 	bool getImageFromParameter(parameter_direction direction, int parameter_number, string filename);
 	string getStringFromParameter(parameter_direction direction, int parameter_number);
+	vector<string> getStringVectorFromParameter(parameter_direction direction, int parameter_number, string delimiter);
+	parameter_value getParameterValue(parameter_direction direction, int parameter_number);
 };
 
 class StoreImageService : public ImageStoring {

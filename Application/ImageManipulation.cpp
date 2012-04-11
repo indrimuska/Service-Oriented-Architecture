@@ -87,6 +87,10 @@ parameter_value ImageManipulation::getParameterValue(parameter_direction directi
 	if (direction == IN) return inParameters[parameter_number].getParameterValue();
 	else return outParameters[parameter_number].getParameterValue();
 }
+void ImageManipulation::setParameterValue(parameter_direction direction, int parameter_number, parameter_value &value) {
+	if (direction == IN) inParameters[parameter_number].setValue(value);
+	else outParameters[parameter_number].setValue(value);
+}
 
 RotateService::RotateService() {
 	vector<parameter> parameters;
