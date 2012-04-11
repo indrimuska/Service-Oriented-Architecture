@@ -133,7 +133,11 @@ bool Service::requestService() {
 		return false;
 	}
 	if (!sendParameters(serviceProvider, inParameters)) {
-		cerr << "Errore nell'invio del nome del servizio richiesto\n";
+		cerr << "Errore nell'invio dei parametri di ingresso del servizio\n";
+		return false;
+	}
+	if (!sendParameters(serviceProvider, outParameters)) {
+		cerr << "Errore nell'invio dei parametri di uscita del servizio\n";
 		return false;
 	}
 	Response response;
@@ -151,48 +155,75 @@ bool Service::requestService() {
 }
 bool Service::serveRequests(Socket * sk) {
 	string name;
-	vector<parameter> received_params;
+	vector<parameter> receivedInParams, receivedOutParams;
 	Response response;
 	if (!sk->receiveString(name)) {
 		cerr << "Errore durante la ricezione di una richiesta di servizio\n";
 		return false;
 	}
-	if (!receiveParameters(sk, received_params)) {
-		cerr << "Errore durante l'invio dei parametri del servizio\n";
+	if (!receiveParameters(sk, receivedInParams)) {
+		cerr << "Errore durante la ricezione dei parametri di ingresso del servizio\n";
+		return false;
+	}
+	if (!receiveParameters(sk, receivedOutParams)) {
+		cerr << "Errore durante la ricezione dei parametri di uscita del servizio\n";
 		return false;
 	}
 	if (name.compare(this->name)) {
 		cerr << "Richiesta con nome del servizio non corretto\n";
 		response.setError("Il nome del servizio non è corretto");
 	}
-	if (received_params.size() != inParameters.size()) {
+	if (receivedInParams.size() != inParameters.size()) {
 		cerr << "Richiesta con numero di parametri di ingresso non corretto\n";
 		response.setError("Il numero dei parametri di ingresso non è corretto");
 	}
-	for (int i = 0; i < (int) received_params.size(); i++) {
-		if (inParameters[i] != received_params[i]) {
+	for (int i = 0; i < (int) receivedInParams.size(); i++) {
+		if (inParameters[i] != receivedInParams[i]) {
 			stringstream error;
-			error << "parametri di ingresso non corretti (" << i << ":";
-			error << (received_params[i].getDirection() == IN ? "IN" : "OUT") << ",";
-			if (received_params[i].getType() == INT) error << "INT";
-			if (received_params[i].getType() == DOUBLE) error << "DOUBLE";
-			if (received_params[i].getType() == STRING) error << "STRING";
-			if (received_params[i].getType() == BUFFER) error << "BUFFER";
-			error << "|" << (inParameters[i].getDirection() == IN ? "IN" : "OUT") << ",";
+			error << "Parametri di ingresso non corretti\n";
+			error << "Il parametro no. " << i << " dev'essere ";
+			error << (inParameters[i].getDirection() == IN ? "IN" : "OUT") << ",";
 			if (inParameters[i].getType() == INT) error << "INT";
 			if (inParameters[i].getType() == DOUBLE) error << "DOUBLE";
 			if (inParameters[i].getType() == STRING) error << "STRING";
 			if (inParameters[i].getType() == BUFFER) error << "BUFFER";
-			error << ")";
-			string s_error = error.str();
-			cerr << "Richiesta con " << s_error << endl;
-			s_error[0] = toupper(s_error[0]);
-			response.setError(s_error);
-		} else inParameters[i] = received_params[i];
+			error << "\nInvece è stato ricevuto un parametro ";
+			error << (receivedOutParams[i].getDirection() == IN ? "IN" : "OUT") << ",";
+			if (receivedInParams[i].getType() == INT) error << "INT";
+			if (receivedInParams[i].getType() == DOUBLE) error << "DOUBLE";
+			if (receivedInParams[i].getType() == STRING) error << "STRING";
+			if (receivedInParams[i].getType() == BUFFER) error << "BUFFER";
+			cerr << "Richiesta con parametri di ingresso non corretti\n";
+			response.setError(error.str());
+		} else inParameters[i] = receivedInParams[i];
+	}
+	if (receivedOutParams.size() != outParameters.size()) {
+		cerr << "Richiesta con numero di parametri di uscita non corretto\n";
+		response.setError("Il numero dei parametri di uscita non è corretto");
+	}
+	for (int i = 0; i < (int) receivedOutParams.size(); i++) {
+		if (outParameters[i] != receivedOutParams[i]) {
+			stringstream error;
+			error << "Parametri di uscita non corretti\n";
+			error << "Il parametro no. " << i << " dev'essere ";
+			error << (outParameters[i].getDirection() == IN ? "IN" : "OUT") << ",";
+			if (outParameters[i].getType() == INT) error << "INT";
+			if (outParameters[i].getType() == DOUBLE) error << "DOUBLE";
+			if (outParameters[i].getType() == STRING) error << "STRING";
+			if (outParameters[i].getType() == BUFFER) error << "BUFFER";
+			error << "\nInvece è stato ricevuto un parametro ";
+			error << (receivedOutParams[i].getDirection() == IN ? "IN" : "OUT") << ",";
+			if (receivedOutParams[i].getType() == INT) error << "INT";
+			if (receivedOutParams[i].getType() == DOUBLE) error << "DOUBLE";
+			if (receivedOutParams[i].getType() == STRING) error << "STRING";
+			if (receivedOutParams[i].getType() == BUFFER) error << "BUFFER";
+			cerr << "Richiesta con parametri di uscita non corretti\n";
+			response.setError(error.str());
+		}
 	}
 	if (response.getResult()) {
 		if (!execute(sk)) response.setError("Errore durante l'esecuzione del servizio");
-		response.setParameters(outParameters);
+		else response.setParameters(outParameters);
 	}
 	if (!sendResponse(* sk, response)) {
 		cerr << "Errore nell'invio della risposta\n";

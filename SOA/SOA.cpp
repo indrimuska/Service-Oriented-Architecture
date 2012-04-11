@@ -10,16 +10,13 @@
 
 bool SOA::setServerRegister(string SRaddress, string SRport) {
 	this->SRaddress = SRaddress;
-
 	this->SRport = SRport;
-
 	Socket SRsocket;
 	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
 		cerr << "Impossibile connettersi al Server Register\n";
 		return false;
 	}
 	string ack;
-
 	if (!SRsocket.sendString(CONN_ACK_REQ) ||
 		!SRsocket.receiveString(ack) || ack.compare(CONN_ACK_RESP)) {
 		cerr << "Impossibile confermare la connesione al Server Register\n" << ack << endl;

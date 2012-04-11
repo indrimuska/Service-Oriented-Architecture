@@ -22,13 +22,13 @@ int main(int argc, char ** argv) {
 	string IMSaddress, IMSport, ISSaddress, ISSport;
 	
 	if (argc != 5) {
-		cout << "ImageManipulationServer Address : ";
+		cout << "Indirizzo del server ImageManipulationServer : ";
 		cin >> IMSaddress;
-		cout << "ImageManipulationServer Port    : ";
+		cout << "Porta del server ImageManipulationServer     : ";
 		cin >> IMSport;
-		cout << "ImageStoringServer Address      : ";
+		cout << "Indirizzo del server ImageStoringServer      : ";
 		cin >> ISSaddress;
-		cout << "ImageStoringServer Port         : ";
+		cout << "Porta del server ImageStoringServer          : ";
 		cin >> ISSport;
 		cout << endl;
 	} else {
@@ -75,7 +75,7 @@ int main(int argc, char ** argv) {
 	
 	// Inizializzazione del servizio GET LIST
 	parameters.clear();
-	parameters.push_back(parameter(OUT, BUFFER));
+	parameters.push_back(parameter(OUT, STRING));
 	
 	ImageStoring getList;
 	getList.setServer(ISSaddress, ISSport);
@@ -105,9 +105,6 @@ int main(int argc, char ** argv) {
 		string(IMAGES_DIRECTORY).substr(0, string(IMAGES_DIRECTORY).find_last_of("/")) << "'\033[0m\n\n";
 	}
 	
-	// TODO: mettere i JPEG al posto dei GIF
-	// TODO: controllare anche i parametri di uscita
-	
 	srand((int) time(NULL));
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
 		
@@ -127,7 +124,7 @@ int main(int argc, char ** argv) {
 		if (getImagesFromServer) cout << "  " << ++stepNumber << ". Richiesta dell'elenco delle immagini sul secondo server\n";
 		cout << "  " << ++stepNumber << ". Prelievo di un'immagine random tra quelle esistenti";
 		if (!getImagesFromServer) cout << " nella cartella Images";
-		cout << "\n";
+		cout << endl;
 		cout << "  " << ++stepNumber << ". Richiesta del servizio " << operation->getServiceName() << " al primo server\n";
 		cout << "  " << ++stepNumber << ". Invio dell'immagine al secondo server\n";
 		if (!getImagesFromServer) cout << "  " << ++stepNumber << ". Richiesta dell'elenco delle immagini sul secondo server\n";

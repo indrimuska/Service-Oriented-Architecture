@@ -19,9 +19,11 @@ int main(int argc, char ** argv) {
 	string SPaddress, SPport;
 	string SRaddress, SRport;
 	
-	// Avvio del server
-	cout << "Numero di porta: ";
-	cin >> SPport;
+	if (argc < 2) {
+		cout << "Numero di porta: ";
+		cin >> SPport;
+		cout << endl;
+	} else SPport = argv[1];
 	
 	Communicator comm;
 	SPaddress = comm.getIP();
@@ -34,18 +36,23 @@ int main(int argc, char ** argv) {
 	HorizontalFlipService horizontalFlip;
 	horizontalFlip.setServer(SPaddress, SPport);
 	
-	// Connessione al Service Register
-	//cout << "Insert server register address: ";
-	//cin >> SRaddress;
-	//cout << "Insert server register port:    ";
-	//cin >> SRport;
+	if (argc != 4) {
+		cout << "Indirizzo del Server Register : ";
+		cin >> SRaddress;
+		cout << "Porta del Server Register     : ";
+		cin >> SRport;
+		cout << endl;
+	} else {
+		SRaddress = argv[2];
+		SRport = argv[3];
+	}
 	
 	//SOA global;
 	//global.setServerRegister(SRaddress, SRport);
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	
-	cout << "\nConnesso all'indirizzo " << SPaddress << ":" << SPport << "\nIn attesa di connessioni...\n\n";
+	cout << "Connesso all'indirizzo " << SPaddress << ":" << SPport << "\nIn attesa di connessioni...\n\n";
 	
 	while (1) {
 		// In attesa di connessione con i client...
