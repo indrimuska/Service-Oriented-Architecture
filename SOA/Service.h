@@ -52,8 +52,9 @@ protected:
 	// Da implmentare nell'applicazione
 	virtual bool execute(Socket * sk);
 public:
-	void setService(string name, vector<parameter> &parameters);
+	void setName(string name);
 	void setParameters(vector<parameter> &parameters);
+	void setService(string name, vector<parameter> &parameters);
 	
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio

@@ -15,25 +15,28 @@
 using namespace std;
 
 #define NUM_ITERATIONS 1
+#define IMAGES_DIRECTORY "Images/"
 
 int main(int argc, char ** argv) {
 	
 	string IMSaddress, IMSport, ISSaddress, ISSport;
 	
-	/*cout << "ImageManipulationServer.address : ";
-	cin >> IMSaddress;
-	cout << "ImageManipulationServer.port    : ";
-	cin >> IMSport;
-	cout << "ImageStoringServer.address      : ";
-	cin >> ISSaddress;
-	cout << "ImageStoringServer.port         : ";
-	cin >> ISSport;
-	cout << endl;*/
-	
-	IMSaddress = argv[1];
-	IMSport = argv[2];
-	ISSaddress = argv[3];
-	ISSport = argv[4];
+	if (argc != 5) {
+		cout << "ImageManipulationServer Address : ";
+		cin >> IMSaddress;
+		cout << "ImageManipulationServer Port    : ";
+		cin >> IMSport;
+		cout << "ImageStoringServer Address      : ";
+		cin >> ISSaddress;
+		cout << "ImageStoringServer Port         : ";
+		cin >> ISSport;
+		cout << endl;
+	} else {
+		IMSaddress = argv[1];
+		IMSport = argv[2];
+		ISSaddress = argv[3];
+		ISSport = argv[4];
+	}
 	
 	/////////////////////////////////////////////////////////////
 	// INIZIALIZZAZIONE DEI SERVIZI DA RICHIEDERE              //
@@ -62,17 +65,13 @@ int main(int argc, char ** argv) {
 	
 	// Inizializzazione del servizio STORE IMAGE
 	ImageStoring storeImage;
+	storeImage.setName("store image");
 	storeImage.setServer(ISSaddress, ISSport);
-	storeImage.setService("store image", parameters);
 	
 	// Inizializzazione del servizio GET IMAGE
-	parameters.clear();
-	parameters.push_back(parameter(IN, STRING));
-	parameters.push_back(parameter(OUT, BUFFER));
-	
 	ImageStoring getImage("Clients");
+	getImage.setName("get image");
 	getImage.setServer(ISSaddress, ISSport);
-	getImage.setService("get image", parameters);
 	
 	// Inizializzazione del servizio GET LIST
 	parameters.clear();
@@ -90,20 +89,20 @@ int main(int argc, char ** argv) {
 	struct dirent * dir_info;
 	vector<string> files_from_folder;
 	vector<string> files_from_server;
-	if (!(directory = opendir("Images"))) {
+	if (!(directory = opendir(IMAGES_DIRECTORY))) {
 		cerr << "Errore durante la lettura della directory\n"
 		"Controllare di avere i permessi necessari\n";
 		return 0;
 	}
 	while ((dir_info = readdir(directory))) {
 		if (dir_info->d_name[0] == '.') continue;
-		if (stat((string("Images/") + dir_info->d_name).c_str(), &file_info)) continue;
+		if (stat((string(IMAGES_DIRECTORY) + dir_info->d_name).c_str(), &file_info)) continue;
 		if (S_ISDIR(file_info.st_mode)) continue;
-		files_from_folder.push_back(string("Images/") + dir_info->d_name);
+		files_from_folder.push_back(string(IMAGES_DIRECTORY) + dir_info->d_name);
 	}
 	if (!files_from_folder.size()) {
-		cerr << "\033[1;33mNon ci sono immagini nella cartella 'Images'\033[0m";
-		return 0;
+		cerr << "\033[1;33mNon ci sono immagini nella cartella '" <<
+		string(IMAGES_DIRECTORY).substr(0, string(IMAGES_DIRECTORY).find_last_of("/")) << "'\033[0m\n\n";
 	}
 	
 	// TODO: mettere i JPEG al posto dei GIF
@@ -113,7 +112,7 @@ int main(int argc, char ** argv) {
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
 		
 		// Scelta del posto in cui prelevare le immagini
-		int getImagesFromServer = (int) (rand() % 2);
+		int getImagesFromServer = files_from_folder.size() ? (int) (rand() % 2) : 1;
 		vector<string> * files;
 		parameter_value result;
 		
@@ -143,11 +142,16 @@ int main(int argc, char ** argv) {
 			}
 			cout << "\033[1;32mServizio confermato\033[0m\n\n";
 			files_from_server = getList.getStringVectorFromParameter(OUT, 0, "\n");
+			if (!files_from_server[0].compare("\033[1;33mNon ci sono immagini nel buffer list\033[0m")) {
+				cerr << "\033[1;33mNon ci sono immagini nel buffer list\033[0m\n\n";
+				return 0;
+			}
 			files = &files_from_server;
 		} else files = &files_from_folder;
 		
 		// Scelta del file da prelevare/inviare
 		int file_index = (int) (rand() % files->size());
+		cout << "Immagine scelta: \033[1;37m" << files->at(file_index) << "\033[0m\n\n";
 		
 		// Eventuale prelievo dell'immagine dal secondo server
 		if (getImagesFromServer) {
@@ -194,39 +198,4 @@ int main(int argc, char ** argv) {
 			else cout << "\033[1;31mRichiesta rifiutata\033[0m\n\n";
 		}
 	}
-	
-	
-	/*cout << "Richiesta del servizio ROTATE:\n";
-	if (rotate.requestService()) {
-		cout << "richiesta accettata\n";
-		if (!rotate.getImageFromParameter(OUT, 0, argv[4])) cout << "impossibile creare l'immagine\n";
-		else cout << "creata immagine '" << argv[4] << "'\n";
-	} else cout << "richiesta rifiutata\n";
-	cout << endl;*/
-	
-	/*cout << "Richiesta del servizio HORIZONTAL FLIP:\n";
-	if (horizontalFlip.requestService()) {
-		cout << "richiesta accettata\n";
-		if (!horizontalFlip.getImageFromParameter(OUT, 0, argv[5])) cout << "impossibile creare l'immagine\n";
-		else cout << "creata immagine '" << argv[5] << "'\n";
-	} else cout << "richiesta rifiutata\n";
-	cout << endl;*/
-	
-	/*cout << "Richiesta del servizio STORE IMAGE:\n";
-	if (storeImage.requestService()) cout << "richiesta accettata\n";
-	else cout << "richiesta rifiutata\n";
-	cout << endl;*/
-	
-	/*cout << "Richiesta del servizio GET IMAGE:\n";
-	if (getImage.requestService()) {
-		cout << "richiesta accettata\n";
-		if (!getImage.getImageFromParameter(OUT, 0, argv[4])) cout << "impossibile creare l'immagine\n";
-		else cout << "creata immagine '" << argv[4] << "'\n";
-	} else cout << "richiesta rifiutata\n";
-	cout << endl;*/
-	
-	/*cout << "Richiesta del servizio GET LIST:\n";
-	if (getList.requestService()) cout << "richiesta accettata:\n" << getList.getStringFromParameter(OUT, 0) << endl;
-	else cout << "richiesta rifiutata\n";
-	cout << endl;*/
 }

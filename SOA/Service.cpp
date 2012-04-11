@@ -38,9 +38,8 @@ void Service::setServer(string SPaddress, string SPport) {
 	this->SPaddress = SPaddress;
 	this->SPport = SPport;
 }
-void Service::setService(string name, vector<parameter> &parameters) {
+void Service::setName(string name) {
 	this->name = name;
-	setParameters(parameters);
 }
 void Service::setParameters(vector<parameter> &parameters) {
 	inParameters.clear();
@@ -49,6 +48,10 @@ void Service::setParameters(vector<parameter> &parameters) {
 		if (parameters[i].getDirection() == IN) inParameters.push_back(parameters[i]);
 		else outParameters.push_back(parameters[i]);
 	}
+}
+void Service::setService(string name, vector<parameter> &parameters) {
+	this->name = name;
+	setParameters(parameters);
 }
 bool Service::serviceRegistration(Socket SRsocket) {
 	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + name)) {
