@@ -24,25 +24,25 @@
 #define SRV_UNREG_RESP	"Starting from now, you will not contacted"
 #define SRC_UNREG_REQ	"Sorry, I can't give a service"
 #define SRC_UNREG_RESP	"Don't worry, you'll not asked for that service again"
-
-//#define SOA_MESSAGES enum { CONN_ACK_REQ, CONN_ACK_RESP, SRV_REG_REQ, SRV_REG_RESP, SRC_REG_REQ, SRC_REG_RESP, SRV_DEREG_REQ, SRV_DEREG_RESP, SRC_DEREG_REQ, SRC_DEREG_RESP };
+#define SRV_REQ			"I need the address of one Service Provider that support this service"
+#define SRV_RESP		"This is the address of the SP you've requested"
 
 using namespace std;
 
 class SOA {
 private:
-
-
+	bool sendRequest(string request, Socket &SRsocket);
 public:
 	string SRaddress;
 	string SRport;
 	Communicator comm;
+	
 	bool setServerRegister(string SRaddres, string SRport);
 	bool serverRegistration(string SPaddres, string SPport);
 	bool serviceRegistration(Service s);
 	bool serverUnRegistration(string SPaddres, string SPport);
 	bool serviceUnRegistration(Service s);
-	bool getServerAddress(string service);
+	bool getServerAddress(string service, string &address, string &port);
 };
 
 #endif

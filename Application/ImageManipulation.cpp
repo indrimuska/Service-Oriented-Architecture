@@ -80,9 +80,6 @@ bool ImageManipulation::getImageFromParameter(parameter_direction direction, int
 	else p = &outParameters[parameter_number];
 	return getImageFromBuffer(* p, filename);
 }
-string ImageManipulation::getServiceName() {
-	return name;
-}
 parameter_value ImageManipulation::getParameterValue(parameter_direction direction, int parameter_number) {
 	if (direction == IN) return inParameters[parameter_number].getParameterValue();
 	else return outParameters[parameter_number].getParameterValue();

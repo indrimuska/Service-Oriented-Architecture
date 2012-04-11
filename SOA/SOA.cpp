@@ -8,17 +8,24 @@
 
 #include "SOA.h"
 
-bool SOA::setServerRegister(string SRaddress, string SRport) {
-	this->SRaddress = SRaddress;
-	this->SRport = SRport;
-	Socket SRsocket;
+bool SOA::sendRequest(string request, Socket &SRsocket) {
 	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
 		cerr << "Impossibile connettersi al Server Register\n";
 		return false;
 	}
+	if (!SRsocket.sendString(request)) {
+		cerr << "Errore nell'invio di una richiesta al Service Register\n";
+		return false;
+	}
+	return true;
+}
+bool SOA::setServerRegister(string SRaddress, string SRport) {
+	this->SRaddress = SRaddress;
+	this->SRport = SRport;
 	string ack;
-	if (!SRsocket.sendString(CONN_ACK_REQ) ||
-		!SRsocket.receiveString(ack) || ack.compare(CONN_ACK_RESP)) {
+	Socket SRsocket;
+	if (!sendRequest(CONN_ACK_REQ, SRsocket)) return false;
+	if (!SRsocket.receiveString(ack) || ack.compare(CONN_ACK_RESP)) {
 		cerr << "Impossibile confermare la connesione al Server Register\n" << ack << endl;
 		return false;
 	}
@@ -26,22 +33,9 @@ bool SOA::setServerRegister(string SRaddress, string SRport) {
 	return true;
 }
 bool SOA::serverRegistration(string SPaddress, string SPport) {
-	cout << "SPaddress: " << SPaddress << endl;
-	cout << "SPport: " << SPport << endl;
-	cout << "SRaddress: " << SRaddress << endl;
-	cout << "SRport: " << SRport << endl;
-	Socket SRsocket;
-	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
-		cerr << "Impossibile connettersi al Server Register\n";
-		return false;
-	}
-	cout << "SOA::serverRegistration -- Dopo la connessione" << endl;
 	string ack;
-	if (!SRsocket.sendString(SRV_REG_REQ)) {
-		cerr << "Errore nella richiesta di registrazione del server\n";
-		return false;
-	}
-	cout << "SOA::serverRegistration -- Dopo l'invio di SRV_REG_REQ" << endl;
+	Socket SRsocket;
+	if (!sendRequest(SRV_REG_REQ, SRsocket)) return false;
 	if (!SRsocket.sendString(SPaddress + ':' + SPport)) {
 		cerr << "Errore nella registrazione del server\n";
 		return false;
@@ -54,16 +48,9 @@ bool SOA::serverRegistration(string SPaddress, string SPport) {
 	return true;
 }
 bool SOA::serviceRegistration(Service s) {
-	Socket SRsocket;
-	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
-		cerr << "Impossibile connettersi al Server Register\n";
-		return false;
-	}
-	if (!SRsocket.sendString(SRC_REG_REQ)) {
-		cerr << "Errore nella richiesta di registrazione del servizio\n";
-		return false;
-	}
 	string ack;
+	Socket SRsocket;
+	if (!sendRequest(SRC_REG_REQ, SRsocket)) return false;
 	s.serviceRegistration(SRsocket);
 	if (!SRsocket.receiveString(ack) || ack.compare(SRC_REG_RESP)) {
 		cerr << "Errore nella conferma di registrazione del servizio\n" << ack << endl;
@@ -73,16 +60,9 @@ bool SOA::serviceRegistration(Service s) {
 	return true;
 }
 bool SOA::serverUnRegistration(string SPaddress, string SPport) {
-	Socket SRsocket;
-	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
-		cerr << "Impossibile connettersi al Server Register\n";
-		return false;
-	}
 	string ack;
-	if (!SRsocket.sendString(SRV_UNREG_REQ)) {
-		cerr << "Errore nella richiesta di de-registrazione del server\n";
-		return false;
-	}
+	Socket SRsocket;
+	if (!sendRequest(SRV_UNREG_REQ, SRsocket)) return false;
 	if (!SRsocket.sendString(SPaddress + ':' + SPport)) {
 		cerr << "Errore nella registrazione del server\n";
 		return false;
@@ -95,19 +75,31 @@ bool SOA::serverUnRegistration(string SPaddress, string SPport) {
 	return true;
 }
 bool SOA::serviceUnRegistration(Service s) {
-	Socket SRsocket;
-	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {
-		cerr << "Impossibile connettersi al Server Register\n";
-		return false;
-	}
 	string ack;
-	if (!SRsocket.sendString(SRV_UNREG_REQ)) {
-		cerr << "Errore nella richiesta di de-registrazione del servizio\n";
+	Socket SRsocket;
+	if (!sendRequest(SRC_UNREG_REQ, SRsocket)) return false;
+	s.serviceUnRegistration(SRsocket);
+	if (!SRsocket.receiveString(ack) || ack.compare(SRC_UNREG_RESP)) {
+		cerr << "Errore nella conferma di de-registrazione del servizio\n" << ack << endl;
 		return false;
 	}
-	s.serviceUnRegistration(SRsocket);
-	if (!SRsocket.receiveString(ack) || ack.compare(SRV_UNREG_RESP)) {
-		cerr << "Errore nella conferma di de-registrazione del servizio\n" << ack << endl;
+	SRsocket.closeSocket();
+	return true;
+}
+bool SOA::getServerAddress(string service, string &address, string &port) {
+	string ack;
+	Socket SRsocket;
+	if (!sendRequest(SRV_REQ, SRsocket)) return false;
+	if (!SRsocket.sendString(service)) {
+		cerr << "Errore nell'invio del nome del servizio\n";
+		return false;
+	}
+	if (!SRsocket.receiveString(ack) || ack.compare(SRV_RESP)) {
+		cerr << "Errore nella ricezione dell'indirizzo del server\n" << ack << endl;
+		return false;
+	}
+	if (!SRsocket.receiveString(address) || !SRsocket.receiveString(port)) {
+		cerr << "Errore nella ricezione dell'indirizzo o della porta del server\n" << ack << endl;
 		return false;
 	}
 	SRsocket.closeSocket();

@@ -55,6 +55,7 @@ public:
 	void setName(string name);
 	void setParameters(vector<parameter> &parameters);
 	void setService(string name, vector<parameter> &parameters);
+	string getServiceName();
 	
 	// Il server lo usa per fare richiesta di registrazione di un servizio
 	// Il client lo usa per fare richiesta di un servizio

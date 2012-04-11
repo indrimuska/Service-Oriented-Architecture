@@ -29,7 +29,6 @@ public:
 	ImageManipulation(string workDirectory);
 	bool setImageAsParameter(parameter_direction direction, int parameter_number, string filename);
 	bool getImageFromParameter(parameter_direction direction, int parameter_number, string filename);
-	string getServiceName();
 	parameter_value getParameterValue(parameter_direction direction, int parameter_number);
 	void setParameterValue(parameter_direction direction, int parameter_number, parameter_value &value);
 };

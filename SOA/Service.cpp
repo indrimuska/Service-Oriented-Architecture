@@ -49,6 +49,9 @@ void Service::setParameters(vector<parameter> &parameters) {
 		else outParameters.push_back(parameters[i]);
 	}
 }
+string Service::getServiceName() {
+	return name;
+}
 void Service::setService(string name, vector<parameter> &parameters) {
 	this->name = name;
 	setParameters(parameters);
