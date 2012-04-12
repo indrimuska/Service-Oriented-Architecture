@@ -158,8 +158,8 @@ bool Service::requestService() {
 }
 bool Service::serveRequests(Socket * sk) {
 	string name;
-	vector<parameter> receivedInParams, receivedOutParams;
 	Response response;
+	vector<parameter> receivedInParams, receivedOutParams;
 	if (!sk->receiveString(name)) {
 		cerr << "Errore durante la ricezione di una richiesta di servizio\n";
 		return false;
@@ -235,6 +235,6 @@ bool Service::serveRequests(Socket * sk) {
 	return response.getResult();
 }
 bool Service::execute(Socket * sk) {
-	cout << "\033[1;31mServizio non implementato\033[0m\n";
-	return true;
+	cerr << "\033[1;31mServizio non implementato\033[0m\n";
+	return false;
 }

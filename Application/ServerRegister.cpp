@@ -45,7 +45,7 @@ public:
 		if (!request.compare(SRV_REG_DISP)) return serversDisplay(sk);
 		if (!request.compare(SRC_REG_DISP)) return servicesDisplay(sk);
 		if (!request.compare(SRV_REQ)) return serverRequest(sk);
-		cerr << "Richiesta sconosciuta\n\n";
+		cerr << "\033[1;31mRichiesta sconosciuta (" << request << ")\033[0m\n\n";
 		return false;
 	}
 	bool confirmConnection(Socket * sk) {
@@ -62,12 +62,12 @@ public:
 	bool serverRequest(Socket * sk) {
 		string service;
 		if (!sk->receiveString(service)) {
-			cerr << "Errore nella ricezione del nome del servizio\n";
+			cerr << "Errore nella ricezione del nome del servizio\n\n";
 			return false;
 		}
 		cout << "È stato richiesto un server che fornisca il servizio \033[1;34m" << service << "\033[0m\n";
 		// Qui bisogna cercare un server che supporta il servizio 'service'
-		// e scegliero in base alla politica implementata (es. Round Robin)
+		// e scegliero tra un insieme di server in base alla politica implementata (es. Round Robin)
 		// Non mi ricordo come hai implementato il server register, per far prima io uso un vettore di stringhe
 		vector<string> servers;
 		servers.push_back("127.0.0.1:2222/rotate");
@@ -84,21 +84,23 @@ public:
 			}
 		// Se non c'è nessun server che supporta quel servizio allora bisogna mandare questo messaggio:
 		if (!server[0].size() || !server[1].size()) {
-			cout << "\033[1;31mNon si è registrato alcune server che fornisca il servizio richiesto\033[0m\n\n";
+			cout << "\033[1;31mNon si è registrato alcune server che fornisca il servizio richiesto\033[0m\n";
 			if (!sk->sendString("Non si è registrato alcun server che fornisca il servizio richiesto")) {
-				cerr << "Errore nell'invio della notifica di assenza di server registrato\n";
+				cerr << "Errore nell'invio della notifica di assenza di server registrato\n\n";
 				return false;
 			}
+			cout << endl;
 			return true;
 		}
 		// Altrimenti bisogna mandare questo ACK:
 		if (!sendAck(sk, SRV_RESP)) return false;
-		cout << "Il server scelto è \033[1;32m" << server[0] << ":" << server[1] << "\033[0m\n\n";
+		cout << "Il server scelto è \033[1;32m" << server[0] << ":" << server[1] << "\033[0m\n";
 		if (!sk->sendString(server[0]) || !sk->sendString(server[1])) {
-			cerr << "Errore nell'invio dell'indirizzo o della porta del server\n";
+			cerr << "Errore nell'invio dell'indirizzo o della porta del server\n\n";
 			return false;
 		}
 		delete sk;
+		cout << endl;
 		return true;
 	}
 	~ServerRegister() {

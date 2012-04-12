@@ -16,6 +16,23 @@
 
 #include "../SOA/Service.h"
 
+class ImageManager {
+private:
+    bool busy;
+    int readersActive;
+    int writersIdle;
+    int readersIdle;
+	pthread_mutex_t mutex;
+	pthread_cond_t ok_read;
+	pthread_cond_t ok_write;
+public:
+	ImageManager();
+	void readRequest();
+    void readRelease();
+    void writeRequest();
+    void writeRelease();
+};
+
 class ImageStoring : public Service {
 protected:
 	string workDirectory;
@@ -34,25 +51,25 @@ public:
 
 class StoreImageService : public ImageStoring {
 private:
-	pthread_mutex_t * mutex;
+	ImageManager * manager;
 public:
-	StoreImageService(pthread_mutex_t * mutex);
+	StoreImageService(ImageManager * manager);
 	bool execute(Socket * sk);
 };
 
 class GetImageService : public ImageStoring {
 private:
-	pthread_mutex_t * mutex;
+	ImageManager * manager;
 public:
-	GetImageService(pthread_mutex_t * mutex);
+	GetImageService(ImageManager * manager);
 	bool execute(Socket * sk);
 };
 
 class GetListService : public ImageStoring {
 private:
-	pthread_mutex_t * mutex;
+	ImageManager * manager;
 public:
-	GetListService(pthread_mutex_t * mutex);
+	GetListService(ImageManager * manager);
 	bool execute(Socket * sk);
 };
 
