@@ -54,7 +54,7 @@ int main(int argc, char ** argv) {
 	
 	// Avvio dei thread (forks)
 	for (int i = 0; i < NUM_THREADS; i++) {
-		threadsInfo[i].setInfos((void *) otherInfos);
+		threadsInfo[i].otherInfos = (void *) otherInfos;
 		threadsInfo[i].startThread(threadMain);
 	}
 	
@@ -83,15 +83,12 @@ int main(int argc, char ** argv) {
 		string client;
 		comm.waitForConnection(sk, client);
 		cout << "Il client " << client << " si è connesso" << flush;
-		pthread_mutex_lock(&mutex);
 		for (int i = 0; i < NUM_THREADS; i++)
-			if (!threadsInfo[i].busy) {
-				threadsInfo[i].busy = true;
+			if (threadsInfo[i].testAndSet()) {
 				threadsInfo[i].client = sk;
 				threadsInfo[i].V();
 				break;
 			}
-		pthread_mutex_unlock(&mutex);
 	}
 	
 	// Chiusura di tutte le connessioni
@@ -114,9 +111,7 @@ void * threadMain(void * threadID) {
 		if (result) cout << "Richiesta servita\n";
 		thread->client.closeSocket();
 		cout << endl;
-		pthread_mutex_lock(&mutex);
-		thread->busy = false;
-		pthread_mutex_unlock(&mutex);
+		thread->setFree();
 	}
 	thread->~ThreadInfo();
 	return NULL;
