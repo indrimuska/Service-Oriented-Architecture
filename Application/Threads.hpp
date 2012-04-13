@@ -43,7 +43,7 @@ public:
 	bool testAndSet() {
 		boost::mutex::scoped_lock scoped_lock(mutex);
 		if (!busy) {
-			busy = false;
+			busy = true;
 			return true;
 		}
 		return false;
@@ -53,7 +53,7 @@ public:
 		while (!busy) condition.wait(scoped_lock);
 	}
 	void startThread() {
-		condition.notify_all();
+		condition.notify_one();
 	}
 };
 

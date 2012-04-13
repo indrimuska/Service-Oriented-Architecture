@@ -12,9 +12,8 @@
 #include "Application/Threads.hpp"
 #include "Application/ImageManipulation.hpp"
 
-using namespace std;
-
 #define NUM_THREADS 10
+
 void threadMain(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip);
 
 int main(int argc, char ** argv) {
@@ -32,7 +31,7 @@ int main(int argc, char ** argv) {
 	SPaddress = comm.getIP();
 	if (!comm.startListener(SPport)) return 0;
 	
-	// Inizializzaione del servizio
+	// Inizializzaione dei servizi
 	RotateService rotate;
 	rotate.setServer(SPaddress, SPport);
 	
@@ -57,14 +56,15 @@ int main(int argc, char ** argv) {
 	
 	SOA global;
 	global.setServerRegister(SRaddress, SRport);
+	global.setServiceProvider(SPaddress, SPport);
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	//if (!global.serviceRegistration(horizontalFlip)) return 0;
 	
-	cout << "Connesso all'indirizzo " << SPaddress << ":" << SPport << "\nIn attesa di connessioni...\n\n";
+	cout << "\033[4mIMAGE MANIPULATION SERVER                   " << SPaddress << ":" << SPport << "\033[0m\n\n";
+	cout << "In attesa di connessioni...\n\n";
 	
 	while (1) {
-		// In attesa di connessione con i client...
 		Socket sk;
 		string client;
 		comm.waitForConnection(sk, client);
@@ -76,6 +76,10 @@ int main(int argc, char ** argv) {
 				break;
 			}
 	}
+	
+	//if (!global.serverUnRegistration(SPaddress, SPport)) return 0;
+	//if (!global.serviceRegistration(rotate)) return 0;
+	//if (!global.serviceRegistration(horizontalFlip)) return 0;
 	
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();
@@ -95,5 +99,4 @@ void threadMain(ThreadInfo * thread, RotateService * rotate, HorizontalFlipServi
 		thread->client.closeSocket();
 		thread->setFree();
 	}
-	thread->~ThreadInfo();
 }

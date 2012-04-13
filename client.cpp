@@ -42,14 +42,6 @@ int main(int argc, char ** argv) {
 		SRport = argv[2];
 	}
 	
-	SOA global;
-	global.setServerRegister(SRaddress, SRport);
-	if (!global.getServerAddress("rotate", RotateServer[0], RotateServer[1])) return 0;
-	if (!global.getServerAddress("horizontal flip", HorizontalFlipServer[0], HorizontalFlipServer[1])) return 0;
-	if (!global.getServerAddress("store image", StoreImageServer[0], StoreImageServer[1])) return 0;
-	if (!global.getServerAddress("get image", GetImageServer[0], GetImageServer[1])) return 0;
-	if (!global.getServerAddress("get list", GetListServer[0], GetListServer[1])) return 0;
-	
 	/////////////////////////////////////////////////////////////
 	// INIZIALIZZAZIONE DEI SERVIZI DA RICHIEDERE              //
 	/////////////////////////////////////////////////////////////
@@ -63,7 +55,6 @@ int main(int argc, char ** argv) {
 	parameters.push_back(parameter(OUT, BUFFER));
 	
 	ImageManipulation rotate;
-	rotate.setServer(RotateServer[0], RotateServer[1]);
 	rotate.setService("rotate", parameters);
 	
 	// Inizializzazione del servizio HORIZONTAL FLIP
@@ -72,30 +63,42 @@ int main(int argc, char ** argv) {
 	parameters.push_back(parameter(OUT, BUFFER));
 	
 	ImageManipulation horizontalFlip;
-	horizontalFlip.setServer(HorizontalFlipServer[0], HorizontalFlipServer[1]);
 	horizontalFlip.setService("horizontal flip", parameters);
 	
 	// Inizializzazione del servizio STORE IMAGE
 	ImageStoring storeImage;
 	storeImage.setName("store image");
-	storeImage.setServer(StoreImageServer[0], StoreImageServer[1]);
 	
 	// Inizializzazione del servizio GET IMAGE
 	ImageStoring getImage("Clients");
 	getImage.setName("get image");
-	getImage.setServer(GetImageServer[0], GetImageServer[1]);
 	
 	// Inizializzazione del servizio GET LIST
 	parameters.clear();
 	parameters.push_back(parameter(OUT, STRING));
 	
 	ImageStoring getList;
-	getList.setServer(GetListServer[0], GetListServer[1]);
 	getList.setService("get list", parameters);
 	
 	/////////////////////////////////////////////////////////////
 	
-	// Leggo i file contenuti nella cartella Images
+	// Richiesta dell'indirizzo dei server al Server Register
+	SOA global;
+	global.setServerRegister(SRaddress, SRport);
+	if (!global.getServerAddress(rotate,         RotateServer[0],         RotateServer[1])) return 0;
+	if (!global.getServerAddress(horizontalFlip, HorizontalFlipServer[0], HorizontalFlipServer[1])) return 0;
+	if (!global.getServerAddress(storeImage,     StoreImageServer[0],     StoreImageServer[1])) return 0;
+	if (!global.getServerAddress(getImage,       GetImageServer[0],       GetImageServer[1])) return 0;
+	if (!global.getServerAddress(getList,        GetListServer[0],        GetListServer[1])) return 0;
+	
+	// Impostazione dell'indirizzo dei Service Provider
+	rotate			.setServer(RotateServer[0],			RotateServer[1]);
+	horizontalFlip	.setServer(HorizontalFlipServer[0],	HorizontalFlipServer[1]);
+	storeImage		.setServer(StoreImageServer[0],		StoreImageServer[1]);
+	getImage		.setServer(GetImageServer[0],		GetImageServer[1]);
+	getList			.setServer(GetListServer[0],		GetListServer[1]);
+	
+	// Lettura dei file contenuti nella cartella IMAGES_DIRECTORY
 	DIR * directory;
 	struct stat file_info;
 	struct dirent * dir_info;

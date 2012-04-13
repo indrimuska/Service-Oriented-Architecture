@@ -56,20 +56,6 @@ void Service::setService(string name, vector<parameter> &parameters) {
 	this->name = name;
 	setParameters(parameters);
 }
-bool Service::serviceRegistration(Socket SRsocket) {
-	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + name)) {
-		cerr << "Errore nella richiesta di registrazione al Server Register\n";
-		return false;
-	}
-	return true;
-}
-bool Service::serviceUnRegistration(Socket SRsocket) {
-	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + name)) {
-		cerr << "Errore nella richiesta di registrazione al Server Register\n";
-		return false;
-	}
-	return true;
-}
 bool Service::sendResponse(Socket &sk, Response &response) {
 	if (!sk.sendInt(response.getResult())) return false;
 	if (!sk.sendString(response.getMessage())) return false;

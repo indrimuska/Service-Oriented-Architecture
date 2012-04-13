@@ -8,51 +8,6 @@
 
 #include "ImageStoring.hpp"
 
-ImageManager::ImageManager() {
-	busy = false;
-	readersActive = 0;
-	writersIdle = 0;
-	readersIdle = 0;
-	pthread_mutex_init(&mutex, NULL);
-	pthread_cond_init(&ok_read, NULL);
-	pthread_cond_init(&ok_write, NULL);
-}
-void ImageManager::readRequest() {
-	pthread_mutex_lock(&mutex);
-	if (!busy && writersIdle == 0);
-	else do {
-		readersIdle++;
-		pthread_cond_wait(&ok_read, &mutex);
-		readersIdle--;
-	} while (busy);
-	readersActive++;
-	pthread_cond_signal(&ok_read);
-	pthread_mutex_unlock(&mutex);
-}
-void ImageManager::readRelease() {
-	pthread_mutex_lock(&mutex);
-	readersActive--;
-	if (readersActive == 0) pthread_cond_signal(&ok_write);
-	pthread_mutex_unlock(&mutex);
-}
-void ImageManager::writeRequest() {
-	pthread_mutex_lock(&mutex);
-	while (readersActive != 0 || busy) {
-		writersIdle++;
-		pthread_cond_wait(&ok_write, &mutex);
-		writersIdle--;
-	}
-	busy = true;
-	pthread_mutex_unlock(&mutex);
-}
-void ImageManager::writeRelease() {
-	pthread_mutex_lock(&mutex);
-	busy = false;
-	if (readersIdle > 0) pthread_cond_signal(&ok_read); else
-	if (writersIdle > 0) pthread_cond_signal(&ok_write);
-	pthread_mutex_unlock(&mutex);
-}
-
 ImageStoring::ImageStoring() {
 	workDirectory = "Servers/ImageStoringServer/";
 }
@@ -162,8 +117,8 @@ parameter_value ImageStoring::getParameterValue(parameter_direction direction, i
 	else return outParameters[parameter_number].getParameterValue();
 }
 
-StoreImageService::StoreImageService(ImageManager * manager) {
-	this->manager = manager;
+StoreImageService::StoreImageService(boost::shared_mutex * mutex) {
+	this->mutex = mutex;
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, STRING));
 	parameters.push_back(parameter(IN, BUFFER));
@@ -172,14 +127,12 @@ StoreImageService::StoreImageService(ImageManager * manager) {
 bool StoreImageService::execute(Socket * sk) {
 	string filename;
 	inParameters[0].getValue(filename);
-	manager->writeRequest();
-	bool result = getImageFromBuffer(inParameters[1], workDirectory + filename, true);
-	manager->writeRelease();
-	return result;
+	boost::unique_lock<boost::shared_mutex> scope_lock(* mutex);
+	return getImageFromBuffer(inParameters[1], workDirectory + filename, true);
 }
 
-GetImageService::GetImageService(ImageManager * manager) {
-	this->manager = manager;
+GetImageService::GetImageService(boost::shared_mutex * mutex) {
+	this->mutex = mutex;
 	vector<parameter> parameters;
 	parameters.push_back(parameter(IN, STRING));
 	parameters.push_back(parameter(OUT, BUFFER));
@@ -188,14 +141,12 @@ GetImageService::GetImageService(ImageManager * manager) {
 bool GetImageService::execute(Socket * sk) {
 	string filename;
 	inParameters[0].getValue(filename);
-	manager->readRequest();
-	bool result = putImageInBuffer(outParameters[0], workDirectory + filename);
-	manager->readRelease();
-	return result;
+	boost::shared_lock<boost::shared_mutex> scope_lock(* mutex);
+	return putImageInBuffer(outParameters[0], workDirectory + filename);
 }
 
-GetListService::GetListService(ImageManager * manager) {
-	this->manager = manager;
+GetListService::GetListService(boost::shared_mutex * mutex) {
+	this->mutex = mutex;
 	vector<parameter> parameters;
 	parameters.push_back(parameter(OUT, STRING));
 	setService("get list", parameters);
@@ -205,7 +156,7 @@ bool GetListService::execute(Socket * sk) {
 	struct stat file_info;
 	struct dirent * dir_info;
 	string directory_list = "";
-	manager->readRequest();
+	boost::shared_lock<boost::shared_mutex> scope_lock(* mutex);
 	if (!(directory = opendir(workDirectory.c_str()))) {
 		cerr << "Errore durante la lettura della directory\n"
 		"Controllare di avere i permessi necessari\n";
@@ -221,6 +172,5 @@ bool GetListService::execute(Socket * sk) {
 	else directory_list = directory_list.substr(1).c_str();
 	outParameters[0].setValue(directory_list);
 	closedir(directory);
-	manager->readRelease();
 	return true;
 }

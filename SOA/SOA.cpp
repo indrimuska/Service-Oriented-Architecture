@@ -32,7 +32,11 @@ bool SOA::setServerRegister(string SRaddress, string SRport) {
 	SRsocket.closeSocket();
 	return true;
 }
-bool SOA::serverRegistration(string SPaddress, string SPport) {
+void SOA::setServiceProvider(string SPaddress, string SPport) {
+	this->SPaddress = SPaddress;
+	this->SPport = SPport;
+}
+bool SOA::serverRegistration() {
 	string ack;
 	Socket SRsocket;
 	if (!sendRequest(SRV_REG_REQ, SRsocket)) return false;
@@ -47,11 +51,15 @@ bool SOA::serverRegistration(string SPaddress, string SPport) {
 	SRsocket.closeSocket();
 	return true;
 }
-bool SOA::serviceRegistration(Service s) {
+bool SOA::serviceRegistration(Service &s) {
 	string ack;
 	Socket SRsocket;
 	if (!sendRequest(SRC_REG_REQ, SRsocket)) return false;
-	s.serviceRegistration(SRsocket);
+	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + s.getServiceName())) {
+		cerr << "Errore nella richiesta di registrazione al Server Register\n";
+		return false;
+	}
+	return true;
 	if (!SRsocket.receiveString(ack) || ack.compare(SRC_REG_RESP)) {
 		cerr << "Errore nella conferma di registrazione del servizio\n" << ack << endl;
 		return false;
@@ -59,7 +67,7 @@ bool SOA::serviceRegistration(Service s) {
 	SRsocket.closeSocket();
 	return true;
 }
-bool SOA::serverUnRegistration(string SPaddress, string SPport) {
+bool SOA::serverUnRegistration() {
 	string ack;
 	Socket SRsocket;
 	if (!sendRequest(SRV_UNREG_REQ, SRsocket)) return false;
@@ -74,11 +82,15 @@ bool SOA::serverUnRegistration(string SPaddress, string SPport) {
 	SRsocket.closeSocket();
 	return true;
 }
-bool SOA::serviceUnRegistration(Service s) {
+bool SOA::serviceUnRegistration(Service &s) {
 	string ack;
 	Socket SRsocket;
 	if (!sendRequest(SRC_UNREG_REQ, SRsocket)) return false;
-	s.serviceUnRegistration(SRsocket);
+	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + s.getServiceName())) {
+		cerr << "Errore nella richiesta di registrazione al Server Register\n";
+		return false;
+	}
+	return true;
 	if (!SRsocket.receiveString(ack) || ack.compare(SRC_UNREG_RESP)) {
 		cerr << "Errore nella conferma di de-registrazione del servizio\n" << ack << endl;
 		return false;
@@ -86,11 +98,11 @@ bool SOA::serviceUnRegistration(Service s) {
 	SRsocket.closeSocket();
 	return true;
 }
-bool SOA::getServerAddress(string service, string &address, string &port) {
+bool SOA::getServerAddress(Service &s, string &address, string &port) {
 	string ack;
 	Socket SRsocket;
 	if (!sendRequest(SRV_REQ, SRsocket)) return false;
-	if (!SRsocket.sendString(service)) {
+	if (!SRsocket.sendString(s.getServiceName())) {
 		cerr << "Errore nell'invio del nome del servizio\n";
 		return false;
 	}

@@ -240,7 +240,6 @@ bool Communicator::connectTo(string address, string port, Socket &S_socket) {
 	memset(&server, '\0', sizeof(server));
 	server.sin_family = AF_INET;
 	server.sin_port = htons(atoi(port.c_str()));
-	//cout << address << endl;
 	if (!inet_pton(AF_INET, (char *) address.c_str(), &server.sin_addr.s_addr)) {
 		cerr << "Indirizzo non valido, il formato deve essere del tipo 127.0.0.1\n";
 		return false;
@@ -272,7 +271,7 @@ string Communicator::getIP() {
 	char hostname[128];
 	struct in_addr address;
 	struct hostent * ip;
-	gethostname(hostname, sizeof(hostname));
+	if (!gethostname(hostname, sizeof(hostname))) return "127.0.0.1";
 	ip = gethostbyname(hostname);
 	memcpy(&address, ip->h_addr_list[0], sizeof(in_addr));
 	return inet_ntoa(address);

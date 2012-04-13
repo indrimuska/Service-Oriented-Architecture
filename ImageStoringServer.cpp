@@ -6,16 +6,14 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include <vector>
 #include <iostream>
 
 #include "SOA/SOA.hpp"
 #include "Application/Threads.hpp"
 #include "Application/ImageStoring.hpp"
 
-using namespace std;
-
 #define NUM_THREADS 10
+
 void threadMain(ThreadInfo * thread, StoreImageService * storeImage, GetImageService * getImage, GetListService * getList);
 
 int main(int argc, char ** argv) {
@@ -33,17 +31,17 @@ int main(int argc, char ** argv) {
 	SPaddress = comm.getIP();
 	if (!comm.startListener(SPport)) return 0;
 	
-	// Inizializzazione del gestore delle immagini
-	ImageManager * manager = new ImageManager();
+	// Mutex per l'accesso alla cartella di lavoro
+	boost::shared_mutex mutex;
 	
 	// Inizializzazione dei servizi
-	StoreImageService storeImage(manager);
+	StoreImageService storeImage(&mutex);
 	storeImage.setServer(SPaddress, SPport);
 	
-	GetImageService getImage(manager);
+	GetImageService getImage(&mutex);
 	getImage.setServer(SPaddress, SPport);
 	
-	GetListService getList(manager);
+	GetListService getList(&mutex);
 	getList.setServer(SPaddress, SPport);
 	
 	// Avvio dei thread (forks)
@@ -64,15 +62,16 @@ int main(int argc, char ** argv) {
 	
 	SOA global;
 	global.setServerRegister(SRaddress, SRport);
-	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
+	global.setServiceProvider(SPaddress, SPport);
+	//if (!global.serverRegistration()) return 0;
 	//if (!global.serviceRegistration(storeImage)) return 0;
 	//if (!global.serviceRegistration(getImage)) return 0;
 	//if (!global.serviceRegistration(getList)) return 0;
 	
-	cout << "Connesso all'indirizzo " << SPaddress << ":" << SPport << "\nIn attesa di connessioni...\n\n";
+	cout << "\033[4mIMAGE STORING SERVER                        " << SPaddress << ":" << SPport << "\033[0m\n\n";
+	cout << "In attesa di connessioni...\n\n";
 	
 	while (1) {
-		// In attesa di connessione con i client...
 		Socket sk;
 		string service, client;
 		comm.waitForConnection(sk, client);
@@ -85,6 +84,11 @@ int main(int argc, char ** argv) {
 			}
 	}
 	
+	//if (!global.serverUnRegistration()) return 0;
+	//if (!global.serviceUnRegistration(storeImage)) return 0;
+	//if (!global.serviceUnRegistration(getImage)) return 0;
+	//if (!global.serviceUnRegistration(getList)) return 0;
+	
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();
 }
@@ -95,7 +99,7 @@ void threadMain(ThreadInfo * thread, StoreImageService * storeImage, GetImageSer
 		string service;
 		thread->waitStart();
 		if (!thread->client.receiveString(service)) continue;
-		cout << " e richiede il servizio \033[1;34m" << service << "\033[0m\n";
+		cout << " e richiede il servizio \033[1;36m" << service << "\034[0m\n";
 		if (!service.compare("store image")) result = storeImage->serveRequest(&thread->client); else
 			if (!service.compare("get image")) result = getImage->serveRequest(&thread->client); else
 												result = getList->serveRequest(&thread->client);
@@ -104,5 +108,4 @@ void threadMain(ThreadInfo * thread, StoreImageService * storeImage, GetImageSer
 		thread->client.closeSocket();
 		thread->setFree();
 	}
-	thread->~ThreadInfo();
 }

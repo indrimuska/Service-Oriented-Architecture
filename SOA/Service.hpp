@@ -62,8 +62,6 @@ public:
 	void setServer(string SPaddress, string SPport);
 	
 	// Usati dai Service Provider
-	bool serviceRegistration(Socket SRsocket);
-	bool serviceUnRegistration(Socket SRsocket);
 	bool serveRequest(Socket * sk);
 	
 	// Usati dai client

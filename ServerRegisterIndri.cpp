@@ -18,8 +18,10 @@ int main(int argc, char ** argv) {
 		cout << endl;
 	} else port =  argv[1];
 	
+	Communicator comm;
 	ServerRegister SR(port);
 	
+	cout << "\033[4mSERVER REGISTER                             " << comm.getIP() << ":" << port << "\033[0m\n\n";
 	cout << "In attesa di connessioni...\n\n";
 	while (1) SR.serveRequests();
 	

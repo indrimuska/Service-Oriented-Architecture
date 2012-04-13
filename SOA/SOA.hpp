@@ -31,18 +31,22 @@ using namespace std;
 
 class SOA {
 private:
+
+
 	bool sendRequest(string request, Socket &SRsocket);
 public:
 	string SRaddress;
 	string SRport;
+	string SPaddress;
+	string SPport;
 	Communicator comm;
-	
 	bool setServerRegister(string SRaddres, string SRport);
-	bool serverRegistration(string SPaddres, string SPport);
-	bool serviceRegistration(Service s);
-	bool serverUnRegistration(string SPaddres, string SPport);
-	bool serviceUnRegistration(Service s);
-	bool getServerAddress(string service, string &address, string &port);
+	void setServiceProvider(string SPaddres, string SPport);
+	bool serverRegistration();
+	bool serviceRegistration(Service &s);
+	bool serverUnRegistration();
+	bool serviceUnRegistration(Service &s);
+	bool getServerAddress(Service &s, string &address, string &port);
 };
 
 #endif

@@ -12,26 +12,11 @@
 #include <string>
 #include <iostream>
 #include <dirent.h>
-#include <pthread.h>
+#include <boost/thread/shared_mutex.hpp>
 
 #include "../SOA/Service.hpp"
 
-class ImageManager {
-private:
-    bool busy;
-    int readersActive;
-    int writersIdle;
-    int readersIdle;
-	pthread_mutex_t mutex;
-	pthread_cond_t ok_read;
-	pthread_cond_t ok_write;
-public:
-	ImageManager();
-	void readRequest();
-    void readRelease();
-    void writeRequest();
-    void writeRelease();
-};
+using namespace std;
 
 class ImageStoring : public Service {
 protected:
@@ -51,25 +36,25 @@ public:
 
 class StoreImageService : public ImageStoring {
 private:
-	ImageManager * manager;
+	boost::shared_mutex * mutex;
 public:
-	StoreImageService(ImageManager * manager);
+	StoreImageService(boost::shared_mutex * mutex);
 	bool execute(Socket * sk);
 };
 
 class GetImageService : public ImageStoring {
 private:
-	ImageManager * manager;
+	boost::shared_mutex * mutex;
 public:
-	GetImageService(ImageManager * manager);
+	GetImageService(boost::shared_mutex * mutex);
 	bool execute(Socket * sk);
 };
 
 class GetListService : public ImageStoring {
 private:
-	ImageManager * manager;
+	boost::shared_mutex * mutex;
 public:
-	GetListService(ImageManager * manager);
+	GetListService(boost::shared_mutex * mutex);
 	bool execute(Socket * sk);
 };
 
