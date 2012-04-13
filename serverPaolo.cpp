@@ -12,8 +12,8 @@
 #include <vector>
 #include <iostream>
 
-#include "SOA/SOA.h"
-#include "SOA/Service.h"
+#include "SOA/SOA.hpp"
+#include "SOA/Service.hpp"
 //#include "Application/RotateService.cpp"
 
 using namespace std;

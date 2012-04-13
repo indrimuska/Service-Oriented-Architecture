@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "Parameters.h"
+#include "Parameters.hpp"
 
 parameter_value::parameter_value() {
 	dimension = 0;

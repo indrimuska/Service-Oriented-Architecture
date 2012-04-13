@@ -1,5 +1,5 @@
 //
-//  SOA/Parameters.h
+//  SOA/Parameters.hpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 01/04/12.

@@ -13,10 +13,10 @@
 #include <string.h>
 #include <iostream>
 
-#include "SOA/SOA.h"
-#include "SOA/Communication.h"
-#include "SOA/ServerInformation.h"
-#include "SOA/ServiceInformation.h"
+#include "SOA/SOA.hpp"
+#include "SOA/Communication.hpp"
+#include "SOA/ServerInformation.hpp"
+#include "SOA/ServiceInformation.hpp"
 
 using namespace std;
 

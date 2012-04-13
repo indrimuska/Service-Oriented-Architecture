@@ -6,28 +6,17 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
+#include <vector>
 #include <iostream>
 
-#include "SOA/SOA.h"
-#include "Application/Threads.h"
-#include "Application/ImageStoring.h"
+#include "SOA/SOA.hpp"
+#include "Application/Threads.hpp"
+#include "Application/ImageStoring.hpp"
 
 using namespace std;
 
-void * threadMain(void * threadID);
-
-ThreadInfo threadsInfo[NUM_THREADS];
-
-struct Infos {
-	StoreImageService * storeImage;
-	GetImageService * getImage;
-	GetListService * getList;
-	Infos(StoreImageService * storeImage, GetImageService * getImage, GetListService * getList) {
-		this->storeImage = storeImage;
-		this->getImage = getImage;
-		this->getList = getList;
-	}
-};
+#define NUM_THREADS 10
+void threadMain(ThreadInfo * thread, StoreImageService * storeImage, GetImageService * getImage, GetListService * getList);
 
 int main(int argc, char ** argv) {
 	
@@ -57,13 +46,10 @@ int main(int argc, char ** argv) {
 	GetListService getList(manager);
 	getList.setServer(SPaddress, SPport);
 	
-	Infos * otherInfos = new Infos(&storeImage, &getImage, &getList);
-	
 	// Avvio dei thread (forks)
-	for (int i = 0; i < NUM_THREADS; i++) {
-		threadsInfo[i].otherInfos = (void *) otherInfos;
-		threadsInfo[i].startThread(threadMain);
-	}
+	ThreadInfo threadsInfo[NUM_THREADS];
+	for (int i = 0; i < NUM_THREADS; i++)
+		boost::thread(threadMain, &threadsInfo[i], &storeImage, &getImage, &getList);
 	
 	if (argc != 4) {
 		cout << "Indirizzo del Server Register : ";
@@ -94,7 +80,7 @@ int main(int argc, char ** argv) {
 		for (int i = 0; i < NUM_THREADS; i++)
 			if (threadsInfo[i].testAndSet()) {
 				threadsInfo[i].client = sk;
-				threadsInfo[i].V();
+				threadsInfo[i].startThread();
 				break;
 			}
 	}
@@ -103,26 +89,20 @@ int main(int argc, char ** argv) {
 	comm.closeAllCommunications();
 }
 
-void * threadMain(void * threadID) {
-	long tid;
-	tid = (long) threadID;
-	ThreadInfo * thread = &threadsInfo[tid];
-	Infos * otherInfos = (Infos *) thread->otherInfos;
+void threadMain(ThreadInfo * thread, StoreImageService * storeImage, GetImageService * getImage, GetListService * getList) {
 	while (1) {
 		bool result;
 		string service;
-		thread->P();
+		thread->waitStart();
 		if (!thread->client.receiveString(service)) continue;
 		cout << " e richiede il servizio \033[1;34m" << service << "\033[0m\n";
-		if (!service.compare("store image")) result = otherInfos->storeImage->serveRequests(&thread->client); else
-			if (!service.compare("get image")) result = otherInfos->getImage->serveRequests(&thread->client); else
-												result = otherInfos->getList->serveRequests(&thread->client);
+		if (!service.compare("store image")) result = storeImage->serveRequest(&thread->client); else
+			if (!service.compare("get image")) result = getImage->serveRequest(&thread->client); else
+												result = getList->serveRequest(&thread->client);
 		if (result) cout << "Richiesta servita\n";
-		else cout << "Richiesta non servita\n";
-		thread->client.closeSocket();
 		cout << endl;
+		thread->client.closeSocket();
 		thread->setFree();
 	}
 	thread->~ThreadInfo();
-	return NULL;
 }

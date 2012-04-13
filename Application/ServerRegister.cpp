@@ -8,8 +8,8 @@
 
 #include <iostream>
 
-#include "../SOA/SOA.h"
-#include "../SOA/Communication.h"
+#include "../SOA/SOA.hpp"
+#include "../SOA/Communication.hpp"
 
 using namespace std;
 

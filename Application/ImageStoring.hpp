@@ -1,5 +1,5 @@
 //
-//  Application/ImageStoring.h
+//  Application/ImageStoring.hpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 09/04/12.
@@ -14,7 +14,7 @@
 #include <dirent.h>
 #include <pthread.h>
 
-#include "../SOA/Service.h"
+#include "../SOA/Service.hpp"
 
 class ImageManager {
 private:

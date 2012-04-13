@@ -1,5 +1,5 @@
 //
-//  SOA/SOA.h
+//  SOA/SOA.hpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 28/03/12.
@@ -9,8 +9,8 @@
 #ifndef SOA_SOA_h
 #define SOA_SOA_h
 
-#include "Service.h"
-#include "Communication.h"
+#include "Service.hpp"
+#include "Communication.hpp"
 
 #define CONN_ACK_REQ	"Could you give an ACK for the connection, please?"
 #define CONN_ACK_RESP	"This is a simple ACK packet"

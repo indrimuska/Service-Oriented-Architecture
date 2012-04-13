@@ -1,5 +1,5 @@
 //
-//  Application/ImageManipulation.h
+//  Application/ImageManipulation.hpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 07/04/12.
@@ -12,7 +12,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "../SOA/Service.h"
+#include "../SOA/Service.hpp"
 
 #include "CImg.h"
 

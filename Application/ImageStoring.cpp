@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "ImageStoring.h"
+#include "ImageStoring.hpp"
 
 ImageManager::ImageManager() {
 	busy = false;

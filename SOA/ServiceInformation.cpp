@@ -5,7 +5,7 @@
  *      Author: par
  */
 
-#include "ServiceInformation.h"
+#include "ServiceInformation.hpp"
 
 ServiceInformation::ServiceInformation(string serviceName) {
 

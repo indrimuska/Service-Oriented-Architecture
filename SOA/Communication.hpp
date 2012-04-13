@@ -1,5 +1,5 @@
 //
-//  SOA/Communication.h
+//  SOA/Communication.hpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 01/04/12.
@@ -20,7 +20,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#include "Parameters.h"
+#include "Parameters.hpp"
 
 using namespace std;
 

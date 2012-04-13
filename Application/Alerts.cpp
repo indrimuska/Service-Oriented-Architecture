@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-#include "../SOA/Service.h"
+#include "../SOA/Service.hpp"
 
 using namespace std;
 

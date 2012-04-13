@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "Service.h"
+#include "Service.hpp"
 
 Response::Response() {
 	result = true;
@@ -156,7 +156,7 @@ bool Service::requestService() {
 	comm.closeAllCommunications();
 	return true;
 }
-bool Service::serveRequests(Socket * sk) {
+bool Service::serveRequest(Socket * sk) {
 	string name;
 	Response response;
 	vector<parameter> receivedInParams, receivedOutParams;

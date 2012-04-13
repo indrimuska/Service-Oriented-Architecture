@@ -9,9 +9,9 @@
 #include <time.h>
 #include <iostream>
 
-#include "SOA/SOA.h"
-#include "Application/ImageManipulation.h"
-#include "Application/ImageStoring.h"
+#include "SOA/SOA.hpp"
+#include "Application/ImageManipulation.hpp"
+#include "Application/ImageStoring.hpp"
 #include "Application/Alerts.cpp"
 
 using namespace std;

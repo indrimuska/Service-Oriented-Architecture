@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "SOA.h"
+#include "SOA.hpp"
 
 bool SOA::sendRequest(string request, Socket &SRsocket) {
 	if (!comm.connectTo(SRaddress, SRport, SRsocket)) {

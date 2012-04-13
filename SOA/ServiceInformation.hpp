@@ -11,8 +11,8 @@
 #include <vector>
 #include <iostream>
 
-#include "Service.h"
-#include "Communication.h"
+#include "Service.hpp"
+#include "Communication.hpp"
 
 class ServiceInformation {
 private:

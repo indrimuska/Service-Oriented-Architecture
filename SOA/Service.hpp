@@ -1,5 +1,5 @@
 //
-//  SOA/Service.h
+//  SOA/Service.hpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 27/03/12.
@@ -12,8 +12,8 @@
 #include <vector>
 #include <iostream>
 
-#include "Parameters.h"
-#include "Communication.h"
+#include "Parameters.hpp"
+#include "Communication.hpp"
 
 #define SERVICE_REQ		"C'mon server, give me this service!"
 #define SERVICE_RESP	"Et-voilà, here is your service"
@@ -64,7 +64,7 @@ public:
 	// Usati dai Service Provider
 	bool serviceRegistration(Socket SRsocket);
 	bool serviceUnRegistration(Socket SRsocket);
-	bool serveRequests(Socket * sk);
+	bool serveRequest(Socket * sk);
 	
 	// Usati dai client
 	bool requestService();

@@ -6,27 +6,16 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include <vector>
 #include <iostream>
 
-#include "SOA/SOA.h"
-#include "Application/Threads.h"
-#include "Application/ImageManipulation.h"
+#include "SOA/SOA.hpp"
+#include "Application/Threads.hpp"
+#include "Application/ImageManipulation.hpp"
 
 using namespace std;
 
-void * threadMain(void * threadID);
-
-ThreadInfo threadsInfo[NUM_THREADS];
-
-struct Infos {
-	RotateService * rotate;
-	HorizontalFlipService * horizontalFlip;
-	Infos(RotateService * rotate, HorizontalFlipService * horizontalFlip) {
-		this->rotate = rotate;
-		this->horizontalFlip = horizontalFlip;
-	}
-};
+#define NUM_THREADS 10
+void threadMain(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip);
 
 int main(int argc, char ** argv) {
 	
@@ -50,13 +39,10 @@ int main(int argc, char ** argv) {
 	HorizontalFlipService horizontalFlip;
 	horizontalFlip.setServer(SPaddress, SPport);
 	
-	Infos * otherInfos = new Infos(&rotate, &horizontalFlip);
-	
 	// Avvio dei thread (forks)
-	for (int i = 0; i < NUM_THREADS; i++) {
-		threadsInfo[i].otherInfos = (void *) otherInfos;
-		threadsInfo[i].startThread(threadMain);
-	}
+	ThreadInfo threadsInfo[NUM_THREADS];
+	for (int i = 0; i < NUM_THREADS; i++)
+		boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
 	
 	if (argc != 4) {
 		cout << "Indirizzo del Server Register : ";
@@ -86,7 +72,7 @@ int main(int argc, char ** argv) {
 		for (int i = 0; i < NUM_THREADS; i++)
 			if (threadsInfo[i].testAndSet()) {
 				threadsInfo[i].client = sk;
-				threadsInfo[i].V();
+				threadsInfo[i].startThread();
 				break;
 			}
 	}
@@ -95,24 +81,19 @@ int main(int argc, char ** argv) {
 	comm.closeAllCommunications();
 }
 
-void * threadMain(void * threadID) {
-	long tid;
-	tid = (long) threadID;
-	ThreadInfo * thread = &threadsInfo[tid];
-	Infos * otherInfos = (Infos *) thread->otherInfos;
+void threadMain(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip) {
 	while (1) {
 		bool result;
 		string service;
-		thread->P();
+		thread->waitStart();
 		if (!thread->client.receiveString(service)) continue;
 		cout << " e richiede il servizio \033[1;34m" << service << "\033[0m\n";
-		if (!service.compare("rotate")) result = otherInfos->rotate->serveRequests(&thread->client); else
-								result = otherInfos->horizontalFlip->serveRequests(&thread->client);
+		if (!service.compare("rotate")) result = rotate->serveRequest(&thread->client); else
+								result = horizontalFlip->serveRequest(&thread->client);
 		if (result) cout << "Richiesta servita\n";
-		thread->client.closeSocket();
 		cout << endl;
+		thread->client.closeSocket();
 		thread->setFree();
 	}
 	thread->~ThreadInfo();
-	return NULL;
 }

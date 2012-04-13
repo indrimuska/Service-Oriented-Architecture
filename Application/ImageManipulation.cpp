@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "ImageManipulation.h"
+#include "ImageManipulation.hpp"
 
 ImageManipulation::ImageManipulation() {
 	workDirectory = "Servers/ImageManipulationServer/";

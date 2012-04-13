@@ -5,7 +5,7 @@
  *      Author: par
  */
 
-#include "ServerInformation.h"
+#include "ServerInformation.hpp"
 
 using namespace std;
 

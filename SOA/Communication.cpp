@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Indri Muska. All rights reserved.
 //
 
-#include "Communication.h"
+#include "Communication.hpp"
 
 Socket::Socket() {
 	sk = -1;
