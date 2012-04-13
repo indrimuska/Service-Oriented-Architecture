@@ -14,6 +14,9 @@ ImageManipulation::ImageManipulation() {
 ImageManipulation::ImageManipulation(string workDirectory) {
 	this->workDirectory = workDirectory;
 }
+string ImageManipulation::findImageName(string filename) {
+	
+}
 bool ImageManipulation::getImageFromBuffer(parameter &p, string filename, bool hideWarning) {
 	FILE * file;
 	if (!hideWarning && (file = fopen(filename.c_str(), "r")) != 0) {

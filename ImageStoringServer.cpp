@@ -99,7 +99,7 @@ void threadMain(ThreadInfo * thread, StoreImageService * storeImage, GetImageSer
 		string service;
 		thread->waitStart();
 		if (!thread->client.receiveString(service)) continue;
-		cout << " e richiede il servizio \033[1;36m" << service << "\034[0m\n";
+		cout << " e richiede il servizio \033[1;34m" << service << "\033[0m\n";
 		if (!service.compare("store image")) result = storeImage->serveRequest(&thread->client); else
 			if (!service.compare("get image")) result = getImage->serveRequest(&thread->client); else
 												result = getList->serveRequest(&thread->client);

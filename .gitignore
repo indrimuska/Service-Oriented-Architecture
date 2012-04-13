@@ -2,8 +2,12 @@
 .DS_Store
 
 client
-
 server
+serverPaolo
+serverRegister
+serverRegisterIndri
+ImageStoringServer
+ImageManipulationServer
 
 Service Oriented Architecture.xcodeproj/**
 
