@@ -108,8 +108,8 @@ RotateService::RotateService() {
 	setService("rotate", parameters);
 }
 bool RotateService::execute(Socket * sk) {
-	string inFile = findImageName(workDirectory + "source.gif");
-	string outFile = findImageName(workDirectory + "rotated.gif");
+	string inFile = findImageName(workDirectory + "source.jpg");
+	string outFile = findImageName(workDirectory + "rotated.jpg");
 	getImageFromBuffer(inParameters[1], inFile, true);
 	int degrees;
 	inParameters[0].getValue(degrees);
@@ -130,8 +130,8 @@ HorizontalFlipService::HorizontalFlipService() {
 	setService("horizontal flip", parameters);
 }
 bool HorizontalFlipService::execute(Socket * sk) {
-	string inFile = findImageName(workDirectory + "source.gif");
-	string outFile = findImageName(workDirectory + "flipped.gif");
+	string inFile = findImageName(workDirectory + "source.jpg");
+	string outFile = findImageName(workDirectory + "flipped.jpg");
 	getImageFromBuffer(inParameters[0], inFile, true);
 	CImg<unsigned char> image(inFile.c_str());
 	image.mirror('x').save(outFile.c_str());
