@@ -20,9 +20,9 @@ using namespace cimg_library;
 
 class ImageManipulation : public Service {
 protected:
+	bool removeImages;
 	string workDirectory;
 	
-	string findImageName(string source);
 	bool getImageFromBuffer(parameter &p, string filename, bool hideWarning = false);
 	bool putImageInBuffer(parameter &p, string filename);
 public:

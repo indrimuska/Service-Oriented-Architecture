@@ -40,8 +40,7 @@ int main(int argc, char ** argv) {
 	
 	// Avvio dei thread (forks)
 	ThreadInfo threadsInfo[NUM_THREADS];
-	for (int i = 0; i < NUM_THREADS; i++)
-		boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
+	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
 	
 	if (argc != 4) {
 		cout << "Indirizzo del Server Register : ";
@@ -55,8 +54,8 @@ int main(int argc, char ** argv) {
 	}
 	
 	SOA global;
-	global.setServerRegister(SRaddress, SRport);
 	global.setServiceProvider(SPaddress, SPport);
+	if (!global.setServerRegister(SRaddress, SRport)) return 0;
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	//if (!global.serviceRegistration(horizontalFlip)) return 0;

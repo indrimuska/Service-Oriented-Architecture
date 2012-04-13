@@ -114,7 +114,7 @@ bool Socket::receiveFile(string where, string &filename) {
 	memset(binary, '\0', dimension + 1);
 	int i = (int) recv(sk, binary, dimension, MSG_WAITALL);
 	if (i == -1 || i < dimension) {
-		cerr << "Il file non è stato ricevuto correttamente.\n";
+		cerr << "Il file non è stato ricevuto correttamente\n";
 		return false;
 	}
 	binary[dimension] = '\0';
@@ -184,12 +184,12 @@ bool Communicator::startListener(string port, int backlog_queue) {
 	server.sin_port = htons(atoi(port.c_str()));
 	if (bind(listenSocket, (sockaddr *) &server, sizeof(server)) == -1) {
 		cerr << "Impossibile associare l'indirizzo al socket\n"
-		"Riprovare più tardi.\n";
+		"Riprovare più tardi\n";
 		return false;
 	}
 	if (listen(listenSocket, backlog_queue) == -1) {
 		cerr << "Impossibile mettersi in ascolto sul socket creato\n"
-		"Riprovare più tardi.\n";
+		"Riprovare più tardi\n";
 		return false;
 	}
 	return true;
@@ -199,7 +199,7 @@ bool Communicator::waitForConnection(Socket &clientSocket) {
 	socklen_t client_size = sizeof(client);
 	int client_socket = accept(listenSocket, (sockaddr *) &client, &client_size);
 	if (client_socket == -1) {
-		cerr << "Impossibile accettare la connessione.\n";
+		cerr << "Impossibile accettare la connessione\n";
 		return false;
 	}
 	clientSocket = Socket(client_socket);
@@ -211,7 +211,7 @@ bool Communicator::waitForConnection(Socket &clientSocket, string &clientAddress
 	socklen_t client_size = sizeof(client);
 	int client_socket = accept(listenSocket, (sockaddr *) &client, &client_size);
 	if (client_socket == -1) {
-		cerr << "Impossibile accettare la connessione.\n";
+		cerr << "Impossibile accettare la connessione\n";
 		return false;
 	}
 	clientSocket = Socket(client_socket);
@@ -223,8 +223,8 @@ bool Communicator::waitForConnection(Socket &clientSocket, string &clientAddress
 }
 bool Communicator::stopListener() {
 	if (close(listenSocket) == -1) {
-		cerr << "Impossibile chiudere la connessione.\n"
-		"Riprovare più tardi.\n";
+		cerr << "Impossibile chiudere la connessione\n"
+		"Riprovare più tardi\n";
 		return false;
 	}
 	return true;

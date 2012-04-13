@@ -17,7 +17,6 @@ class ServerRegister {
 private:
 	string address;
 	string port;
-	Communicator comm;
 	
 	bool sendAck(Socket * sk, string ack) {
 		if (!sk->sendString(ack)) {
@@ -27,15 +26,12 @@ private:
 		return true;
 	}
 public:
-	ServerRegister(string port) {
-		this->address = comm.getIP();
+	ServerRegister(string address, string port) {
+		this->address = address;
 		this->port = port;
-		comm.startListener(port);
 	}
-	bool serveRequests() {
+	bool serveRequest(Socket * sk) {
 		string request;
-		Socket * sk = new Socket();
-		if (!comm.waitForConnection(* sk)) return false;
 		if (!sk->receiveString(request)) return false;
 		if (!request.compare(CONN_ACK_REQ)) return confirmConnection(sk);
 		if (!request.compare(SRV_REG_REQ)) return serverRegistration(sk);
@@ -50,7 +46,6 @@ public:
 	}
 	bool confirmConnection(Socket * sk) {
 		if (!sendAck(sk, CONN_ACK_RESP)) return false;
-		delete sk;
 		return true;
 	}
 	bool serverRegistration(Socket * sk) { return true; }
@@ -99,11 +94,7 @@ public:
 			cerr << "Errore nell'invio dell'indirizzo o della porta del server\n\n";
 			return false;
 		}
-		delete sk;
 		cout << endl;
 		return true;
-	}
-	~ServerRegister() {
-		comm.closeAllCommunications();
 	}
 };

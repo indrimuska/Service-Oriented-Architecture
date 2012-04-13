@@ -46,8 +46,7 @@ int main(int argc, char ** argv) {
 	
 	// Avvio dei thread (forks)
 	ThreadInfo threadsInfo[NUM_THREADS];
-	for (int i = 0; i < NUM_THREADS; i++)
-		boost::thread(threadMain, &threadsInfo[i], &storeImage, &getImage, &getList);
+	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &storeImage, &getImage, &getList);
 	
 	if (argc != 4) {
 		cout << "Indirizzo del Server Register : ";
@@ -61,8 +60,8 @@ int main(int argc, char ** argv) {
 	}
 	
 	SOA global;
-	global.setServerRegister(SRaddress, SRport);
 	global.setServiceProvider(SPaddress, SPport);
+	if (!global.setServerRegister(SRaddress, SRport)) return 0;
 	//if (!global.serverRegistration()) return 0;
 	//if (!global.serviceRegistration(storeImage)) return 0;
 	//if (!global.serviceRegistration(getImage)) return 0;
@@ -73,7 +72,7 @@ int main(int argc, char ** argv) {
 	
 	while (1) {
 		Socket sk;
-		string service, client;
+		string client;
 		comm.waitForConnection(sk, client);
 		cout << "Il client " << client << " si è connesso" << flush;
 		for (int i = 0; i < NUM_THREADS; i++)
