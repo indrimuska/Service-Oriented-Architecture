@@ -124,7 +124,7 @@ StoreImageService::StoreImageService(boost::shared_mutex * mutex) {
 	parameters.push_back(parameter(IN, BUFFER));
 	setService("store image", parameters);
 }
-bool StoreImageService::execute(Socket * sk) {
+bool StoreImageService::execute() {
 	string filename;
 	inParameters[0].getValue(filename);
 	boost::unique_lock<boost::shared_mutex> scope_lock(* mutex);
@@ -138,7 +138,7 @@ GetImageService::GetImageService(boost::shared_mutex * mutex) {
 	parameters.push_back(parameter(OUT, BUFFER));
 	setService("get image", parameters);
 }
-bool GetImageService::execute(Socket * sk) {
+bool GetImageService::execute() {
 	string filename;
 	inParameters[0].getValue(filename);
 	boost::shared_lock<boost::shared_mutex> scope_lock(* mutex);
@@ -151,7 +151,7 @@ GetListService::GetListService(boost::shared_mutex * mutex) {
 	parameters.push_back(parameter(OUT, STRING));
 	setService("get list", parameters);
 }
-bool GetListService::execute(Socket * sk) {
+bool GetListService::execute() {
 	DIR * directory;
 	struct stat file_info;
 	struct dirent * dir_info;

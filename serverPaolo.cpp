@@ -14,7 +14,7 @@
 
 #include "SOA/SOA.hpp"
 #include "SOA/Service.hpp"
-//#include "Application/RotateService.cpp"
+#include "Application/ImageManipulation.hpp"
 
 using namespace std;
 
@@ -107,7 +107,8 @@ int main(int argc, char ** argv) {
 				cout << "SERVER REGISTER - SRport: " << global.SRport << endl;
 				cout << "LOCAL SERVER - SPaddress: " << SPaddress << endl;
 				cout << "LOCAL SERVER - SPport: " << localServerPort << endl;
-				if (!global.serverRegistration(SPaddress, localServerPort)) {
+				global.setServiceProvider(SPaddress, localServerPort);
+				if (!global.serverRegistration()) {
 					localServerPort = "";
 					cout << "Impossibile registrare il server" << endl;
 					//return 0; //questo return va tolto, al posto va gestito l'errore, in modo che il server rimanga comunque attivo
@@ -143,7 +144,7 @@ int main(int argc, char ** argv) {
 			if (localServerPort.empty()) {
 				cout << "Il server non è stato registrato" << endl;
 			}
-			if (!global.serverUnRegistration(SPaddress, localServerPort)) {
+			if (!global.serverUnRegistration()) {
 				return 0; //questo return va tolto, al posto va gestito l'errore, in modo che il server rimanga comunque attivo
 			}
 			localServerPort = "";
@@ -181,6 +182,18 @@ int main(int argc, char ** argv) {
 			serverRegister.sendString(servReq); //prologo
 			cout << "Qui ho inviato la richiesta di registrazione del servizio"
 					<< endl;
+			string serviceName;
+			RotateService rotate;
+			global.serviceRegistration(rotate);
+			cout << "Ho mandato la rotate" << endl;
+			string stampa;
+
+			//da qui si impalla perché non viene inviato niente
+			serverRegister.receiveString(stampa);
+			cout << "Risultato: " << stampa << endl;
+
+			//serverRegister.sendString(serviceName);
+
 			//fino a qui OK
 			/*string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
 			cout << "Sto per inviare serverInfo = " << endl;

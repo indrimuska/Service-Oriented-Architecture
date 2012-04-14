@@ -38,8 +38,6 @@ public:
 
 class Service {
 protected:
-	string SPaddress;
-	string SPport;
 	string name;
 	vector<parameter> inParameters;
 	vector<parameter> outParameters;
@@ -50,22 +48,18 @@ protected:
 	bool receiveParameters(Socket * sk, vector<parameter> &parameters);
 	
 	// Da implmentare nell'applicazione
-	virtual bool execute(Socket * sk);
+	virtual bool execute();
 public:
 	void setName(string name);
 	void setParameters(vector<parameter> &parameters);
 	void setService(string name, vector<parameter> &parameters);
 	string getServiceName();
 	
-	// Il server lo usa per fare richiesta di registrazione di un servizio
-	// Il client lo usa per fare richiesta di un servizio
-	void setServer(string SPaddress, string SPport);
-	
 	// Usati dai Service Provider
 	bool serveRequest(Socket * sk);
 	
 	// Usati dai client
-	bool requestService();
+	bool requestService(string SPaddress, string SPport);
 };
 
 #endif

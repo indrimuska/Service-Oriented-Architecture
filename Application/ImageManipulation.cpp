@@ -97,7 +97,7 @@ RotateService::RotateService() {
 	parameters.push_back(parameter(OUT, BUFFER));
 	setService("rotate", parameters);
 }
-bool RotateService::execute(Socket * sk) {
+bool RotateService::execute() {
 	static int imageNumber = 0;
 	stringstream ss; ss << imageNumber++;
 	string inFile = workDirectory + "source-r" + ss.str() + ".jpg";
@@ -121,7 +121,7 @@ HorizontalFlipService::HorizontalFlipService() {
 	parameters.push_back(parameter(OUT, BUFFER));
 	setService("horizontal flip", parameters);
 }
-bool HorizontalFlipService::execute(Socket * sk) {
+bool HorizontalFlipService::execute() {
 	static int imageNumber = 0;
 	stringstream ss; ss << imageNumber++;
 	string inFile = workDirectory + "source-f" + ss.str() + ".jpg";

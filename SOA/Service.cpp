@@ -34,10 +34,6 @@ vector<parameter>& Response::getParameters() {
 	return parameters;
 }
 
-void Service::setServer(string SPaddress, string SPport) {
-	this->SPaddress = SPaddress;
-	this->SPport = SPport;
-}
 void Service::setName(string name) {
 	this->name = name;
 }
@@ -104,7 +100,7 @@ bool Service::receiveParameters(Socket * sk, vector<parameter> &parameters) {
 	}
 	return true;
 }
-bool Service::requestService() {
+bool Service::requestService(string SPaddress, string SPport) {
 	Communicator comm;
 	Socket serviceProvider;
 	if (!comm.connectTo(SPaddress, SPport, serviceProvider)) {
@@ -211,7 +207,7 @@ bool Service::serveRequest(Socket * sk) {
 		}
 	}
 	if (response.getResult()) {
-		if (!execute(sk)) response.setError("Errore durante l'esecuzione del servizio");
+		if (!execute()) response.setError("Errore durante l'esecuzione del servizio");
 		else response.setParameters(outParameters);
 	}
 	if (!sendResponse(* sk, response)) {
@@ -220,7 +216,7 @@ bool Service::serveRequest(Socket * sk) {
 	}
 	return response.getResult();
 }
-bool Service::execute(Socket * sk) {
+bool Service::execute() {
 	cerr << "\033[1;31mServizio non implementato\033[0m\n";
 	return false;
 }

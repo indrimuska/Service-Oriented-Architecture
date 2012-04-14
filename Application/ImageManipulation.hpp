@@ -37,13 +37,13 @@ public:
 class RotateService : public ImageManipulation {
 public:
 	RotateService();
-	bool execute(Socket * sk);
+	bool execute();
 };
 
 class HorizontalFlipService : public ImageManipulation {
 public:
 	HorizontalFlipService();
-	bool execute(Socket * sk);
+	bool execute();
 };
 
 #endif

@@ -91,13 +91,6 @@ int main(int argc, char ** argv) {
 	if (!global.getServerAddress(getImage,       GetImageServer[0],       GetImageServer[1])) return 0;
 	if (!global.getServerAddress(getList,        GetListServer[0],        GetListServer[1])) return 0;
 	
-	// Impostazione dell'indirizzo dei Service Provider
-	rotate			.setServer(RotateServer[0],			RotateServer[1]);
-	horizontalFlip	.setServer(HorizontalFlipServer[0],	HorizontalFlipServer[1]);
-	storeImage		.setServer(StoreImageServer[0],		StoreImageServer[1]);
-	getImage		.setServer(GetImageServer[0],		GetImageServer[1]);
-	getList			.setServer(GetListServer[0],		GetListServer[1]);
-	
 	// Lettura dei file contenuti nella cartella IMAGES_DIRECTORY
 	DIR * directory;
 	struct stat file_info;
@@ -147,7 +140,7 @@ int main(int argc, char ** argv) {
 		// Scelta dell'elenco delle immagini disponibili
 		if (getImagesFromServer) {
 			info.serviceRequestMessage(getList);
-			if (!getList.requestService()) {
+			if (!getList.requestService(GetListServer[0], GetListServer[1])) {
 				info.serviceRequestFailed();
 				continue;
 			}
@@ -171,7 +164,7 @@ int main(int argc, char ** argv) {
 			parameters.push_back(parameter(OUT, BUFFER));
 			getImage.setParameters(parameters);
 			info.serviceRequestMessage(getImage);
-			if (!getImage.requestService()) {
+			if (!getImage.requestService(GetImageServer[0], GetImageServer[1])) {
 				info.serviceRequestFailed();
 				continue;
 			}
@@ -180,10 +173,13 @@ int main(int argc, char ** argv) {
 		}
 		
 		// Richiesta del servizio scelto al primo server
+		string server[2];
 		if (getImagesFromServer) operation->setParameterValue(IN, 1-operationType, result);
 		else operation->setImageAsParameter(IN, 1-operationType, files->at(file_index));
+		server[0] = operationType == 0 ? RotateServer[0] : HorizontalFlipServer[0];
+		server[1] = operationType == 0 ? RotateServer[1] : HorizontalFlipServer[1];
 		info.serviceRequestMessage(* operation);
-		if (!operation->requestService()) {
+		if (!operation->requestService(server[0], server[1])) {
 			info.serviceRequestFailed();
 			continue;
 		}
@@ -196,7 +192,7 @@ int main(int argc, char ** argv) {
 		parameters.push_back(parameter(IN, BUFFER, result));
 		storeImage.setParameters(parameters);
 		info.serviceRequestMessage(storeImage);
-		if (!storeImage.requestService()) {
+		if (!storeImage.requestService(StoreImageServer[0], StoreImageServer[1])) {
 			info.serviceRequestFailed();
 			continue;
 		}
@@ -205,7 +201,7 @@ int main(int argc, char ** argv) {
 		// Eventuale elenco dei file presenti sul secondo server
 		if (!getImagesFromServer) {
 			info.serviceRequestMessage(getList);
-			if (getList.requestService()) cout << getList.getStringFromParameter(OUT, 0) << endl << endl;
+			if (getList.requestService(GetListServer[0], GetListServer[1])) cout << getList.getStringFromParameter(OUT, 0) << endl << endl;
 			else info.serviceRequestFailed();
 		}
 	}

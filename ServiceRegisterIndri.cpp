@@ -7,11 +7,11 @@
 //
 
 #include "Application/Threads.hpp"
-#include "Application/ServerRegister.cpp"
+#include "Application/ServiceRegister.cpp"
 
 #define NUM_THREADS 10
 
-void threadMain(ThreadInfo * thread, ServerRegister * SR);
+void threadMain(ThreadInfo * thread, ServiceRegister * SR);
 
 int main(int argc, char ** argv) {
 	
@@ -25,7 +25,7 @@ int main(int argc, char ** argv) {
 	
 	Communicator comm;
 	address = comm.getIP();
-	ServerRegister SR(address, port);
+	ServiceRegister SR(address, port);
 	if (!comm.startListener(port)) return 0;
 	
 	// Avvio dei thread (forks)
@@ -50,7 +50,7 @@ int main(int argc, char ** argv) {
 	comm.closeAllCommunications();
 }
 
-void threadMain(ThreadInfo * thread, ServerRegister * SR) {
+void threadMain(ThreadInfo * thread, ServiceRegister * SR) {
 	while (1) {
 		thread->waitStart();
 		if (!SR->serveRequest(&thread->client)) continue;

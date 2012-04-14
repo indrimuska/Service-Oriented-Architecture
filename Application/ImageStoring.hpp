@@ -39,7 +39,7 @@ private:
 	boost::shared_mutex * mutex;
 public:
 	StoreImageService(boost::shared_mutex * mutex);
-	bool execute(Socket * sk);
+	bool execute();
 };
 
 class GetImageService : public ImageStoring {
@@ -47,7 +47,7 @@ private:
 	boost::shared_mutex * mutex;
 public:
 	GetImageService(boost::shared_mutex * mutex);
-	bool execute(Socket * sk);
+	bool execute();
 };
 
 class GetListService : public ImageStoring {
@@ -55,7 +55,7 @@ private:
 	boost::shared_mutex * mutex;
 public:
 	GetListService(boost::shared_mutex * mutex);
-	bool execute(Socket * sk);
+	bool execute();
 };
 
 #endif

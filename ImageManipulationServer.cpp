@@ -33,10 +33,7 @@ int main(int argc, char ** argv) {
 	
 	// Inizializzaione dei servizi
 	RotateService rotate;
-	rotate.setServer(SPaddress, SPport);
-	
 	HorizontalFlipService horizontalFlip;
-	horizontalFlip.setServer(SPaddress, SPport);
 	
 	// Avvio dei thread (forks)
 	ThreadInfo threadsInfo[NUM_THREADS];
