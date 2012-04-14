@@ -132,7 +132,7 @@ public:
 		cout << "È stato richiesto un server che fornisca il servizio \033[1;34m" << service << "\033[0m\n";
 		// Qui bisogna cercare un server che supporta il servizio 'service'
 		// e scegliero tra un insieme di server in base alla politica implementata (es. Round Robin)
-		// Non mi ricordo come hai implementato il server register, per far prima io uso un vettore di stringhe
+		// Non mi ricordo come hai implementato il service register, per far prima io uso un vettore di stringhe
 		vector<string> servers;
 		servers.push_back("127.0.0.1:2222/rotate");
 		servers.push_back("127.0.0.1:2222/horizontal flip");

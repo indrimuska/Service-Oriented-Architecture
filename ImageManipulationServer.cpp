@@ -40,9 +40,9 @@ int main(int argc, char ** argv) {
 	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
 	
 	if (argc != 4) {
-		cout << "Indirizzo del Server Register : ";
+		cout << "Indirizzo del Service Register : ";
 		cin >> SRaddress;
-		cout << "Porta del Server Register     : ";
+		cout << "Porta del Service Register     : ";
 		cin >> SRport;
 		cout << endl;
 	} else {
@@ -52,7 +52,7 @@ int main(int argc, char ** argv) {
 	
 	SOA global;
 	global.setServiceProvider(SPaddress, SPport);
-	if (!global.setServerRegister(SRaddress, SRport)) return 0;
+	if (!global.setServiceRegister(SRaddress, SRport)) return 0;
 	//if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	//if (!global.serviceRegistration(rotate)) return 0;
 	//if (!global.serviceRegistration(horizontalFlip)) return 0;

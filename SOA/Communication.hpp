@@ -54,7 +54,6 @@ public:
 	bool waitForConnection(Socket &clientSocket, string &clientAddress);
 	bool stopListener();
 	bool connectTo(string address, string port, Socket &S_socket);
-	bool closeCommunication(Socket socket);
 	bool closeAllCommunications();
 	string getIP();
 };

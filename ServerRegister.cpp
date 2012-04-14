@@ -1,5 +1,5 @@
 //
-//  ServerRegister.cpp
+//  ServiceRegister.cpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 28/03/12.
@@ -19,7 +19,7 @@
 
 using namespace std;
 
-class ServerRegister {
+class ServiceRegister {
 private:
 	Communicator comm;
 	string SRaddress;
@@ -61,7 +61,7 @@ private:
 
 public:
 
-	ServerRegister(string SRport) {
+	ServiceRegister(string SRport) {
 		this->SRaddress = comm.getIP();
 		this->SRport = SRport;
 		comm.startListener(SRport);
@@ -333,7 +333,7 @@ public:
 		//ServiceInformation si = servicesIt;
 		return true;
 	}
-	~ServerRegister() {
+	~ServiceRegister() {
 		// Chiusura del socket di ascolto
 		comm.stopListener();
 		// Chiusura di tutte le connessioni aperte
@@ -344,22 +344,22 @@ public:
 int main(int argc, char ** argv) {
 	string SRport;
 
-	cout << " * SERVER REGISTER * \n\n";
+	cout << " * SERVICE REGISTER * \n\n";
 	cout << "Set port number: ";
 	cin >> SRport;
 
-	ServerRegister serverRegister(SRport);
+	ServiceRegister serviceRegister(SRport);
 
 	while (1) {
 		// Attesa di connessioni in corso
 		cout << "\nWaiting for connection...\n";
-		if (!serverRegister.waitForConnection())
+		if (!serviceRegister.waitForConnection())
 			continue;
 
 		cout << "Connection closed\n";
 	}
 
-	//serverRegister.~ServerRegister();
+	//serviceRegister.~ServiceRegister();
 
 	return 1;
 }

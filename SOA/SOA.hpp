@@ -40,7 +40,7 @@ public:
 	string SPaddress;
 	string SPport;
 	Communicator comm;
-	bool setServerRegister(string SRaddres, string SRport);
+	bool setServiceRegister(string SRaddres, string SRport);
 	void setServiceProvider(string SPaddres, string SPport);
 	bool serverRegistration();
 	bool serviceRegistration(Service &s);

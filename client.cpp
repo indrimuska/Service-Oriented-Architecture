@@ -32,9 +32,9 @@ int main(int argc, char ** argv) {
 	string GetListServer[2];
 	
 	if (argc != 3) {
-		cout << "Indirizzo del Server Register : ";
+		cout << "Indirizzo del Serviec Register : ";
 		cin >> SRaddress;
-		cout << "Porta del Server Register     : ";
+		cout << "Porta del Service Register     : ";
 		cin >> SRport;
 		cout << endl;
 	} else {
@@ -82,9 +82,9 @@ int main(int argc, char ** argv) {
 	
 	/////////////////////////////////////////////////////////////
 	
-	// Richiesta dell'indirizzo dei server al Server Register
+	// Richiesta dell'indirizzo dei server al Service Register
 	SOA global;
-	global.setServerRegister(SRaddress, SRport);
+	global.setServiceRegister(SRaddress, SRport);
 	if (!global.getServerAddress(rotate,         RotateServer[0],         RotateServer[1])) return 0;
 	if (!global.getServerAddress(horizontalFlip, HorizontalFlipServer[0], HorizontalFlipServer[1])) return 0;
 	if (!global.getServerAddress(storeImage,     StoreImageServer[0],     StoreImageServer[1])) return 0;

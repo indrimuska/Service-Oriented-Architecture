@@ -1,5 +1,5 @@
 //
-//  ServerRegisterIndri.cpp
+//  ServiceRegisterIndri.cpp
 //  Service Oriented Architecture
 //
 //  Created by Indri Muska on 11/04/12.
@@ -18,7 +18,7 @@ int main(int argc, char ** argv) {
 	string address, port;
 	
 	if (argc != 2) {
-		cout << "Porta del Server Register: ";
+		cout << "Porta del Service Register: ";
 		cin >> port;
 		cout << endl;
 	} else port =  argv[1];
@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
 	ThreadInfo threadsInfo[NUM_THREADS];
 	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &SR);
 	
-	cout << "\033[4mSERVER REGISTER                             " << address << ":" << port << "\033[0m\n\n";
+	cout << "\033[4mSERVICE REGISTER                             " << address << ":" << port << "\033[0m\n\n";
 	cout << "In attesa di connessioni...\n\n";
 	
 	while (1) {

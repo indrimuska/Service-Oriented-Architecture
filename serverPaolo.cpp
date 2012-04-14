@@ -7,7 +7,7 @@
 //
 
 //questo esempio serve solo per provare il funzionamento della registrazione di un server e di un registro
-//sul serverRegister
+//sul ServiceRegister
 
 #include <vector>
 #include <iostream>
@@ -20,29 +20,29 @@ using namespace std;
 
 int main(int argc, char ** argv) {
 
-	Socket serverRegister;
+	Socket serviceRegister;
 	Communicator serverPaolo;
 	string port;
 	string localServerPort = "";
 	SOA global;
 
-	/*global.setServerRegister(SRaddress, SRport);
+	/*global.setServiceRegister(SRaddress, SRport);
 	 if (!global.serverRegistration(SPaddress, SPport)) return 0;
 	 if (!global.serviceRegistration(rotate)) return 0;*/
 
 	/*Da utilizzare poi per le demo su lan
 	 // Connessione al Service Register
-	 cout << "Insert server register address: ";
+	 cout << "Insert Service register address: ";
 	 cin >> SRaddress;
-	 cout << "Insert server register port: ";
+	 cout << "Insert Service register port: ";
 	 cin >> SRport;
 	 */
 
 	cout << " * LOCAL SERVER * \n\n";
-	//cout << "Porta del server Register: ";
+	//cout << "Porta del Service Register: ";
 	//cin >> port;
 	//server.startListener(argv[1]);
-	//serverPaolo.connectTo("127.0.0.1", port, serverRegister);
+	//serverPaolo.connectTo("127.0.0.1", port, serviceRegister);
 
 	while (1) {
 		cout << endl
@@ -80,7 +80,7 @@ int main(int argc, char ** argv) {
 			cout << "Digitare il numero di porta del service register" << endl;
 			cin >> SRport;
 			//cout << SRport << endl;
-			if (!global.setServerRegister(SRaddress, SRport)) {
+			if (!global.setServiceRegister(SRaddress, SRport)) {
 				SRaddress = "";
 				SRport = "";
 				cout << "Impossibile registrare il service register" << endl;
@@ -102,9 +102,9 @@ int main(int argc, char ** argv) {
 			} else {
 				cout << "Porta su cui far girare questo server: ";
 				cin >> localServerPort;
-				cout << "SERVER REGISTER - SRaddress: " << global.SRaddress
+				cout << "SERVICE REGISTER - SRaddress: " << global.SRaddress
 						<< endl;
-				cout << "SERVER REGISTER - SRport: " << global.SRport << endl;
+				cout << "SERVICE REGISTER - SRport: " << global.SRport << endl;
 				cout << "LOCAL SERVER - SPaddress: " << SPaddress << endl;
 				cout << "LOCAL SERVER - SPport: " << localServerPort << endl;
 				global.setServiceProvider(SPaddress, localServerPort);
@@ -123,17 +123,17 @@ int main(int argc, char ** argv) {
 			 cout << "È stato scelto di fare la registrazione di un server"
 			 << endl;
 			 string regReq = SRV_REG_REQ;
-			 serverRegister.sendString(regReq);
+			 serviceRegister.sendString(regReq);
 
 			 cout << serverPaolo.getIP() << endl;
 			 cout << "Porta su cui far girare questo server: ";
 			 cin >> localServerPort;
 			 port = localServerPort; //mi salvo la port che poi verrà utilizzata sempre per questo server
 			 string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
-			 serverRegister.sendString(serverInfo);
-			 serverRegister.sendString(serverPaolo.getIP());
+			 serviceRegister.sendString(serverInfo);
+			 serviceRegister.sendString(serverPaolo.getIP());
 
-			 serverRegister.sendString(localServerPort);
+			 serviceRegister.sendString(localServerPort);
 			 cout << "Voglio registrare: " + serverInfo << endl;
 			 */
 
@@ -157,14 +157,14 @@ int main(int argc, char ** argv) {
 			cout << "È stato scelto di visualizzare i server registrati"
 					<< endl;
 			serverPaolo.connectTo(global.SRaddress, global.SRport,
-					serverRegister);
+					serviceRegister);
 			string regDisp = SRV_REG_DISP;
-			serverRegister.sendString(regDisp);
+			serviceRegister.sendString(regDisp);
 			cout
 					<< "Ho inviato la richiesta per visualizzare i server registrati: "
 					<< regDisp << endl;
 			string result;
-			serverRegister.receiveString(result);
+			serviceRegister.receiveString(result);
 			cout << result;
 		}
 			break;
@@ -179,7 +179,7 @@ int main(int argc, char ** argv) {
 				return false;
 			}
 			string servReq = SRC_REG_REQ;
-			serverRegister.sendString(servReq); //prologo
+			serviceRegister.sendString(servReq); //prologo
 			cout << "Qui ho inviato la richiesta di registrazione del servizio"
 					<< endl;
 			string serviceName;
@@ -189,20 +189,20 @@ int main(int argc, char ** argv) {
 			string stampa;
 
 			//da qui si impalla perché non viene inviato niente
-			serverRegister.receiveString(stampa);
+			serviceRegister.receiveString(stampa);
 			cout << "Risultato: " << stampa << endl;
 
-			//serverRegister.sendString(serviceName);
+			//serviceRegister.sendString(serviceName);
 
 			//fino a qui OK
 			/*string serverInfo = serverPaolo.getIP() + ":" + localServerPort;
 			cout << "Sto per inviare serverInfo = " << endl;
 			cout << serverInfo << endl;
-			serverRegister.sendString(serverInfo); //1
+			serviceRegister.sendString(serverInfo); //1
 			cout << "In questo momento ho già inviato serverInfo " << endl;
 
 			string infoRegistrazione;
-			serverRegister.receiveString(infoRegistrazione); //2
+			serviceRegister.receiveString(infoRegistrazione); //2
 			cout << "Info registrazione = " << infoRegistrazione << endl;
 			cout << "superato il controllo" << endl;
 
@@ -232,7 +232,7 @@ int main(int argc, char ** argv) {
 			cout << "È stato scelto di visualizzare tutti i servizi registrati "
 					<< endl;
 			string regDispServices = SRC_REG_DISP;
-			serverRegister.sendString(regDispServices);
+			serviceRegister.sendString(regDispServices);
 			cout
 					<< "Ho inviato la richiesta per visualizzare i servizi registrati"
 					<< endl;

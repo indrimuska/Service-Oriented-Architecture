@@ -253,14 +253,6 @@ bool Communicator::connectTo(string address, string port, Socket &S_socket) {
 	sockets.push_back(S_socket);
 	return true;
 }
-bool Communicator::closeCommunication(Socket socket) {
-	int i;
-	for (i = 0; i < (int) sockets.size(); i++)
-		if (sockets[i] == socket) break;
-	if (!sockets[i].closeSocket()) return false;
-	sockets.erase(sockets.begin() + i);
-	return true;
-}
 bool Communicator::closeAllCommunications() {
 	for (int i = 0; i < (int) sockets.size(); i++)
 		if (!sockets[i].closeSocket()) return false;
