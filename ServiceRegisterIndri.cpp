@@ -7,7 +7,7 @@
 //
 
 #include "Application/Threads.hpp"
-#include "Application/ServiceRegister.cpp"
+#include "Application/ServiceRegister.hpp"
 
 #define NUM_THREADS 10
 

@@ -72,7 +72,7 @@ bool SOA::serverUnRegistration() {
 	Socket SRsocket;
 	if (!sendRequest(SRV_UNREG_REQ, SRsocket)) return false;
 	if (!SRsocket.sendString(SPaddress + ':' + SPport)) {
-		cerr << "Errore nella registrazione del server\n";
+		cerr << "Errore nella de-registrazione del server\n";
 		return false;
 	}
 	if (!SRsocket.receiveString(ack) || ack.compare(SRV_UNREG_RESP)) {
@@ -87,7 +87,7 @@ bool SOA::serviceUnRegistration(Service &s) {
 	Socket SRsocket;
 	if (!sendRequest(SRC_UNREG_REQ, SRsocket)) return false;
 	if (!SRsocket.sendString(SPaddress + ':' + SPport + '/' + s.getServiceName())) {
-		cerr << "Errore nella richiesta di registrazione al Service Register\n";
+		cerr << "Errore nella de-registrazione del servizio\n";
 		return false;
 	}
 	return true;
