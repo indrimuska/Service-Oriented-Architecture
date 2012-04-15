@@ -1,10 +1,13 @@
-//
-//  SOA/Service.cpp
-//  Service Oriented Architecture
-//
-//  Created by Indri Muska on 27/03/12.
-//  Copyright (c) 2012 Indri Muska. All rights reserved.
-//
+/**
+ * @file	SOA/Service.cpp
+ * @brief	Definizione dei metodi dichiarati in SOA/Service.hpp
+ *
+ * @date	27/03/2012
+ * @author	Indri Muska <indrimuska@gmail.com>
+ * @author	Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+ *
+ * @copyright Copyright (c) 2012 Indri Muska, Paolo Antonio Rossi. All rights reserved.
+ */
 
 #include "Service.hpp"
 
@@ -70,14 +73,14 @@ bool Service::receiveResponse(Socket &sk, Response &response) {
 	response.setParameters(parameters);
 	return true;
 }
-bool Service::sendParameters(Socket &serviceProvider, vector<parameter> &parameters) {
+bool Service::sendParameters(Socket &sk, vector<parameter> &parameters) {
 	int parameters_size = (int) parameters.size();
-	if (!serviceProvider.sendInt(parameters_size)) {
+	if (!sk.sendInt(parameters_size)) {
 		cerr << "Errore nell'invio del numero di parametri del servizio\n";
 		return false;
 	}
 	for (int i = 0; i < parameters_size; i++) {
-		if (!serviceProvider.sendParameter(parameters[i])) {
+		if (!sk.sendParameter(parameters[i])) {
 			cerr << "Errore durante l'invio di uno dei parametri del servizio\n";
 			return false;
 		}
