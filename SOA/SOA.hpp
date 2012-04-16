@@ -28,17 +28,11 @@
  * @def		SRV_REG_RESP
  * @brief	Messaggio standard per la conferma di registrazione di un server
  *
- * @def		SRV_REG_DISP
- * @brief	
- *
  * @def		SRC_REG_REQ
  * @brief	Messaggio standard per la richiesta di registrazione di un servizio
  *
  * @def		SRC_REG_RESP
  * @brief	Messaggio standard per la conferma di registrazione di un servizio
- *
- * @def		SRC_REG_DISP
- * @brief	
  *
  * @def		SRV_UNREG_REQ
  * @brief	Messaggio standard per la richiesta di de-registrazione di un server
@@ -52,6 +46,12 @@
  * @def		SRC_UNREG_RESP
  * @brief	Messaggio standard per la conferma di de-registrazione di un servizio
  *
+ * @def		SRV_DISP_REQ
+ * @brief	Messaggio standard per la richiesta dell'elenco dei server registrati
+ *
+ * @def		SRC_DISP_REQ
+ * @brief	Messaggio standard per la richiesta dell'elenco dei servizi registrati
+ *
  * @def		SRV_REQ
  * @brief	Messaggio standard per la richiesta dell'indirizzo di un service provider
  *
@@ -63,14 +63,14 @@
 #define CONN_ACK_RESP   "This is a simple ACK packet"
 #define SRV_REG_REQ	    "I'd like me to register"
 #define SRV_REG_RESP    "Ok, now you're registred"
-#define SRV_REG_DISP    "I want to know who is registered"
 #define SRC_REG_REQ     "Hey, I have a new service for any client!"
 #define SRC_REG_RESP    "Well, your service is now registred"
-#define SRC_REG_DISP    "I want to know the available services"
 #define SRV_UNREG_REQ   "I don't want to serv clients anymore"
 #define SRV_UNREG_RESP  "Starting from now, you will not contacted"
 #define SRC_UNREG_REQ   "Sorry, I can't give a service"
 #define SRC_UNREG_RESP  "Don't worry, you'll not asked for that service again"
+#define SRV_DISP_REQ    "I want to know who is registered"
+#define SRC_DISP_REQ    "I want to know the available services"
 #define SRV_REQ         "I need the address of one Service Provider that support this service"
 #define SRV_RESP        "This is the address of the SP you've requested"
 
@@ -96,12 +96,8 @@ using namespace std;
  */
 class SOA {
 private:
-	string SRaddress;  ///< Indirizzo IP del service register
-	string SRport;     ///< Porta di ascolto del service register
-	string SPaddress;  ///< Indirizzo IP del service provider
-	string SPport;     ///< Porta di ascolto del service provider
-	Communicator comm; ///< Comunicazioni con il service register
 	
+
 	/**
 	 * @brief	Invia una richiesta al service register
 	 * @param	request		Messaggio standard che definisce la richiesta
@@ -110,6 +106,11 @@ private:
 	 */
 	bool sendRequest(string request, Socket &SRsocket);
 public:
+	string SRaddress;  ///< Indirizzo IP del service register
+	string SRport;     ///< Porta di ascolto del service register
+	string SPaddress;  ///< Indirizzo IP del service provider
+	string SPport;     ///< Porta di ascolto del service provider
+	Communicator comm; ///< Comunicazioni con il service register
 	/**
 	 * @brief	Imposta l'indirizzo e la porta del service register
 	 * @param	SRaddress	Indirizzo IP del service register
@@ -157,6 +158,8 @@ public:
 	 * @result	Restituisce vero se la richiesta è stata accettata, falso altrimenti
 	 */
 	bool getServerAddress(Service &s, string &address, string &port);
+	bool requestDisplayServers();
+	bool requestDisplayServices();
 };
 
 #endif
