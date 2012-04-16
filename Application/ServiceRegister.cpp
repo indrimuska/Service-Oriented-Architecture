@@ -1,16 +1,74 @@
-//
-//  Application/ServiceRegister.cpp
-//  Service Oriented Architecture
-//
-//  Created by Indri Muska on 11/04/12.
-//  Copyright (c) 2012 Indri Muska. All rights reserved.
-//
+/**
+ * @file	Application/ServiceRegister.cpp
+ * @brief	Definizione dei metodi dichiarati in Application/ServiceRegister.hpp
+ *
+ * @date	11/04/2012
+ * @author	Indri Muska <indrimuska@gmail.com>
+ * @author	Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+ *
+ * @copyright Copyright (c) 2012 Indri Muska, Paolo Antonio Rossi. All rights reserved.
+ */
 
 #include "ServiceRegister.hpp"
+
+ServiceRegister::ServerInfo::ServerInfo(string serverName) {
+	address = serverName.substr(0, serverName.find_first_of(":"));
+	port    = serverName.substr(serverName.find_first_of(":")+1);
+}
+bool ServiceRegister::ServerInfo::isValid() {
+	return address.length() + port.length() != 0;
+}
+string ServiceRegister::ServerInfo::getAddress() {
+	return address;
+}
+string ServiceRegister::ServerInfo::getPort() {
+	return port;
+}
+string ServiceRegister::ServerInfo::getServerName() {
+	return address + ':' + port;
+}
+
+ServiceRegister::ServiceInfo::ServiceInfo(string serviceName) {
+	address = serviceName.substr(0, serviceName.find_first_of(":"));
+	port    = serviceName.substr(serviceName.find_first_of(":")+1, serviceName.find_first_of("/")-serviceName.find_first_of(":")-1);
+	service = serviceName.substr(serviceName.find_first_of("/")+1);
+}
+bool ServiceRegister::ServiceInfo::isValid() {
+	return address.length() + port.length() + service.length() != 0;
+}
+string ServiceRegister::ServiceInfo::getAddress() {
+	return address;
+}
+string ServiceRegister::ServiceInfo::getPort() {
+	return port;
+}
+string ServiceRegister::ServiceInfo::getService() {
+	return service;
+}
+string ServiceRegister::ServiceInfo::getServerName() {
+	return address + ':' + port;
+}
+string ServiceRegister::ServiceInfo::getServiceName() {
+	return address + ':' + port + '/' + service;
+}
 
 ServiceRegister::ServiceRegister(string address, string port) {
 	this->address = address;
 	this->port = port;
+}
+bool ServiceRegister::serveRequest(Socket * sk) {
+	string request;
+	if (!sk->receiveString(request))     return false;
+	if (!request.compare(CONN_ACK_REQ))  return confirmConnection(sk);
+	if (!request.compare(SRV_REG_REQ))   return serverRegistration(sk);
+	if (!request.compare(SRC_REG_REQ))   return serviceRegistration(sk);
+	if (!request.compare(SRV_UNREG_REQ)) return serverUnRegistration(sk);
+	if (!request.compare(SRC_UNREG_REQ)) return serviceUnRegistration(sk);
+	if (!request.compare(SRV_DISP_REQ))  return serversDisplay(sk);
+	if (!request.compare(SRC_DISP_REQ))  return servicesDisplay(sk);
+	if (!request.compare(SRV_REQ))       return serverRequest(sk);
+	cerr << "\033[1;31mRichiesta sconosciuta (" << request << ")\033[0m\n\n";
+	return false;
 }
 
 bool ServiceRegister::sendAck(Socket * sk, string ack) {
@@ -20,51 +78,26 @@ bool ServiceRegister::sendAck(Socket * sk, string ack) {
 	}
 	return true;
 }
-bool ServiceRegister::splitServerName(string serverName, string &address, string &port) {
-	address = serverName.substr(0, serverName.find_first_of(":"));
-	port    = serverName.substr(serverName.find_first_of(":")+1);
-	return address.length() + port.length() != 0;
-}
-bool ServiceRegister::splitServiceName(string serviceName, string &address, string &port, string &service) {
-	address = serviceName.substr(0, serviceName.find_first_of(":"));
-	port    = serviceName.substr(serviceName.find_first_of(":")+1, serviceName.find_first_of("/")-serviceName.find_first_of(":")-1);
-	service = serviceName.substr(serviceName.find_first_of("/")+1);
-	return address.length() + port.length() + service.length() != 0;
-}
-bool ServiceRegister::isServerRegistred(string serverName) {
+bool ServiceRegister::isServerRegistered(string serverName) {
 	for (int i = 0; i < (int) servers.size(); i++)
-		if (!serverName.compare(servers[i]))
+		if (!serverName.compare(servers[i].getServerName()))
 			return true;
 	return false;
 }
-bool ServiceRegister::ServiceRegister::isServiceRegistred(string serviceName) {
+bool ServiceRegister::isServiceRegistered(string serviceName) {
 	return services.find(serviceName) != services.end();
 }
-void ServiceRegister::ServiceRegister::deleteServerFromServersVector(string service, string serverName) {
-	vector<string> serversVector = services[service];
-	for (int i = 0; i < (int) serversVector.size(); i++)
-		if (!serversVector[i].compare(serverName)) {
-			serversVector.erase(serversVector.begin() + i);
+void ServiceRegister::deleteServerFromServersList(string service, string serverName) {
+	list<ServiceInfo> serversList = services[service];
+	for (list<ServiceInfo>::iterator i = serversList.begin(); i != serversList.end(); i++)
+		if (!i->getServerName().compare(serverName)) {
+			serversList.erase(i);
 			break;
 		}
-	if (serversVector.empty()) services.erase(service);
-	else services[service] = serversVector;
+	if (serversList.empty()) services.erase(service);
+	else services[service] = serversList;
 }
 
-bool ServiceRegister::serveRequest(Socket * sk) {
-	string request;
-	if (!sk->receiveString(request)) return false;
-	if (!request.compare(CONN_ACK_REQ)) return confirmConnection(sk);
-	if (!request.compare(SRV_REG_REQ)) return serverRegistration(sk);
-	if (!request.compare(SRC_REG_REQ)) return serviceRegistration(sk);
-	if (!request.compare(SRV_UNREG_REQ)) return serverUnRegistration(sk);
-	if (!request.compare(SRC_UNREG_REQ)) return serviceUnRegistration(sk);
-	if (!request.compare(SRV_REG_DISP)) return serversDisplay(sk);
-	if (!request.compare(SRC_REG_DISP)) return servicesDisplay(sk);
-	if (!request.compare(SRV_REQ)) return serverRequest(sk);
-	cerr << "\033[1;31mRichiesta sconosciuta (" << request << ")\033[0m\n\n";
-	return false;
-}
 bool ServiceRegister::confirmConnection(Socket * sk) {
 	if (!sendAck(sk, CONN_ACK_RESP)) return false;
 	return true;
@@ -76,7 +109,15 @@ bool ServiceRegister::serverRegistration(Socket * sk) {
 		cerr << "Errore nella ricezione del nome del server da registrare\n\n";
 		return false;
 	}
-	if (isServerRegistred(serverName)) {
+	ServerInfo server(serverName);
+	if (!server.isValid()) {
+		cerr << "\033[1;31mIl nome del server è invalido\033[0m\n";
+		if (!sk->sendString("Nome del server invalido"))
+			cerr << "Errore nell'invio della notifica di nome del server invalido\n";
+		cerr << endl;
+		return false;
+	}
+	if (isServerRegistered(serverName)) {
 		cerr << "\033[1;31mIl server richiedente è già registrato\033[0m\n";
 		if (!sk->sendString("Server già registrato"))
 			cerr << "Errore nell'invio della notifica di server già registrato\n\n";
@@ -95,29 +136,29 @@ bool ServiceRegister::serviceRegistration(Socket * sk) {
 		cerr << "Errore nella ricezione del nome del servizio\n\n";
 		return false;
 	}
-	string address, port, service;
-	if (!splitServiceName(serviceName, address, port, service)) {
+	ServiceInfo service(serviceName);
+	if (!service.isValid()) {
 		cerr << "\033[1;31mIl nome del servizio è invalido\033[0m\n";
 		if (!sk->sendString("Nome del servizio invalido"))
 			cerr << "Errore nell'invio della notifica di nome del servizio invalido\n";
 		cerr << endl;
 		return false;
 	}
-	if (!isServerRegistred(address + ':' + port)) {
+	if (!isServerRegistered(service.getServerName())) {
 		cerr << "\033[1;31mIl server che vuole registrare il servizio non è registrato\033[0m\n";
 		if (!sk->sendString("Server non registrato"))
 			cerr << "Errore nell'invio della notifica di server non registrato\n";
 		cerr << endl;
 		return false;
 	}
-	if (isServiceRegistred(service)) {
+	if (isServiceRegistered(service.getService())) {
 		cerr << "\033[1;31mIl servizio che si vuole registrare è già registrato\033[0m\n";
 		if (!sk->sendString("Servizio già registrato"))
 			cerr << "Errore nell'invio della notifica di servizio già registrato\n";
 		cerr << endl;
 		return false;
 	}
-	services[service].push_back(address + ':' + port);
+	services[service.getService()].push_back(service);
 	if (!sendAck(sk, SRC_REG_RESP)) return false;
 	cout << "Il servizio \033[1;32m" << serviceName << "\033[0m è stato registrato\n\n";
 	return true;
@@ -129,7 +170,7 @@ bool ServiceRegister::serverUnRegistration(Socket * sk) {
 		cerr << "Errore nella ricezione del nome del server da de-registrare\n\n";
 		return false;
 	}
-	if (!isServerRegistred(serverName)) {
+	if (!isServerRegistered(serverName)) {
 		cerr << "\033[1;31mIl server richiedente non è già registrato\033[0m\n";
 		if (!sk->sendString("Server non registrato"))
 			cerr << "Errore nell'invio della notifica di server non registrato\n\n";
@@ -138,14 +179,13 @@ bool ServiceRegister::serverUnRegistration(Socket * sk) {
 	}
 	// Eliminazione dal vettore dei server
 	for (int i = 0; i < (int) servers.size(); i++)
-		if (!servers[i].compare(serverName)) {
+		if (!servers[i].getServerName().compare(serverName)) {
 			servers.erase(servers.begin() + i);
 			break;
 		}
 	// Eliminazione dalla mappa dei servizi
-	map<string, vector<string> >::iterator serversVector;
-	for (serversVector = services.begin(); serversVector != services.end(); serversVector++)
-		deleteServerFromServersVector(serversVector->first, serverName);
+	for (map<string, list<ServiceInfo> >::iterator i = services.begin(); i != services.end(); i++)
+		deleteServerFromServersList(i->first, serverName);
 	if (!sendAck(sk, SRV_UNREG_RESP)) return false;
 	cout << "Il server \033[1;32m" << serverName << "\033[0m si è de-registrato\n\n";
 	return true;
@@ -157,22 +197,22 @@ bool ServiceRegister::serviceUnRegistration(Socket * sk) {
 		cerr << "Errore nella ricezione del nome del servizio\n\n";
 		return false;
 	}
-	string address, port, service;
-	if (!splitServiceName(serviceName, address, port, service)) {
+	ServiceInfo service(serviceName);
+	if (!service.isValid()) {
 		cerr << "\033[1;31mIl nome del servizio è invalido\033[0m\n";
 		if (!sk->sendString("Nome del servizio invalido"))
 			cerr << "Errore nell'invio della notifica di nome del servizio invalido\n";
 		cerr << endl;
 		return false;
 	}
-	if (!isServerRegistred(address + ':' + port)) {
+	if (!isServerRegistered(service.getServerName())) {
 		cerr << "\033[1;31mIl server che vuole de-registrare il servizio non è registrato\033[0m\n";
 		if (!sk->sendString("Server non registrato"))
 			cerr << "Errore nell'invio della notifica di server non registrato\n";
 		cerr << endl;
 		return false;
 	}
-	if (!isServiceRegistred(service)) {
+	if (!isServiceRegistered(service.getService())) {
 		cerr << "\033[1;31mIl servizio che si vuole de-registrare non è registrato\033[0m\n";
 		if (!sk->sendString("Servizio non registrato"))
 			cerr << "Errore nell'invio della notifica di servizio non registrato\n";
@@ -180,15 +220,38 @@ bool ServiceRegister::serviceUnRegistration(Socket * sk) {
 		return false;
 	}
 	// Eliminazione dalla mappa dei servizi del server
-	deleteServerFromServersVector(service, address + ':' + port);
+	deleteServerFromServersList(service.getService(), service.getServerName());
 	if (!sendAck(sk, SRC_UNREG_RESP)) return false;
 	cout << "Il servizio \033[1;32m" << serviceName << "\033[0m è stato de-registrato\n\n";
 	return true;
 }
 bool ServiceRegister::serversDisplay(Socket * sk) {
+	string serverList = "";
+	cout << "È stata richiesto l'elenco dei server registrati\n";
+	for (int i = 0; i < (int) servers.size(); i++)
+		serverList += '\n' + servers[i].getServerName();
+	if (!sk->sendString(serverList.substr(1))) {
+		cerr << "Errore nell'invio dell'elenco dei server registrati\n\n";
+		return false;
+	}
+	cout << "Richiesta servita\n\n";
 	return true;
 }
 bool ServiceRegister::servicesDisplay(Socket * sk) {
+	string serviceList = "";
+	cout << "È stata richiesto l'elenco dei servizi registrati\n";
+	for (map<string, list<ServiceInfo> >::iterator i = services.begin(); i != services.end(); i++) {
+		serviceList += '\n' + i->first + '\t';
+		for (list<ServiceInfo>::iterator j = i->second.begin(); j != i->second.end(); j++)
+			serviceList += j->getServerName() + ',';
+		serviceList = serviceList.substr(0, serviceList.length()-1);
+	}
+	if (!sk->sendString(serviceList.substr(1))) {
+		cerr << "Errore nell'invio dell'elenco dei servizi registrati\n\n";
+		return false;
+	}
+	cout << "Richiesta servita\n\n";
+	return true;
 	return true;
 }
 bool ServiceRegister::serverRequest(Socket * sk) {
@@ -197,26 +260,24 @@ bool ServiceRegister::serverRequest(Socket * sk) {
 		cerr << "Errore nella ricezione del nome del servizio\n\n";
 		return false;
 	}
-	map<string, vector<string> >::iterator serversVector = services.find(service);
 	cout << "È stato richiesto un server che fornisca il servizio \033[1;34m" << service << "\033[0m\n";
-	if (serversVector == services.end()) {
-		cout << "\033[1;31mNon si è registrato alcune server che fornisca il servizio richiesto\033[0m\n";
-		if (!sk->sendString("Non si è registrato alcun server che fornisca il servizio richiesto")) {
-			cerr << "Errore nell'invio della notifica di assenza di server registrato\n\n";
-			return false;
-		}
-		cout << endl;
+	if (!isServiceRegistered(service)) {
+		cerr << "\033[1;31mIl servizio non è registrato\033[0m\n";
+		if (!sk->sendString("Servizio non registrato"))
+			cerr << "Errore nell'invio della notifica di servizio non registrato\n";
+		cerr << endl;
 		return true;
 	}
-	string server[2];
-	// Qui bisogna cercare un server che supporta il servizio 'service'
-	// e scegliero tra un insieme di server in base alla politica implementata (es. Round Robin)
-	// Io per semplicità scelgo sempre il primo (di fatto escludendo gli altri, infatti non va bene)
-	splitServerName(serversVector->second[0], server[0], server[1]);
-	
+	// Estrazione del primo elemento della lista e reinserimento in coda
+	list<ServiceInfo> serversList = services[service];
+	ServiceInfo server(serversList.begin()->getServerName());
+	serversList.pop_front();
+	serversList.push_back(server);
+	services[service] = serversList;
+	// Invio dell'ACK e dell'indirizzo e porta del server scelto
 	if (!sendAck(sk, SRV_RESP)) return false;
-	cout << "Il server scelto è \033[1;32m" << server[0] << ":" << server[1] << "\033[0m\n";
-	if (!sk->sendString(server[0]) || !sk->sendString(server[1])) {
+	cout << "Il server scelto è \033[1;32m" << server.getServerName() << "\033[0m\n";
+	if (!sk->sendString(server.getAddress()) || !sk->sendString(server.getPort())) {
 		cerr << "Errore nell'invio dell'indirizzo o della porta del server\n\n";
 		return false;
 	}

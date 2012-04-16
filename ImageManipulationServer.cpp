@@ -36,8 +36,8 @@ int main(int argc, char ** argv) {
 	HorizontalFlipService horizontalFlip;
 	
 	// Avvio dei thread (forks)
-	//ThreadInfo threadsInfo[NUM_THREADS];
-	//for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
+	ThreadInfo threadsInfo[NUM_THREADS];
+	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
 	
 	if (argc != 4) {
 		cout << "Indirizzo del Service Register : ";
@@ -52,19 +52,15 @@ int main(int argc, char ** argv) {
 	
 	SOA global;
 	global.setServiceProvider(SPaddress, SPport);
-	sleep(2);
 	if (!global.setServiceRegister(SRaddress, SRport)) return 0;
-	sleep(2);
 	if (!global.serverRegistration()) return 0;
-	sleep(2);
 	if (!global.serviceRegistration(rotate)) return 0;
-	sleep(2);
 	if (!global.serviceRegistration(horizontalFlip)) return 0;
 	
 	cout << "\033[4mIMAGE MANIPULATION SERVER                   " << SPaddress << ":" << SPport << "\033[0m\n\n";
 	cout << "In attesa di connessioni...\n\n";
 	
-	/*while (1) {
+	while (1) {
 		Socket sk;
 		string client;
 		comm.waitForConnection(sk, client);
@@ -75,13 +71,10 @@ int main(int argc, char ** argv) {
 				threadsInfo[i].startThread();
 				break;
 			}
-	}*/
+	}
 	
-	sleep(2);
 	if (!global.serviceUnRegistration(rotate)) return 0;
-	sleep(2);
 	if (!global.serviceUnRegistration(horizontalFlip)) return 0;
-	sleep(2);
 	if (!global.serverUnRegistration()) return 0;
 	
 	// Chiusura di tutte le connessioni

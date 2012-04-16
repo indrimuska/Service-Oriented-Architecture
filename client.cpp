@@ -12,7 +12,7 @@
 #include "SOA/SOA.hpp"
 #include "Application/ImageManipulation.hpp"
 #include "Application/ImageStoring.hpp"
-#include "Application/Alerts.cpp"
+#include "Application/Alerts.hpp"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
 	string GetListServer[2];
 	
 	if (argc != 3) {
-		cout << "Indirizzo del Serviec Register : ";
+		cout << "Indirizzo del Service Register : ";
 		cin >> SRaddress;
 		cout << "Porta del Service Register     : ";
 		cin >> SRport;

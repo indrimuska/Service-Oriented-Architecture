@@ -40,8 +40,8 @@ int main(int argc, char ** argv) {
 	GetListService getList(&mutex);
 	
 	// Avvio dei thread (forks)
-	//ThreadInfo threadsInfo[NUM_THREADS];
-	//for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &storeImage, &getImage, &getList);
+	ThreadInfo threadsInfo[NUM_THREADS];
+	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &storeImage, &getImage, &getList);
 	
 	if (argc != 4) {
 		cout << "Indirizzo del Service Register : ";
@@ -58,18 +58,14 @@ int main(int argc, char ** argv) {
 	global.setServiceProvider(SPaddress, SPport);
 	if (!global.setServiceRegister(SRaddress, SRport)) return 0;
 	if (!global.serverRegistration()) return 0;
-
-	string service;
-	cin >> service;
-
 	if (!global.serviceRegistration(storeImage)) return 0;
-	//if (!global.serviceRegistration(getImage)) return 0;
-	//if (!global.serviceRegistration(getList)) return 0;
+	if (!global.serviceRegistration(getImage)) return 0;
+	if (!global.serviceRegistration(getList)) return 0;
 	
 	cout << "\033[4mIMAGE STORING SERVER                        " << SPaddress << ":" << SPport << "\033[0m\n\n";
 	cout << "In attesa di connessioni...\n\n";
 	
-	/*while (1) {
+	while (1) {
 		Socket sk;
 		string client;
 		comm.waitForConnection(sk, client);
@@ -80,13 +76,12 @@ int main(int argc, char ** argv) {
 				threadsInfo[i].startThread();
 				break;
 			}
-	}*/
+	}
 	
-	//sleep(10);
-	//if (!global.serverUnRegistration()) return 0;
-	//if (!global.serviceUnRegistration(storeImage)) return 0;
-	//if (!global.serviceUnRegistration(getImage)) return 0;
-	//if (!global.serviceUnRegistration(getList)) return 0;
+	if (!global.serviceUnRegistration(storeImage)) return 0;
+	if (!global.serviceUnRegistration(getImage)) return 0;
+	if (!global.serviceUnRegistration(getList)) return 0;
+	if (!global.serverUnRegistration()) return 0;
 	
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();
