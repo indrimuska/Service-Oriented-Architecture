@@ -15,11 +15,36 @@
 #include "Application/Threads.hpp"
 #include "Application/ImageManipulation.hpp"
 
+/**
+ * @define	NUM_THREADS
+ * @brief	Numero di thread del service provider
+ */
 #define NUM_THREADS 10
 
+/**
+ * @brief	Corpo del thread che gestisce l'interazione
+ * @param	server		Informazioni relative al server
+ * @param	comm		Comunicatore del server
+ * @param	global		Informazioni generali dell'applicazione S.O.A.
+ * @param	storeImage	Informazioni relative al servizio store image
+ * @param	getImage	Informazioni relative al servizio get image
+ * @param	getList		Informazioni relative al servizio get list
+ */
 void controlThread(ThreadInfo * server, Communicator * comm, SOA * global, RotateService * rotate, HorizontalFlipService * horizontalFlip);
+
+/**
+ * @brief	Corpo di ogni thread del service provider
+ * @param	thread			Informazioni relative al thread
+ * @param	rotate			Informazioni relative al servizio rotate
+ * @param	horizontalFlip	Informazioni relative al servizio horizontalFlip
+ */
 void executionThread(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip);
 
+/**
+ * @brief	Corpo del processo principale del service register
+ * @param	argc	Numero di parametri di ingresso
+ * @param	argv	Array di parametri di ingresso
+ */
 int main(int argc, char ** argv) {
 	
 	string SPaddress, SPport;

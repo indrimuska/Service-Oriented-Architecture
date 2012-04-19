@@ -19,8 +19,17 @@
 
 using namespace std;
 
+/**
+ * @def		IMAGES_DIRECTORY
+ * @brief	Percorso della directory contenente le immagini
+ */
 #define IMAGES_DIRECTORY "Images/"
 
+/**
+ * @brief	Corpo del processo principale del service register
+ * @param	argc	Numero di parametri di ingresso
+ * @param	argv	Array di parametri di ingresso
+ */
 int main(int argc, char ** argv) {
 	
 	int NUM_ITERATIONS = atoi(argv[1]);

@@ -12,10 +12,24 @@
 #include "Application/Threads.hpp"
 #include "Application/ServiceRegister.hpp"
 
+/**
+ * @define	NUM_THREADS
+ * @brief	Numero di thread del service provider
+ */
 #define NUM_THREADS 10
 
+/**
+ * @brief	Corpo di ogni thread del service register
+ * @param	thread	Informazioni relative al thread
+ * @param	SR		Identificativo del service register
+ */
 void threadMain(ThreadInfo * thread, ServiceRegister * SR);
 
+/**
+ * @brief	Corpo del processo principale del service register
+ * @param	argc	Numero di parametri di ingresso
+ * @param	argv	Array di parametri di ingresso
+ */
 int main(int argc, char ** argv) {
 	
 	string address, port;

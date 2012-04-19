@@ -2,13 +2,18 @@
 README.txt
 ---------------------------------------
 
+Progetto:
+  Service Oriented Architecture
+
+Autori:
+  Indri Muska <indrimuska@gmail.com>
+  Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+
 Indice:
-
   1. makefile: compilazione dei file ed esecuzione dell'applicazione
+  2. Informazioni utili per l'esecuzione
 
-  3. Informazioni utili per l'esecuzione
-
-**************************************************************************************
+*************************************************************************************
 
 1. makefile
 
@@ -29,7 +34,7 @@ In seguito vengono avviati 5 client che in parallelo interrogano il Service Regi
 per l'indirizzo dei server in grado di fornire i servizi richiesti permettendo di in-
 teragire direttamente con i Service Provider.
 
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 
 2. Informazioni utili per l'esecuzione
 
@@ -42,16 +47,9 @@ tri sono presenti le seguenti variabili:
   - ImageStoringServerPort: identifica la porta di ascolto dell'Image Storing Server
   - ClientIterations: numero di iterazioni da far eseguire a ciascun client
 
-Questo possono essere modificate per permettere l'esecuzione dell'applicativo in tutti
-quei casi in cui sono presenti problemi non dovuti al progetto (ad esempio, una chiu-
-sura errata degli eseguibili può comportare che un rocket rimanga aperto e non sia
-disponibile la porta di ascolto su cui impostare i server)
+Questo possono essere modificate per permettere l'esecuzione dell'applicativo in tut-
+ti quei casi in cui sono presenti problemi non dovuti al progetto (ad esempio, una
+chiusura errata degli eseguibili può comportare che un rocket rimanga aperto e non
+sia disponibile la porta di ascolto su cui impostare i server).
 
---------------------------------------------------------------------------------------
-
-Progetto:
-  Service Oriented Architecture
-
-Autori:
-  Indri Muska <indrimuska@gmail.com>
-  Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+-------------------------------------------------------------------------------------
