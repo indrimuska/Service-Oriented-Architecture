@@ -130,17 +130,18 @@ private:
 	 */
 	bool sendAck(Socket * sk, string ack);
 	/**
-	 * @brief	Verifica che un service provider sia registrato
+	 * @brief	Controlla che un service provider sia registrato
 	 * @param	serverName	Nome del service provider
 	 * @return	Restituisce vero se il server è registrato, falso altrimenti
 	 */
 	bool isServerRegistered(string serverName);
 	/**
-	 * @brief	Verifica che un servizio sia registrato
+	 * @brief	Controlla che un servizio offerto da un server sia registrato
+	 * @param	serverName	Nome completo del server
 	 * @param	serviceName	Nome del servizio
 	 * @return	Restituisce vero se il servizio è registrato, falso altrimenti
 	 */
-	bool isServiceRegistered(string serviceName);
+	bool isServiceRegistered(string serverName, string service);
 	/**
 	 * @brief	Elimina un server dall'elenco dei server associato ad un servizio
 	 * @param	service		Nome del servizio in cui cercare il server

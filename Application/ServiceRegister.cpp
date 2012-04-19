@@ -64,8 +64,6 @@ bool ServiceRegister::serveRequest(Socket * sk) {
 	if (!request.compare(SRC_REG_REQ))   return serviceRegistration(sk);
 	if (!request.compare(SRV_UNREG_REQ)) return serverUnRegistration(sk);
 	if (!request.compare(SRC_UNREG_REQ)) return serviceUnRegistration(sk);
-	if (!request.compare(SRV_DISP_REQ))  return serversDisplay(sk);
-	if (!request.compare(SRC_DISP_REQ))  return servicesDisplay(sk);
 	if (!request.compare(SRV_REQ))       return serverRequest(sk);
 	cerr << "\033[1;31mRichiesta sconosciuta (" << request << ")\033[0m\n\n";
 	return false;
@@ -84,8 +82,12 @@ bool ServiceRegister::isServerRegistered(string serverName) {
 			return true;
 	return false;
 }
-bool ServiceRegister::isServiceRegistered(string serviceName) {
-	return services.find(serviceName) != services.end();
+bool ServiceRegister::isServiceRegistered(string serverName, string service) {
+	if (services.find(service) == services.end()) return false;
+	for (list<ServiceInfo>::iterator i = services[service].begin(); i != services[service].end(); i++)
+		if (!i->getServerName().compare(serverName))
+			return true;
+	return false;
 }
 void ServiceRegister::deleteServerFromServersList(string service, string serverName) {
 	list<ServiceInfo> serversList = services[service];
@@ -151,7 +153,7 @@ bool ServiceRegister::serviceRegistration(Socket * sk) {
 		cerr << endl;
 		return false;
 	}
-	if (isServiceRegistered(service.getService())) {
+	if (isServiceRegistered(service.getServerName(), service.getService())) {
 		cerr << "\033[1;31mIl servizio che si vuole registrare è già registrato\033[0m\n";
 		if (!sk->sendString("Servizio già registrato"))
 			cerr << "Errore nell'invio della notifica di servizio già registrato\n";
@@ -213,7 +215,7 @@ bool ServiceRegister::serviceUnRegistration(Socket * sk) {
 		cerr << endl;
 		return false;
 	}
-	if (!isServiceRegistered(service.getService())) {
+	if (!isServiceRegistered(service.getServerName(), service.getService())) {
 		cerr << "\033[1;31mIl servizio che si vuole de-registrare non è registrato\033[0m\n";
 		if (!sk->sendString("Servizio non registrato"))
 			cerr << "Errore nell'invio della notifica di servizio non registrato\n";
@@ -233,7 +235,7 @@ bool ServiceRegister::serverRequest(Socket * sk) {
 		return false;
 	}
 	printf("È stato richiesto un server che fornisca il servizio \033[1;34m%s\033[0m\n", service.c_str());
-	if (!isServiceRegistered(service)) {
+	if (services.find(service) == services.end()) {
 		cerr << "\033[1;31mIl servizio non è registrato\033[0m\n";
 		if (!sk->sendString("Servizio non registrato"))
 			cerr << "Errore nell'invio della notifica di servizio non registrato\n";

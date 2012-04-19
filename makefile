@@ -4,22 +4,22 @@
      ServiceRegisterAddress="127.0.0.1"
         ServiceRegisterPort="12345"
 ImageManipulationServerPort="17171"
-	 ImageStoringServerPort="34343"
+     ImageStoringServerPort="34343"
+           ClientIterations="1"
 
 ####################################### Non modificare quanto segue ###
 
-GCC=@g++
-CFLAGS=-Wall -O2 -L/usr/X11R6/lib -lm -lpthread -lX11 -lboost_thread-mt SOA/*.cpp Application/*.cpp
+COMPILE=@g++ -Wall -O2 -L/usr/X11R6/lib -lm -lpthread -lX11 -lboost_thread-mt SOA/*.cpp Application/*.cpp
 COMPILING_MESSAGE=Compiling
 
 # Varibili d'uso
 ImageManipulationServerCommand="ImageManipulationServer ${ImageManipulationServerPort} ${ServiceRegisterAddress} ${ServiceRegisterPort}"
      ImageStoringServerCommand="ImageStoringServer ${ImageStoringServerPort} ${ServiceRegisterAddress} ${ServiceRegisterPort}"
         ServiceRegisterCommand="ServiceRegister ${ServiceRegisterPort}"
-                 ClientCommand="Client ${ServiceRegisterAddress} ${ServiceRegisterPort}"
+                 ClientCommand="Client ${ClientIterations} ${ServiceRegisterAddress} ${ServiceRegisterPort}"
 
 # Settaggio dell'ambiente di xterm
-XtermCommand=@xterm -fg green -bg black -leftbar -geometry
+XtermCommand=@xterm -hold -fg green -bg black -leftbar -geometry
 
 all:
 	@clear
@@ -30,26 +30,27 @@ all:
 	@make -s compile
 	@make exec
 
-compile: ImageManipulationServer ImageStoringServer ServiceRegister Client
-	@echo "\033[1;34mCompiling source\033[0m"
+compile:
+	@echo "\033[1;34mCompiling sources\033[0m"
 	@make ImageManipulationServer ImageStoringServer ServiceRegister Client
 	@echo "${COMPILING_MESSAGE} process complete."
+	@echo ""
 
-ImageManipulationServer: ImageManipulationServer.cpp
+ImageManipulationServer: SOA/*.cpp Application/*.cpp ImageManipulationServer.cpp
 	@echo "${COMPILING_MESSAGE} Image Manipulation Server"
-	${GCC} ${CFLAGS} ImageManipulationServer.cpp -o ImageManipulationServer
+	${COMPILE} ImageManipulationServer.cpp -o ImageManipulationServer
 
-ImageStoringServer: ImageStoringServer.cpp
+ImageStoringServer: SOA/*.cpp Application/*.cpp ImageStoringServer.cpp
 	@echo "${COMPILING_MESSAGE} Image Storing Server"
-	${GCC} ${CFLAGS} ImageStoringServer.cpp -o ImageStoringServer
+	${COMPILE} ImageStoringServer.cpp -o ImageStoringServer
 
-ServiceRegister: ServiceRegister.cpp
+ServiceRegister: SOA/*.cpp Application/*.cpp ServiceRegister.cpp
 	@echo "${COMPILING_MESSAGE} Service Register"
-	${GCC} ${CFLAGS} ServiceRegister.cpp -o ServiceRegister
+	${COMPILE} ServiceRegister.cpp -o ServiceRegister
 
-Client: Client.cpp
+Client: SOA/*.cpp Application/*.cpp Client.cpp
 	@echo "${COMPILING_MESSAGE} Client"
-	${GCC} ${CFLAGS} Client.cpp -o Client
+	${COMPILE} Client.cpp -o Client
 
 exec: ImageManipulationServer ImageStoringServer ServiceRegister Client
 	@echo "\033[1;34mExecuting application\033[0m"
@@ -57,16 +58,16 @@ exec: ImageManipulationServer ImageStoringServer ServiceRegister Client
 	@echo "Launching Service Register"
 	${XtermCommand} 70x45+0+0 -e "./${ServiceRegisterCommand}" &
 	@sleep 2
-	@echo "Launching Image Modification Server"
-	${XtermCommand} 72x23+420+0 -e "./${ImageManipulationServerCommand}" &
+	@echo "Launching Image Manipulation Server"
+	${XtermCommand} 74x23+400+0 -e "./${ImageManipulationServerCommand}" &
 	@sleep 0.1
 	@echo "Launching Image Storing Server"
-	${XtermCommand} 70x23+840+0 -e "./${ImageStoringServerCommand}" &
+	${XtermCommand} 70x23+800+0 -e "./${ImageStoringServerCommand}" &
 	@sleep 2
 	@echo "Launching Clients"
-	${XtermCommand} 100x30+100+100 -e "./${ClientCommand}; sleep 30" &
-	${XtermCommand} 100x30+200+120 -e "./${ClientCommand}; sleep 30" &
-	${XtermCommand} 100x30+300+130 -e "./${ClientCommand}; sleep 30" &
-	${XtermCommand} 100x30+400+140 -e "./${ClientCommand}; sleep 30" &
-	${XtermCommand} 100x30+500+150 -e "./${ClientCommand}; sleep 30" &
+	${XtermCommand} 80x30+100+100 -e "./${ClientCommand};" & sleep 0.1
+	${XtermCommand} 80x30+200+120 -e "./${ClientCommand};" & sleep 0.1
+	${XtermCommand} 80x30+300+130 -e "./${ClientCommand}" & sleep 0.1
+	${XtermCommand} 80x30+400+140 -e "./${ClientCommand}" & sleep 0.1
+	${XtermCommand} 80x30+500+150 -e "./${ClientCommand}" & sleep 0.1
 	@echo ""

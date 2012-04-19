@@ -19,10 +19,11 @@
 
 using namespace std;
 
-#define NUM_ITERATIONS 1
 #define IMAGES_DIRECTORY "Images/"
 
 int main(int argc, char ** argv) {
+	
+	int NUM_ITERATIONS = atoi(argv[1]);
 	
 	Alerts info;
 	
@@ -34,15 +35,15 @@ int main(int argc, char ** argv) {
 	string GetImageServer[2];
 	string GetListServer[2];
 	
-	if (argc != 3) {
+	if (argc != 4) {
 		cout << "Indirizzo del Service Register : ";
 		cin >> SRaddress;
 		cout << "Porta del Service Register     : ";
 		cin >> SRport;
 		cout << endl;
 	} else {
-		SRaddress = argv[1];
-		SRport = argv[2];
+		SRaddress = argv[2];
+		SRport = argv[3];
 	}
 	
 	// Lettura dei file contenuti nella cartella IMAGES_DIRECTORY
@@ -68,6 +69,7 @@ int main(int argc, char ** argv) {
 	
 	srand((int) time(NULL));
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
+		system("clear");
 		
 		/////////////////////////////////////////////////////////////
 		// INIZIALIZZAZIONE DEI SERVIZI DA RICHIEDERE              //
