@@ -1,10 +1,13 @@
-//
-//  ImageManipulationServer.cpp
-//  Service Oriented Architecture
-//
-//  Created by Indri Muska on 14/03/12.
-//  Copyright (c) 2012 Indri Muska. All rights reserved.
-//
+/**
+ * @file	ImageManipulationServer.cpp
+ * @brief	Service Provider multi-threaded per la manipolazione delle immagini.
+ *
+ * @date	14/03/2012
+ * @author	Indri Muska <indrimuska@gmail.com>
+ * @author	Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+ *
+ * @copyright Copyright (c) 2012 Indri Muska, Paolo Antonio Rossi. All rights reserved.
+ */
 
 #include <iostream>
 
@@ -14,7 +17,8 @@
 
 #define NUM_THREADS 10
 
-void threadMain(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip);
+void controlThread(ThreadInfo * server, Communicator * comm, SOA * global, RotateService * rotate, HorizontalFlipService * horizontalFlip);
+void executionThread(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip);
 
 int main(int argc, char ** argv) {
 	
@@ -31,14 +35,6 @@ int main(int argc, char ** argv) {
 	SPaddress = comm.getIP();
 	if (!comm.startListener(SPport)) return 0;
 	
-	// Inizializzaione dei servizi
-	RotateService rotate;
-	HorizontalFlipService horizontalFlip;
-	
-	// Avvio dei thread (forks)
-	ThreadInfo threadsInfo[NUM_THREADS];
-	for (int i = 0; i < NUM_THREADS; i++) boost::thread(threadMain, &threadsInfo[i], &rotate, &horizontalFlip);
-	
 	if (argc != 4) {
 		cout << "Indirizzo del Service Register : ";
 		cin >> SRaddress;
@@ -50,6 +46,10 @@ int main(int argc, char ** argv) {
 		SRport = argv[3];
 	}
 	
+	// Inizializzaione dei servizi
+	RotateService rotate;
+	HorizontalFlipService horizontalFlip;
+	
 	SOA global;
 	global.setServiceProvider(SPaddress, SPport);
 	if (!global.setServiceRegister(SRaddress, SRport)) return 0;
@@ -57,14 +57,23 @@ int main(int argc, char ** argv) {
 	if (!global.serviceRegistration(rotate)) return 0;
 	if (!global.serviceRegistration(horizontalFlip)) return 0;
 	
+	// Avvio dei thread
+	boost::thread_group threads;
+	ThreadInfo controlThreadInfo, threadsInfo[NUM_THREADS];
+	for (int i = 0; i < NUM_THREADS; i++) threads.add_thread(new boost::thread(executionThread, &threadsInfo[i], &rotate, &horizontalFlip));
+	
 	cout << "\033[4mIMAGE MANIPULATION SERVER                   " << SPaddress << ":" << SPport << "\033[0m\n\n";
 	cout << "In attesa di connessioni...\n\n";
 	
-	while (1) {
+	// Avvio del thread per il controllo dei comandi
+	boost::thread(controlThread, &controlThreadInfo, &comm, &global, &rotate, &horizontalFlip);
+	
+	while (controlThreadInfo.isActive()) {
 		Socket sk;
 		string client;
 		comm.waitForConnection(sk, client);
-		cout << "Il client " << client << " si è connesso" << flush;
+		if (!controlThreadInfo.isActive()) break;
+		printf("Il client %s si è connesso", client.c_str());
 		for (int i = 0; i < NUM_THREADS; i++)
 			if (threadsInfo[i].testAndSet()) {
 				threadsInfo[i].client = sk;
@@ -73,25 +82,69 @@ int main(int argc, char ** argv) {
 			}
 	}
 	
-	if (!global.serviceUnRegistration(rotate)) return 0;
-	if (!global.serviceUnRegistration(horizontalFlip)) return 0;
-	if (!global.serverUnRegistration()) return 0;
+	// Terminazione di tutti i thread
+	for (int i = 0; i < NUM_THREADS; i++) threadsInfo[i].exitThread();
+	threads.join_all();
 	
 	// Chiusura di tutte le connessioni
 	comm.closeAllCommunications();
+	
+	cout << "Server chiuso\n\n";
 }
 
-void threadMain(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip) {
-	while (1) {
+void controlThread(ThreadInfo * server, Communicator * comm, SOA * global, RotateService * rotate, HorizontalFlipService * horizontalFlip) {
+	bool serverRegistered = true;
+	while (server->isActive()) {
+		bool result = false;
+		string command = "", operand = "";
+		cout << "> " << flush;
+		getline(cin, command);
+		operand = command.substr(command.find(' ')+1);
+		command = command.substr(0, command.find_first_of(' '));
+		if (!command.compare("reg-server")) {
+			result = global->serverRegistration();
+			serverRegistered = true;
+		} else
+		if (!command.compare("reg-service")) {
+			if (!operand.compare("rotate")) result = global->serviceRegistration(* rotate); else
+			if (!operand.compare("horizontal flip")) result = global->serviceRegistration(* horizontalFlip); else
+			printf("Servizio %s sconosciuto\n", operand.c_str());
+		} else
+		if (!command.compare("dereg-server")) {
+			result = global->serverUnRegistration();
+			serverRegistered = false;
+		} else
+		if (!command.compare("dereg-service")) {
+			if (!operand.compare("rotate")) result = global->serviceUnRegistration(* rotate); else
+			if (!operand.compare("horizontal flip")) result = global->serviceUnRegistration(* horizontalFlip); else
+			printf("Servizio %s sconosciuto\n", operand.c_str());
+		} else
+		if (!command.compare("quit")) {
+			if (serverRegistered) global->serverUnRegistration();
+			server->exitThread();
+			comm->stopListener();
+		} else {
+			cout << "Comando sconosciuto\n\n";
+			continue;
+		}
+		if (result) cout << "Comando eseguito\n";
+		cout << endl;
+	}
+}
+
+void executionThread(ThreadInfo * thread, RotateService * rotate, HorizontalFlipService * horizontalFlip) {
+	static int i = 0; i++;
+	while (thread->isActive()) {
 		bool result;
 		string service;
 		thread->waitStart();
+		if (!thread->isActive()) break;
 		if (!thread->client.receiveString(service)) continue;
-		cout << " e richiede il servizio \033[1;34m" << service << "\033[0m\n";
+		printf(" e richiede il servizio \033[1;34m%s\033[0m\n", service.c_str());
 		if (!service.compare("rotate")) result = rotate->serveRequest(&thread->client); else
 								result = horizontalFlip->serveRequest(&thread->client);
 		if (result) cout << "Richiesta servita\n";
-		cout << endl;
+		cout << "\n> " << flush;
 		thread->client.closeSocket();
 		thread->setFree();
 	}

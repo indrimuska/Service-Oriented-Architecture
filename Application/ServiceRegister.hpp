@@ -145,7 +145,6 @@ private:
 	 * @brief	Elimina un server dall'elenco dei server associato ad un servizio
 	 * @param	service		Nome del servizio in cui cercare il server
 	 * @param	serverName	Nome del server da eliminare
-	 * @return	Restituisce vero se l'operazione è andata a buon fine, falso altrimenti
 	 */
 	void deleteServerFromServersList(string service, string serverName);
 	
@@ -179,18 +178,6 @@ private:
 	 * @return	Restituisce vero se l'operazione è andata a buon fine, falso altrimenti
 	 */
 	bool serviceUnRegistration(Socket * sk);
-	/**
-	 * @brief	Invia l'elenco dei service provider registrati
-	 * @param	sk	Socket di connessione con il service provider
-	 * @return	Restituisce vero se l'operazione è andata a buon fine, falso altrimenti
-	 */
-	bool serversDisplay(Socket * sk);
-	/**
-	 * @brief	Invia l'elenco dei servizi registrati
-	 * @param	sk	Socket di connessione con il service provider
-	 * @return	Restituisce vero se l'operazione è andata a buon fine, falso altrimenti
-	 */
-	bool servicesDisplay(Socket * sk);
 	/**
 	 * @brief	Invia l'indirizzo di un server in grado di fornire il servizio richiesto
 	 * @param	sk	Socket di connessione con il client

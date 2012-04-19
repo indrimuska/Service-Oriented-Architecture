@@ -126,7 +126,7 @@ bool ServiceRegister::serverRegistration(Socket * sk) {
 	}
 	servers.push_back(serverName);
 	if (!sendAck(sk, SRV_REG_RESP)) return false;
-	cout << "Il server \033[1;32m" << serverName << "\033[0m si è registrato\n\n";
+	printf("Il server \033[1;32m%s\033[0m si è registrato\n\n", serverName.c_str());
 	return true;
 }
 bool ServiceRegister::serviceRegistration(Socket * sk) {
@@ -160,7 +160,7 @@ bool ServiceRegister::serviceRegistration(Socket * sk) {
 	}
 	services[service.getService()].push_back(service);
 	if (!sendAck(sk, SRC_REG_RESP)) return false;
-	cout << "Il servizio \033[1;32m" << serviceName << "\033[0m è stato registrato\n\n";
+	printf("Il servizio \033[1;32m%s\033[0m è stato registrato\n\n", serviceName.c_str());
 	return true;
 }
 bool ServiceRegister::serverUnRegistration(Socket * sk) {
@@ -184,10 +184,11 @@ bool ServiceRegister::serverUnRegistration(Socket * sk) {
 			break;
 		}
 	// Eliminazione dalla mappa dei servizi
-	for (map<string, list<ServiceInfo> >::iterator i = services.begin(); i != services.end(); i++)
+	map<string, list<ServiceInfo> > servicesCopy = services;
+	for (map<string, list<ServiceInfo> >::iterator i = servicesCopy.begin(); i != servicesCopy.end(); i++)
 		deleteServerFromServersList(i->first, serverName);
 	if (!sendAck(sk, SRV_UNREG_RESP)) return false;
-	cout << "Il server \033[1;32m" << serverName << "\033[0m si è de-registrato\n\n";
+	printf("Il server \033[1;32m%s\033[0m si è de-registrato\n\n", serverName.c_str());
 	return true;
 }
 bool ServiceRegister::serviceUnRegistration(Socket * sk) {
@@ -225,42 +226,13 @@ bool ServiceRegister::serviceUnRegistration(Socket * sk) {
 	cout << "Il servizio \033[1;32m" << serviceName << "\033[0m è stato de-registrato\n\n";
 	return true;
 }
-bool ServiceRegister::serversDisplay(Socket * sk) {
-	string serverList = "";
-	cout << "È stata richiesto l'elenco dei server registrati\n";
-	for (int i = 0; i < (int) servers.size(); i++)
-		serverList += '\n' + servers[i].getServerName();
-	if (!sk->sendString(serverList.substr(1))) {
-		cerr << "Errore nell'invio dell'elenco dei server registrati\n\n";
-		return false;
-	}
-	cout << "Richiesta servita\n\n";
-	return true;
-}
-bool ServiceRegister::servicesDisplay(Socket * sk) {
-	string serviceList = "";
-	cout << "È stata richiesto l'elenco dei servizi registrati\n";
-	for (map<string, list<ServiceInfo> >::iterator i = services.begin(); i != services.end(); i++) {
-		serviceList += '\n' + i->first + '\t';
-		for (list<ServiceInfo>::iterator j = i->second.begin(); j != i->second.end(); j++)
-			serviceList += j->getServerName() + ',';
-		serviceList = serviceList.substr(0, serviceList.length()-1);
-	}
-	if (!sk->sendString(serviceList.substr(1))) {
-		cerr << "Errore nell'invio dell'elenco dei servizi registrati\n\n";
-		return false;
-	}
-	cout << "Richiesta servita\n\n";
-	return true;
-	return true;
-}
 bool ServiceRegister::serverRequest(Socket * sk) {
 	string service;
 	if (!sk->receiveString(service)) {
 		cerr << "Errore nella ricezione del nome del servizio\n\n";
 		return false;
 	}
-	cout << "È stato richiesto un server che fornisca il servizio \033[1;34m" << service << "\033[0m\n";
+	printf("È stato richiesto un server che fornisca il servizio \033[1;34m%s\033[0m\n", service.c_str());
 	if (!isServiceRegistered(service)) {
 		cerr << "\033[1;31mIl servizio non è registrato\033[0m\n";
 		if (!sk->sendString("Servizio non registrato"))
@@ -276,7 +248,7 @@ bool ServiceRegister::serverRequest(Socket * sk) {
 	services[service] = serversList;
 	// Invio dell'ACK e dell'indirizzo e porta del server scelto
 	if (!sendAck(sk, SRV_RESP)) return false;
-	cout << "Il server scelto è \033[1;32m" << server.getServerName() << "\033[0m\n";
+	printf("Il server scelto è \033[1;32m%s\033[0m\n", server.getServerName().c_str());
 	if (!sk->sendString(server.getAddress()) || !sk->sendString(server.getPort())) {
 		cerr << "Errore nell'invio dell'indirizzo o della porta del server\n\n";
 		return false;

@@ -263,11 +263,12 @@ bool Communicator::closeAllCommunications() {
 	return true;
 }
 string Communicator::getIP() {
-	struct hostent * ip;
-	struct in_addr address;
 	char hostname[MAXHOSTNAMELEN];
-	gethostname(hostname, MAXHOSTNAMELEN);
-	ip = gethostbyname(hostname);
-	memcpy(&address, ip->h_addr_list[0], sizeof(in_addr));
-	return inet_ntoa(address);
+	if (gethostname(hostname, MAXHOSTNAMELEN)) {
+		struct in_addr address;
+		struct hostent * ip = gethostbyname(hostname);
+		memcpy(&address, ip->h_addr_list[0], sizeof(in_addr));
+		return inet_ntoa(address);
+	}
+	return "127.0.0.1";
 }

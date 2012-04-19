@@ -1,10 +1,13 @@
-//
-//  ServiceRegisterIndri.cpp
-//  Service Oriented Architecture
-//
-//  Created by Indri Muska on 11/04/12.
-//  Copyright (c) 2012 Indri Muska. All rights reserved.
-//
+/**
+ * @file	ServiceRegister.cpp
+ * @brief	Registro dei servizi.
+ *
+ * @date	11/04/2012
+ * @author	Indri Muska <indrimuska@gmail.com>
+ * @author	Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+ *
+ * @copyright Copyright (c) 2012 Indri Muska, Paolo Antonio Rossi. All rights reserved.
+ */
 
 #include "Application/Threads.hpp"
 #include "Application/ServiceRegister.hpp"
@@ -53,7 +56,7 @@ int main(int argc, char ** argv) {
 void threadMain(ThreadInfo * thread, ServiceRegister * SR) {
 	while (1) {
 		thread->waitStart();
-		if (!SR->serveRequest(&thread->client)) continue;
+		SR->serveRequest(&thread->client);
 		thread->client.closeSocket();
 		thread->setFree();
 	}

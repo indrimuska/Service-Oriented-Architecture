@@ -34,6 +34,8 @@ using namespace std;
  *   - Assegnare il socket di connessione del client al thread scelto
  *   - Notificare l'avvio del thread quando un client si connette
  *   - Attendere la notifica di connessione di un client prima di risvegliare un thread
+ *   - Notificare la terminazione di un thread
+ *   - Controllare se un thread deve terminare o meno
  *
  * Ogni operazione sullo stato del thread viene eseguita in mutua esclusione per mezzo
  * di semafori mutex della libreria boost con dei lock di tipo scoped_lock. L'avvio e
@@ -42,6 +44,7 @@ using namespace std;
 class ThreadInfo {
 private:
 	bool busy;                           ///< Stato del thread
+	bool active;                         ///< Attivazione del thread
 	boost::mutex mutex;                  ///< Mutua esclusione per l'accesso allo stato
 	boost::condition_variable condition; ///< Condizione per mettere il thread in attesa
 public:
@@ -52,6 +55,7 @@ public:
 	 */
 	ThreadInfo() {
 		busy = false;
+		active = true;
 	}
 	/**
 	 * @brief	Imposta il thread su uno stato occupato
@@ -98,6 +102,23 @@ public:
 	 * @brief	Invia una notifica di avvio al thread
 	 */
 	void startThread() {
+		condition.notify_one();
+	}
+	/**
+	 * @brief	Controlla se un thread può continuare ad eseguire
+	 */
+	bool isActive() {
+		boost::mutex::scoped_lock scoped_lock(mutex);
+		return active;
+	}
+	/**
+	 * @brief	Invia la notifica di terminazione al thread
+	 */
+	void exitThread() {
+		mutex.lock();
+		busy = true;
+		active = false;
+		mutex.unlock();
 		condition.notify_one();
 	}
 };

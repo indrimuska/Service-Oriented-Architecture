@@ -62,7 +62,6 @@ bool SOA::serviceRegistration(Service &s) {
 		cerr << "Errore nella richiesta di registrazione al Service Register\n";
 		return false;
 	}
-	return true;
 	if (!SRsocket.receiveString(ack) || ack.compare(SRC_REG_RESP)) {
 		cerr << "Errore nella conferma di registrazione del servizio\n" << ack << endl;
 		return false;
@@ -116,30 +115,6 @@ bool SOA::getServerAddress(Service &s, string &address, string &port) {
 		cerr << "Errore nella ricezione dell'indirizzo o della porta del server\n" << ack << endl;
 		return false;
 	}
-	SRsocket.closeSocket();
-	return true;
-}
-bool SOA::requestDisplayServers() {
-	string ack;
-	Socket SRsocket;
-	if (!sendRequest(SRV_DISP_REQ, SRsocket)) return false;
-	if (!SRsocket.receiveString(ack)) {
-		cerr << "Errore nella ricezione dell'elenco dei server registrati\n" << ack << endl;
-		return false;
-	}
-	cout << "Server registrati:\n" << ack << "\n\n";
-	SRsocket.closeSocket();
-	return true;
-}
-bool SOA::requestDisplayServices() {
-	string ack;
-	Socket SRsocket;
-	if (!sendRequest(SRC_DISP_REQ, SRsocket)) return false;
-	if (!SRsocket.receiveString(ack)) {
-		cerr << "Errore nella ricezione dell'elenco dei servizi registrati\n" << ack << endl;
-		return false;
-	}
-	cout << "Servizi registrati:\n" << ack << "\n\n";
 	SRsocket.closeSocket();
 	return true;
 }

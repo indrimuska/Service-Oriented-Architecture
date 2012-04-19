@@ -46,12 +46,6 @@
  * @def		SRC_UNREG_RESP
  * @brief	Messaggio standard per la conferma di de-registrazione di un servizio
  *
- * @def		SRV_DISP_REQ
- * @brief	Messaggio standard per la richiesta dell'elenco dei server registrati
- *
- * @def		SRC_DISP_REQ
- * @brief	Messaggio standard per la richiesta dell'elenco dei servizi registrati
- *
  * @def		SRV_REQ
  * @brief	Messaggio standard per la richiesta dell'indirizzo di un service provider
  *
@@ -69,8 +63,6 @@
 #define SRV_UNREG_RESP  "Starting from now, you will not contacted"
 #define SRC_UNREG_REQ   "Sorry, I can't give a service"
 #define SRC_UNREG_RESP  "Don't worry, you'll not asked for that service again"
-#define SRV_DISP_REQ    "I want to know who is registered"
-#define SRC_DISP_REQ    "I want to know the available services"
 #define SRV_REQ         "I need the address of one Service Provider that support this service"
 #define SRV_RESP        "This is the address of the SP you've requested"
 
@@ -158,8 +150,6 @@ public:
 	 * @result	Restituisce vero se la richiesta è stata accettata, falso altrimenti
 	 */
 	bool getServerAddress(Service &s, string &address, string &port);
-	bool requestDisplayServers();
-	bool requestDisplayServices();
 };
 
 #endif

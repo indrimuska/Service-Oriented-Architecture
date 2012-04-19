@@ -1,10 +1,13 @@
-//
-//  Application/ImageManipulation.cpp
-//  Service Oriented Architecture
-//
-//  Created by Indri Muska on 07/04/12.
-//  Copyright (c) 2012 Indri Muska. All rights reserved.
-//
+/**
+ * @file	Application/ImageManipulation.cpp
+ * @brief	Definizione dei metodi dichiarati in Application/ImageManipulation.hpp
+ *
+ * @date	07/04/2012
+ * @author	Indri Muska <indrimuska@gmail.com>
+ * @author	Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+ *
+ * @copyright Copyright (c) 2012 Indri Muska, Paolo Antonio Rossi. All rights reserved.
+ */
 
 #include "ImageManipulation.hpp"
 

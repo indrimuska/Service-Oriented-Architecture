@@ -1,10 +1,13 @@
-//
-//  Application/ImageStoring.cpp
-//  Service Oriented Architecture
-//
-//  Created by Indri Muska on 09/04/12.
-//  Copyright (c) 2012 Indri Muska. All rights reserved.
-//
+/**
+ * @file	Application/ImageStoring.cpp
+ * @brief	Definizione dei metodi dichiarati in Application/ImageStoring.hpp
+ *
+ * @date	09/04/2012
+ * @author	Indri Muska <indrimuska@gmail.com>
+ * @author	Paolo Antonio Rossi <paoloantoniorossi@gmail.com>
+ *
+ * @copyright Copyright (c) 2012 Indri Muska, Paolo Antonio Rossi. All rights reserved.
+ */
 
 #include "ImageStoring.hpp"
 
