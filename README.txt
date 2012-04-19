@@ -24,12 +24,13 @@ eseguibili:
   - ServiceRegister
   - Client
 Attraverso il comando "make" è possibile automatizzare la compilazione dell'applica-
-zione garantendo che tutte le opzioni di compilazione vengano inserite.
+zione garantendo che tutte le opzioni necessarie vengano inserite. La compilazione
+avviene solo se non effettuata in precedenza e solo se i file di progetto non sono
+stati modificati. In seguito, viene automaticamente avviata l'applicazione.
 
-La dimostrazione (ottenibile direttamente attraverso il comando 'make exec') consi-
-ste nell'avvio di un Service Register e dei due server Image Manipulation Server e
-Image Storing Server, i quali si registrano nel registro dei servizi insieme ai ser-
-vizi che offrono.
+La dimostrazione consiste nell'avvio di un Service Register e dei due server Image
+Manipulation Server e Image Storing Server, i quali si registrano nel registro dei
+servizi insieme ai servizi che offrono.
 In seguito vengono avviati 5 client che in parallelo interrogano il Service Register
 per l'indirizzo dei server in grado di fornire i servizi richiesti permettendo di in-
 teragire direttamente con i Service Provider.
