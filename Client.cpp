@@ -122,7 +122,7 @@ int main(int argc, char ** argv) {
 		
 		// Richiesta dell'indirizzo dei server al Service Register
 		SOA global;
-		global.setServiceRegister(SRaddress, SRport);
+		if (!global.setServiceRegister(SRaddress, SRport)) return 0;
 		if (!global.getServerAddress(rotate,         RotateServer[0],         RotateServer[1])) return 0;
 		if (!global.getServerAddress(horizontalFlip, HorizontalFlipServer[0], HorizontalFlipServer[1])) return 0;
 		if (!global.getServerAddress(storeImage,     StoreImageServer[0],     StoreImageServer[1])) return 0;
