@@ -1,4 +1,3 @@
-
 # Variabili d'ambiente modificabili
 
 ServiceRegisterAddress      := "127.0.0.1"
@@ -82,8 +81,8 @@ exec: ImageManipulationServer ImageStoringServer ServiceRegister Client
 	${XtermCommand} 70x23+800+0 -e "./${ImageStoringServerCommand}" &
 	@sleep 2
 	@echo "Launching Clients"
-	${XtermCommand} 80x30+100+100 -e "./${ClientCommand};" & sleep 0.1
-	${XtermCommand} 80x30+200+120 -e "./${ClientCommand};" & sleep 0.1
+	${XtermCommand} 80x30+100+100 -e "./${ClientCommand}" & sleep 0.1
+	${XtermCommand} 80x30+200+120 -e "./${ClientCommand}" & sleep 0.1
 	${XtermCommand} 80x30+300+130 -e "./${ClientCommand}" & sleep 0.1
 	${XtermCommand} 80x30+400+140 -e "./${ClientCommand}" & sleep 0.1
 	${XtermCommand} 80x30+500+150 -e "./${ClientCommand}" & sleep 0.1
