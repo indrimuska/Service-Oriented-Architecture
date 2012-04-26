@@ -28,7 +28,7 @@ all:
 	@echo ""
 	@make -s compile
 	@make -s directories
-	@make exec
+	@make -s execution
 	@echo ""
 	@echo "***********************************************"
 	@echo ""
@@ -68,7 +68,7 @@ Client: SOA/*.cpp Application/*.cpp Client.cpp
 	@echo "${COMPILING_MESSAGE} Client"
 	${COMPILE} Client.cpp -o Client
 
-exec: ImageManipulationServer ImageStoringServer ServiceRegister Client
+execution: ImageManipulationServer ImageStoringServer ServiceRegister Client
 	@echo "\033[1;34mExecuting application\033[0m"
 	@xterm -e "echo Pre-fetching xterm"
 	@echo "Launching Service Register"

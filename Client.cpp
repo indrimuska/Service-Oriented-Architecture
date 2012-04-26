@@ -17,6 +17,8 @@
 #include "Application/ImageStoring.hpp"
 #include "Application/Alerts.hpp"
 
+
+
 using namespace std;
 
 /**
@@ -78,7 +80,8 @@ int main(int argc, char ** argv) {
 	
 	srand((int) time(NULL));
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
-		system("clear");
+		int clear;
+		clear = system("clear");
 		
 		/////////////////////////////////////////////////////////////
 		// INIZIALIZZAZIONE DEI SERVIZI DA RICHIEDERE              //
