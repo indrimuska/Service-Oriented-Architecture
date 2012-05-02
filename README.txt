@@ -48,7 +48,7 @@ tri sono presenti le seguenti variabili:
   - ImageStoringServerPort: identifica la porta di ascolto dell'Image Storing Server
   - ClientIterations: numero di iterazioni da far eseguire a ciascun client
 
-Questo possono essere modificate per permettere l'esecuzione dell'applicativo in tut-
+Queste possono essere modificate per permettere l'esecuzione dell'applicativo in tut-
 ti quei casi in cui sono presenti problemi non dovuti al progetto (ad esempio, una
 chiusura errata degli eseguibili può comportare che un rocket rimanga aperto e non
 sia disponibile la porta di ascolto su cui impostare i server).
