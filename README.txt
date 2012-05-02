@@ -30,7 +30,7 @@ stati modificati. In seguito, viene automaticamente avviata l'applicazione.
 
 La dimostrazione consiste nell'avvio di un Service Register e dei due server Image
 Manipulation Server e Image Storing Server, i quali si registrano nel registro dei
-servizi insieme ai servizi che offrono.
+servizi notificando ai servizi che offrono.
 In seguito vengono avviati 5 client che in parallelo interrogano il Service Register
 per l'indirizzo dei server in grado di fornire i servizi richiesti permettendo di in-
 teragire direttamente con i Service Provider.
@@ -50,7 +50,7 @@ tri sono presenti le seguenti variabili:
 
 Queste possono essere modificate per permettere l'esecuzione dell'applicativo in tut-
 ti quei casi in cui sono presenti problemi non dovuti al progetto (ad esempio, una
-chiusura errata degli eseguibili può comportare che un rocket rimanga aperto e non
-sia disponibile la porta di ascolto su cui impostare i server).
+chiusura errata degli eseguibili può comportare che un socket rimanga aperto e non
+sia più disponibile la porta di ascolto su cui impostare i server).
 
 -------------------------------------------------------------------------------------
